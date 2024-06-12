@@ -7,17 +7,22 @@ A class for a card in Hanabi.
 #pragma once
 
 // possible colors
-enum Color { red, green, blue, yellow, white };
+enum Color { red = 1, green, blue, yellow, white };
 // possible ranks
-enum Rank { one, two, three, four, five };
+enum Rank { one = 1, two, three, four, five };
 
-class card
+class Card
 {
+    Color color_;
+    Rank rank_;
 
-    Color color;
-    Rank rank;
+public:
 
-    
+    Card(Color, Rank);
+
+    Color color();
+
+    Rank rank();
+
     void str();
-
 };

@@ -1,9 +1,9 @@
-#include <state.h>
-#include <player.h>
+#include "state.h"
+#include "player.h"
 
 
 class game
 {
-    int num_players;
+    int num_players_;
 };
 

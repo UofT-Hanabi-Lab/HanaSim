@@ -3,7 +3,7 @@
 A class for a Hanabi player.
 
 */
-#include <state.h>
+#include "state.h"
 
 #pragma once
 
