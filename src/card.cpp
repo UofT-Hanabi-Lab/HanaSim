@@ -30,3 +30,7 @@ void Card::str() {
 
     system("color 00");
 }
+
+bool Card::operator == (const Card c) {
+    return ((color_ == c.color_) && (rank_ == c.rank_));
+}
