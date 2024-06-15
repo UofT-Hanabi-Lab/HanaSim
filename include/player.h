@@ -13,7 +13,7 @@ A class for a Hanabi player.
 class player
 {
     int num_cards_;
-    int id_;
+    int id_; // should be unique and in order of 0,1,2,3,...
 
 
 public:

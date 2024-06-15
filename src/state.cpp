@@ -65,7 +65,7 @@ void State::transition(move m) {
         Card playing_card = hands_[m.get_from()][m.get_card_index()];
         int top_rank = piles_[playing_card.color() - 1];
         if (playing_card.rank() == top_rank + 1) { // SUCCESSFUL PLAY
-            piles_[playing_card.color()] += 1;
+            piles_[playing_card.color() - 1] += 1;
             auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), 
                                 playing_card);
             hands_[m.get_from()].erase(it);
