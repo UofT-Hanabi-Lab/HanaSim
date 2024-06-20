@@ -11,7 +11,7 @@
 humanplayer::humanplayer(int n_cards, int id) : num_cards_(n_cards), id_(id) {
 }
 
-void humanplayer::observe(move m) {};
+void humanplayer::observe(State s, move m) {};
 
 int humanplayer::get_id() {
     return id_;
@@ -86,27 +86,44 @@ std::vector<move> humanplayer::get_legal_moves(State s, int id) {
         for (int i = 0; i < hands.size(); i++) {
             std::set<Color> colors;
             std::set<Rank> ranks;
+            std::map<Color, std::vector<int>> col_to_indices{};
+            std::map<Rank, std::vector<int>> rank_to_indices{};
             if (i == id) {
                 continue;
             }
-            for (Card c : hands[i]) {
+            std::cout << hands[i].size() << std::endl;
+            for (int j = 0; j < hands[i].size(); j++) {
+                Card c = hands[i][j];
                 colors.insert(c.color());
+                if (auto search = col_to_indices.find(c.color()); search == col_to_indices.end()) {
+                    col_to_indices.insert({c.color(), {j}});
+                } else {
+                    col_to_indices.at(c.color()).push_back(j);
+                }
                 ranks.insert(c.rank());
+                if (auto search = rank_to_indices.find(c.rank()); search == rank_to_indices.end()) {
+                    rank_to_indices.insert({c.rank(), {j}});
+                } else {
+                    rank_to_indices.at(c.rank()).push_back(j);
+                }
             }
             for (Color col : colors) {
-                moves.push_back(move(COL_HINT, i, id, -1, col, invalid_rank));
-            };
-            for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, -1, invalid_color, rank));
+                moves.push_back(move(COL_HINT, i, id, -1, col_to_indices.at(col), col, invalid_rank));
+            }
+            for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, -1, rank_to_indices.at(rank), invalid_color, rank));
         }
     }
+    
     if (s.get_num_hints() < 8) {
         for (int i = 0; i < hands[id].size(); i++) {
-            moves.push_back(move(DISCARD, -1, id, i, invalid_color, invalid_rank));
+            moves.push_back(move(DISCARD, -1, id, i, {}, invalid_color, invalid_rank));
         }
     }
+    
     for (int i = 0; i < hands[id].size(); i++) {
-        moves.push_back(move(PLAY, -1, id, i, invalid_color, invalid_rank));
+        moves.push_back(move(PLAY, -1, id, i, {}, invalid_color, invalid_rank));
     }
+    
     return moves;
 }
 

@@ -4,8 +4,8 @@
 
 #include "../include/move.h"
 
-move::move(move_type type, int to, int from, int card_index, Color color, Rank rank) : 
-    type_(type), to_(to), from_(from), card_index_(card_index), color_(color), rank_(rank) {
+move::move(move_type type, int to, int from, int card_index, std::vector<int> card_indices, Color color, Rank rank) : 
+    type_(type), to_(to), from_(from), card_index_(card_index), card_indices_(card_indices), color_(color), rank_(rank) {
 }
 
 move_type move::get_type() {
@@ -30,6 +30,10 @@ Color move::get_color() {
 
 Rank move::get_rank() {
     return rank_;
+}
+
+std::vector<int> move::get_card_indices() {
+    return card_indices_;
 }
 
 std::string col_str(Color col) {

@@ -17,12 +17,12 @@ class State {
 public:
     State(int num_players, int cards_per_hand);
 
-    std::vector<std::vector<Card>> get_hands();
-    int get_num_hints();
-    int get_num_lives();
-    std::vector<Card> get_discards();
-    std::vector<int> get_piles();
-    std::vector<Card> get_deck();
+    std::vector<std::vector<Card>> get_hands() const;
+    int get_num_hints() const;
+    int get_num_lives() const;
+    std::vector<Card> get_discards() const;
+    std::vector<int> get_piles() const;
+    std::vector<Card> get_deck() const;
 
     void transition(move m);
 };

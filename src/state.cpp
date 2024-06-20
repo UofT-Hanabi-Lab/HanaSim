@@ -94,23 +94,23 @@ void State::transition(move m) {
     }
 }
 
-int State::get_num_hints() {
+int State::get_num_hints() const {
     return hint_tokens_;
 }
-int State::get_num_lives() {
+int State::get_num_lives() const {
     return lives_;
 }
-std::vector<Card> State::get_discards() {
+std::vector<Card> State::get_discards() const {
     return discards_;
 }
-std::vector<int> State::get_piles() {
+std::vector<int> State::get_piles() const {
     return piles_;
 }
-std::vector<Card> State::get_deck() {
+std::vector<Card> State::get_deck() const {
     return deck_;
 }
 
-std::vector<std::vector<Card>> State::get_hands() {
+std::vector<std::vector<Card>> State::get_hands() const {
     return hands_;
 }
 
