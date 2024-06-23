@@ -9,7 +9,7 @@
 class holmesbot;
 
 class cardknowledge {
-    bool cantBe_[5][5];
+    bool cantBe_[6][6];
     Color color_;
     Rank rank_;
 public:
@@ -39,8 +39,8 @@ class holmesbot final : public player {
 
     int num_cards_;
     int id_;
-    int located_count_[5][5];
-    int played_count_[5][5];
+    int located_count_[6][6];
+    int played_count_[6][6];
     std::vector<std::vector<cardknowledge>> hand_knowledge_; // what each player knows about their hand
     int lowest_playable_rank_;
     int my_hand_size_;

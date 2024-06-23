@@ -46,7 +46,7 @@ State::State(int num_players, int cards_per_hand) {
         hands_.push_back(hand);
     }
     discards_ = {};
-    piles_ = {0, 0, 0, 0, 0}; // all piles are empty
+    piles_ = {0, 0, 0, 0, 0, 0}; // all piles are empty
 }
 
 void State::transition(move m) {
@@ -57,19 +57,21 @@ void State::transition(move m) {
                             discard);
         hands_[m.get_from()].erase(it);
         if (!(deck_.empty())) {
+            deck_.back().str();
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
         }
         hint_tokens_++; // if there were 8 hint tokens, a discard shoudn't have even been made
     } else if (m.get_type() == PLAY) {
         Card playing_card = hands_[m.get_from()][m.get_card_index()];
-        int top_rank = piles_[playing_card.color() - 1];
+        int top_rank = piles_[playing_card.color()];
         if (playing_card.rank() == top_rank + 1) { // SUCCESSFUL PLAY
-            piles_[playing_card.color() - 1] += 1;
+            piles_[playing_card.color()] += 1;
             auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), 
                                 playing_card);
             hands_[m.get_from()].erase(it);
             if (!(deck_.empty())) {
+                deck_.back().str();
                 hands_[m.get_from()].push_back(deck_.back());
                 deck_.pop_back();
             }
@@ -83,6 +85,7 @@ void State::transition(move m) {
                                 playing_card);
             hands_[m.get_from()].erase(it);
             if (!(deck_.empty())) {
+                deck_.back().str();
                 hands_[m.get_from()].push_back(deck_.back());
                 deck_.pop_back();
             }

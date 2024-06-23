@@ -1,13 +1,14 @@
 #include <cstring>
 #include <algorithm>
+#include <assert.h>
 
 #include "../include/holmesbot.h"
 
 int col_to_num(Color col) {
     if (col == red) return 0;
-    if (col == blue) return 1;
-    if (col == yellow) return 2;
-    if (col == green) return 3;
+    if (col == green) return 1;
+    if (col == blue) return 2;
+    if (col == yellow) return 3;
     if (col == white) return 4;
     if (col == invalid_color) return -1;
     return -1;
@@ -15,10 +16,10 @@ int col_to_num(Color col) {
 
 Color num_to_col(int col) {
     if (col == 0) return red;
-    if (col == 1) return blue;
-    if (col == 2) return yellow;
-    if (col == 3) return green;
-    if (col == 4) return white;
+    if (col == 1) return green;
+    if (col == 2) return blue;
+    if (col == 3) return yellow;
+    if (col == 5) return white;
     return invalid_color;
 }
 
@@ -38,11 +39,11 @@ int rank_to_num(Rank r) {
 Rank num_to_rank(int rank) {
     Rank r = invalid_rank;
     switch(rank) {
-        case 0: r = one; break;
-        case 1: r = two; break;
-        case 2: r = three; break;
-        case 3: r = four; break;
-        case 4: r = five; break;
+        case 1: r = one; break;
+        case 2: r = two; break;
+        case 3: r = three; break;
+        case 4: r = four; break;
+        case 5: r = five; break;
         case -1: break;
     }
     return r;
@@ -60,12 +61,12 @@ cardknowledge::cardknowledge()
 
 bool cardknowledge::must_be(Color color) { return (this->color_ == color); }
 bool cardknowledge::must_be(Rank rank) { return (this->rank_ == rank); }
-bool cardknowledge::cannot_be(Card card)  { return cantBe_[col_to_num(card.color())][rank_to_num(card.rank())]; }
+bool cardknowledge::cannot_be(Card card)  { return cantBe_[card.color()][card.rank()]; }
 bool cardknowledge::cannot_be(Color color) 
 {
-    if (this->color_ != invalid_color) return (this->color_ != color);
-    for (int v = 0; v < 5; v++) {
-        if (!cantBe_[col_to_num(color)][v]) return false;
+    if (color_ != invalid_color) return (color_ != color);
+    for (int v = 1; v < 6; v++) {
+        if (!cantBe_[color][v]) return false;
     }
     return true;
 }
@@ -73,77 +74,77 @@ bool cardknowledge::cannot_be(Color color)
 bool cardknowledge::cannot_be(Rank rank)
 {
     if (this->rank_ != invalid_rank) return (this->rank_ != rank);
-    for (int k = 0; k < 5; k++) {
-        if (!cantBe_[k][rank_to_num(rank)]) return false;
+    for (int k = 1; k < 6; k++) {
+        if (!cantBe_[k][rank]) return false;
     }
     return true;
 }
 
-int cardknowledge::color() { return col_to_num(color_); }
-int cardknowledge::rank() { return rank_to_num(rank_); }
+int cardknowledge::color() { return color_; }
+int cardknowledge::rank() { return rank_; }
 
 void cardknowledge::set_must_be(Color color)
 {
-    for (int k = 0; k < 5; k++) {
-        if (k != col_to_num(color)) set_cannot_be(num_to_col(k));
+    for (int k = 1; k < 6; k++) {
+        if (k != color) set_cannot_be(Color(k));
     }
     color_ = color;
 }
 
 void cardknowledge::set_must_be(Rank rank)
 {
-    for (int v = 0; v < 4; v++) {
-        if (v != rank_to_num(rank)) set_cannot_be(num_to_rank(v));
+    for (int v = 1; v < 6; v++) {
+        if (v != rank) set_cannot_be(Rank(v));
     }
     rank_ = rank;
 }
 
 void cardknowledge::set_cannot_be(Color color)
 {
-    for (int v = 1; v < 4; v++) {
-        cantBe_[col_to_num(color)][v] = true;
+    for (int v = 1; v < 6; v++) {
+        cantBe_[color][v] = true;
     }
 }
 
 void cardknowledge::set_cannot_be(Rank rank)
 {
-    for (int k = 0; k < 4; k++) {
-        cantBe_[k][rank_to_num(rank)] = true;
+    for (int k = 0; k < 6; k++) {
+        cantBe_[k][rank] = true;
     }
 }
 
 void cardknowledge::update(State s, const holmesbot &bot) {
-    int col = col_to_num(color_);
-    int rank = rank_to_num(rank_);
+    int color = color_;
+    int rank = rank_;
     repeat_loop:
-    if (col == -1) {
-        for (int k = 0; k < 5; k++) {
-            if (cannot_be(num_to_col(k))) continue;
-            else if (col == -1) col = k;
-            else {col = -1; break;}
+    if (color == invalid_color) {
+        for (int k = 1; k < 6; k++) {
+            if (cannot_be(Color(k))) continue;
+            else if (color == invalid_color) color = k;
+            else {color = invalid_color; break;}
         }
-        if (col != -1) set_must_be(num_to_col(col));
+        if (color != invalid_color) set_must_be(Color(color));
     }
-    if (rank == -1) {
-        for (int r = 0; r < 5; r++) {
-            if (cannot_be(num_to_rank(r))) continue;
-            else if (rank == -1) rank = r;
-            else {rank = -1; break;}
+    if (rank == invalid_rank) {
+        for (int r = 1; r < 6; r++) {
+            if (cannot_be(Rank(r))) continue;
+            else if (rank == invalid_rank) rank = r;
+            else {rank = invalid_rank; break;}
         }
-        if (rank != -1) set_must_be(num_to_rank(rank));
+        if (rank != invalid_rank) set_must_be(Rank(rank));
     }
-    if (rank == -1 || col == -1) {
+    if (rank == invalid_rank || color == invalid_color) {
         bool restart = false;
-        for (int k = 0; k < 4; k++) {
-            for (int r = 0; r < 4; r++) {
+        for (int k = 1; k < 6; k++) {
+            for (int r = 1; r < 6; r++) {
                 if (this->cantBe_[k][r]) continue;
-                int total = (r == 0 ? 3 : (r == 4 ? 1 : 2));
+                int total = (r == 1 ? 3 : (r == 5 ? 1 : 2));
                 int played = bot.played_count_[k][r];
                 int held = bot.located_count_[k][r];
                 if ((played + held >= total) ||
-                    (is_valuable && !bot.is_valuable(s, Card(num_to_col(k), num_to_rank(r)))) ||
+                    (is_valuable && !bot.is_valuable(s, Card(Color(k), Rank(r)))) ||
                     (is_playable && s.get_piles()[k] + 1 != r) ||
-                    (is_worthless && r > s.get_piles()[k]))
+                    (is_worthless && s.get_piles()[k] < r))
                 {
                     this->cantBe_[k][r] = true;
                     restart = true;
@@ -155,8 +156,8 @@ void cardknowledge::update(State s, const holmesbot &bot) {
     if (is_worthless) return;
 
     if (!is_playable && !is_valuable) {
-        for (int k = 0; k < 5; k++) {
-            for (int r = 0; r < 5; r++) {
+        for (int k = 1; k < 6; k++) {
+            for (int r = 1; r < 6; r++) {
                 if (cantBe_[k][r]) continue;
                 if (r > s.get_piles()[k]) {
                     goto notWorthless;
@@ -169,10 +170,10 @@ void cardknowledge::update(State s, const holmesbot &bot) {
     }
     
     if (!is_valuable) {
-        for (int k = 0; k < 5; k++) {
-            for (int r = 0; r < 5; r++) {
+        for (int k = 1; k < 6; k++) {
+            for (int r = 1; r < 6; r++) {
                 if (this->cantBe_[k][r]) continue;
-                if (!bot.is_valuable(s, Card(num_to_col(k), num_to_rank(r)))) {
+                if (!bot.is_valuable(s, Card(Color(k), Rank(r)))) {
                     goto maybeNotValuable;
                 }
             }
@@ -182,8 +183,8 @@ void cardknowledge::update(State s, const holmesbot &bot) {
     }
 
     if (!is_playable) {
-        for (int k = 0; k < 5; k++) {
-            for (int r = 0; r < 5; r++) {
+        for (int k = 1; k < 6; k++) {
+            for (int r = 1; r < 6; r++) {
                 if (this->cantBe_[k][r]) continue;
                 if (s.get_piles()[k] + 1 != r) {
                     goto maybeUnplayable;
@@ -206,16 +207,15 @@ holmesbot::holmesbot(int n_cards, int id, int n_players) {
 }
 
 bool holmesbot::is_valuable(State s, Card card) const {
-    if (s.get_piles()[col_to_num(card.color())] >= rank_to_num(card.rank())) return false;
-    int total = (rank_to_num(card.rank()) == 0 ? 3 : (rank_to_num(card.rank()) == 4 ? 1 : 2));
-    return (played_count_[col_to_num(card.color())][rank_to_num(card.rank())] == total - 1); // Valuable if it's the last card of its kind
+    if (s.get_piles()[card.color()] >= card.rank()) return false;
+    int total = (card.rank() == 1 ? 3 : (card.rank() == 5 ? 1 : 2));
+    return (played_count_[card.color()][card.rank()] == total - 1); // Valuable if it's the last card of its kind
 }
 
 bool holmesbot::could_be_valuable(State s, cardknowledge ck, int rank) {
-    for (int k = 0; k < 5; k++) {
-        Card card(num_to_col(k), num_to_rank(rank));
-        if (ck.cannot_be(card)) continue;
-        if (is_valuable(s, card)) return true;
+    for (int k = 1; k < 6; k++) {
+        if (ck.cannot_be(Card(Color(k), Rank(rank)))) continue;
+        if (is_valuable(s, Card(Color(k), Rank(rank)))) return true;
     }
     return false;
 }
@@ -228,10 +228,10 @@ void holmesbot::shift_knowledge(int p_index, int c_index) {
 }
 
 bool holmesbot::update_located_count() {
-    int new_count[5][5] = {};
+    int new_count[6][6] = {};
     for (int p = 0; p < hand_knowledge_.size(); p++) {
         for (int i = 0; i < hand_knowledge_[p].size(); i++) {
-            if (hand_knowledge_[p][i].color() != -1 && hand_knowledge_[p][i].rank() != -1) {
+            if (hand_knowledge_[p][i].color() != invalid_color && hand_knowledge_[p][i].rank() != invalid_rank) {
                 new_count[hand_knowledge_[p][i].color()][hand_knowledge_[p][i].rank()] += 1;
             }
         }
@@ -257,15 +257,15 @@ void holmesbot::observe_before_move(State s) {
             }
         }
     } while (update_located_count());
-    lowest_playable_rank_ = 5;
-    for (int k = 0; k < 5; k++) {
-        lowest_playable_rank_ = std::min(lowest_playable_rank_, s.get_piles()[k]);
+    lowest_playable_rank_ = 6;
+    for (int k = 1; k < 6; k++) {
+        lowest_playable_rank_ = std::min(lowest_playable_rank_, s.get_piles()[k] + 1);
     }
 }
 
 void holmesbot::observe_before_discard(State s, move m) {
     Card c = s.get_hands()[m.get_from()][m.get_card_index()]; // can observe since we're discarding anyway, so the card is now public
-    played_count_[col_to_num(c.color())][rank_to_num(c.rank())] += 1;
+    played_count_[c.color()][c.rank()] += 1;
     shift_knowledge(m.get_from(), m.get_card_index());
 }
 
@@ -282,24 +282,29 @@ void holmesbot::wipe_out_playables(Card c) {
 
 void holmesbot::observe_before_play(State s, move m) {
     Card c = s.get_hands()[m.get_from()][m.get_card_index()]; // can observe since we're playing anyway, so the card is now public
-    if (s.get_piles()[col_to_num(c.color())]+ 1 == c.rank()) {
+    if (s.get_piles()[c.color()] + 1 == c.rank()) {
         /* This card is getting played, not discarded. */
         if (!is_valuable(s, c)) {
             wipe_out_playables(c);
         }
     }
-    played_count_[col_to_num(c.color())][rank_to_num(c.rank())] += 1;
+    played_count_[c.color()][c.rank()] += 1;
     shift_knowledge(m.get_from(), m.get_card_index());
 }
 
 void holmesbot::observe_color_hint(State s, move m) {
-    int next_rank = s.get_piles()[col_to_num(m.get_color())] + 1;
+    int next_rank = s.get_piles()[m.get_color()] + 1;
     next_rank = std::min(next_rank, 5);
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
-        if (std::find(m.get_card_indices().begin(), m.get_card_indices().end(), i) != m.get_card_indices().end()) {
+        bool found = false;
+        for (int j : m.get_card_indices()) {
+            if (j == i) found = true;
+        }
+        if (found) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_color());
-            if (hand_knowledge_[m.get_to()][i].rank() != -1 && !(hand_knowledge_[m.get_to()][i].is_worthless)) {
-                hand_knowledge_[m.get_to()][i].set_must_be(num_to_rank(next_rank));
+            if (hand_knowledge_[m.get_to()][i].rank() == invalid_rank && !(hand_knowledge_[m.get_to()][i].is_worthless)) {
+                hand_knowledge_[m.get_to()][i].set_must_be(Rank(next_rank));
+                hand_knowledge_[m.get_to()][i].is_playable = true;
             }
         } else {
             hand_knowledge_[m.get_to()][i].set_cannot_be(m.get_color());
@@ -319,20 +324,36 @@ int holmesbot::next_discard_index(State s, int player_index) {
 
 void holmesbot::observe_rank_hint(State s, move m) {
     int discard_ind = next_discard_index(s, m.get_to());
-    bool is_warning = (std::find(m.get_card_indices().begin(), m.get_card_indices().end(), discard_ind) != m.get_card_indices().end()) && 
-                      could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank());
-    if (s.get_num_hints() < 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && 
-        (std::find(m.get_card_indices().begin(), m.get_card_indices().end(), 0) != m.get_card_indices().end())) return;
+    bool discard_ind_found = false;
+    bool zero_found = false;
+    for (int j : m.get_card_indices()) {
+        if (j == discard_ind) discard_ind_found = true;
+        if (j == 0) zero_found = true;
+    }
+    bool is_warning = discard_ind_found && could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank());
+    if (s.get_num_hints() == 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && zero_found) return;
     if (is_warning) {
+        std::cout << "observed warn" << std::endl;
         hand_knowledge_[m.get_to()][discard_ind].is_valuable = true;
-        if (rank_to_num(m.get_rank()) == lowest_playable_rank_) {
+        if (m.get_rank() == lowest_playable_rank_) {
             hand_knowledge_[m.get_to()][discard_ind].is_playable = true;
         }
     }
+    std::cout << m.get_card_indices().size() << std::endl;
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
-        if (std::find(m.get_card_indices().begin(), m.get_card_indices().end(), i) != m.get_card_indices().end()) {
+        bool found = false;
+        std::cout << "searching" << std::endl;
+        for (int j : m.get_card_indices()) {
+            std::cout << j << i << std::endl;
+            if (j == i) found = true;
+        }
+        if (found) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_rank());
-            if (hand_knowledge_[m.get_to()][i].color() == -1 && !is_warning && !hand_knowledge_[m.get_to()][i].is_worthless) {
+            if (hand_knowledge_[m.get_to()][i].color() == invalid_color && !is_warning && !hand_knowledge_[m.get_to()][i].is_worthless) {
+                std::cout << "HERE" << std::endl;
+                std::cout << m.get_to() << std::endl;
+                std::cout << m.get_rank() << std::endl;
+                std::cout << i << std::endl;
                 hand_knowledge_[m.get_to()][i].is_playable = true;
             }
         } else {
@@ -356,7 +377,7 @@ void holmesbot::observe(State s, move m) {
 
 move holmesbot::play_lowest_playable(State s) {
     int best_i = -1;
-    int lowest_r = 5;
+    int lowest_r = 6;
     for (int i = 0; i < s.get_hands()[id_].size(); i++) {
         if (hand_knowledge_[id_][i].is_playable && hand_knowledge_[id_][i].rank() < lowest_r) {
             best_i = i;
@@ -364,6 +385,7 @@ move holmesbot::play_lowest_playable(State s) {
         }
     }
     if (best_i != -1) {
+        std::cout << rank_to_num(s.get_hands()[id_][best_i].rank()) << std::endl;
         move m = move(PLAY, -1, id_, best_i, {}, invalid_color, invalid_rank);
         return m;
     }
@@ -385,8 +407,8 @@ move holmesbot::discard_worthless(State s) {
 move holmesbot::play_mystery(State s) {
     int table[4] = { -99, 1, 1, 1 };
     if (s.get_deck().size() <= table[s.get_num_lives()]) {
-        for (int i = my_hand_size_ - 1; i >= 0; --i) {
-            if (hand_knowledge_[id_][i].is_worthless || (hand_knowledge_[id_][i].color() != -1 && hand_knowledge_[id_][i].rank() != -1)) continue;
+        for (int i = my_hand_size_ - 1; i >= 0; i--) {
+            if (hand_knowledge_[id_][i].is_worthless || (hand_knowledge_[id_][i].color() != invalid_color && hand_knowledge_[id_][i].rank() != invalid_rank)) continue;
             move m = move(PLAY, -1, id_, i, {}, invalid_color, invalid_rank);
             return m;
         }
@@ -396,7 +418,7 @@ move holmesbot::play_mystery(State s) {
 }
 
 move holmesbot::discard_old(State s) {
-    for (int i = my_hand_size_ - 1; i >= 0; --i) {
+    for (int i = 0; i < my_hand_size_; i++) {
         if (hand_knowledge_[id_][i].is_valuable) continue;
         move m = move(DISCARD, -1, id_, i, {}, invalid_color, invalid_rank);
         return m;
@@ -407,13 +429,13 @@ move holmesbot::discard_old(State s) {
 
 std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_index) {
     std::vector<Card> partner_hand = s.get_hands()[partner_index];
-    bool is_actually_playable[5];
+    bool is_actually_playable[partner_hand.size()];
     for (int i = 0; i < partner_hand.size(); i++) {
-        is_actually_playable[i] = s.get_piles()[col_to_num(partner_hand[i].color())] + 1 == partner_hand[i].rank();
+        is_actually_playable[i] = s.get_piles()[partner_hand[i].color()] + 1 == partner_hand[i].rank();
     }
-    move m = move(INVALID_MOVE, partner_index, id_, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
     int highest_info = 0;
-    for (int k = 0; k < 5; k++) {
+    for (int k = 1; k < 6; k++) {
         int info = 0;
         bool misinformative = false;
         std::vector<int> card_indices = {};
@@ -421,7 +443,7 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
             if (partner_hand[i].color() != k) continue;
             if (is_actually_playable[i] && !(hand_knowledge_[partner_index][i].is_playable)) {
                 info++;
-            } else if (!is_actually_playable[i] && (hand_knowledge_[partner_index][i].rank() == -1 && !(hand_knowledge_[partner_index][i].is_worthless))) {
+            } else if (!is_actually_playable[i] && (hand_knowledge_[partner_index][i].rank() == invalid_rank && !(hand_knowledge_[partner_index][i].is_worthless))) {
                 misinformative = true;
                 break;
             }
@@ -430,17 +452,17 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
         if (misinformative) continue;
         if (info > highest_info) {
             highest_info = info;
-            m = move(COL_HINT, partner_index, id_, -1, card_indices, num_to_col(k), invalid_rank);
+            m = move(COL_HINT, partner_index, id_, -1, card_indices, Color(k), invalid_rank);
         }
     }
 
     int discard_index = next_discard_index(s, partner_index);
-    int avoid_rank = -1;
+    Rank avoid_rank = invalid_rank;
     if (discard_index != -1) {
-        avoid_rank = rank_to_num(partner_hand[discard_index].rank());
-        if(!could_be_valuable(s, hand_knowledge_[partner_index][discard_index], avoid_rank)) avoid_rank = -1;
+        avoid_rank = partner_hand[discard_index].rank();
+        if(!could_be_valuable(s, hand_knowledge_[partner_index][discard_index], avoid_rank)) avoid_rank = invalid_rank;
     }
-    for (int r = 0; r < 5; r++) {
+    for (int r = 1; r < 6; r++) {
         if (r == avoid_rank) continue;
         int info = 0;
         bool misinformative = false;
@@ -449,8 +471,9 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
             if (partner_hand[i].rank() != r) continue;
             if (is_actually_playable[i] && !(hand_knowledge_[partner_index][i].is_playable)) {
                 info++;
-            } else if (!is_actually_playable[i] && (hand_knowledge_[partner_index][i].color() == -1 && !(hand_knowledge_[partner_index][i].is_worthless))) {
+            } else if (!is_actually_playable[i] && (hand_knowledge_[partner_index][i].color() == invalid_color && !(hand_knowledge_[partner_index][i].is_worthless))) {
                 misinformative = true;
+                std::cout << "misinf" << std::endl;
                 break;
             }
             card_indices.push_back(i);
@@ -458,9 +481,10 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
         if (misinformative) continue;
         if (info > highest_info) {
             highest_info = info;
-            m = move(RANK_HINT, partner_index, id_, -1, card_indices, invalid_color, num_to_rank(r));
+            m = move(RANK_HINT, partner_index, id_, -1, card_indices, invalid_color, Rank(r));
         }
     }
+    std::cout << highest_info << std::endl;
     return std::make_tuple(m, highest_info);
 }
 
@@ -502,39 +526,68 @@ move holmesbot::give_helpful_hint(State s) {
     move best_hint = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);;
     int highest_info = 0;
     for (int i = 1; i < hand_knowledge_.size(); i++) {
-        std::tuple<move, int> best_hint_tuple = best_hint_for_partner(s, (id_ + i) % hand_knowledge_.size());
+        int partner = (id_ + i) % hand_knowledge_.size();
+        std::tuple<move, int> best_hint_tuple = best_hint_for_partner(s, partner);
+        if (std::get<0>(best_hint_tuple).get_type() == INVALID_MOVE) continue;
         if (std::get<1>(best_hint_tuple) > highest_info) {
             highest_info = std::get<1>(best_hint_tuple);
             best_hint = std::get<0>(best_hint_tuple);
         }
+    }
+    if (best_hint.get_type() == INVALID_MOVE) {
+        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        return m;
     }
     return best_hint;
 }
 
 move holmesbot::play(State s) {
     move m = give_valuable_warning(s);
-    if (m.get_type() != INVALID_MOVE) return m;
+    if (m.get_type() != INVALID_MOVE) {
+        std::cout << "warn" << std::endl;
+        return m;
+    }
     m = play_lowest_playable(s);
-    if (m.get_type() != INVALID_MOVE) return m;
+    if (m.get_type() != INVALID_MOVE) {
+        std::cout << "lowestplay" << std::endl;
+        std::cout << col_to_num(s.get_hands()[id_][m.get_card_index()].color()) << rank_to_num(s.get_hands()[id_][m.get_card_index()].rank()) << std::endl;
+        std::cout << m.get_card_index() << std::endl;
+        return m;
+    }
     m = give_helpful_hint(s);
-    if (m.get_type() != INVALID_MOVE) return m;
+    if (m.get_type() != INVALID_MOVE) {
+        std::cout << "helpful" << std::endl;
+        return m;
+    }
     m = play_mystery(s);
-    if (m.get_type() != INVALID_MOVE) return m;
+    if (m.get_type() != INVALID_MOVE) {
+        std::cout << "mystery" << std::endl;
+        return m;
+    }
 
     if (s.get_num_hints() == 8) {
         int right_partner = (id_ + hand_knowledge_.size() - 1) % hand_knowledge_.size();
         Rank r = s.get_hands()[right_partner][0].rank();
         std::vector<int> card_indices = {};
         for (int i = 0; i < s.get_hands()[right_partner].size(); i++) {
-            if (s.get_hands()[right_partner][i].rank() == r) card_indices.push_back(i);
+            if (s.get_hands()[right_partner][i].rank() == r) {
+                if (i == 0) std::cout << "ind con 0" << std::endl;
+                card_indices.push_back(i);
+            }
         }
         m = move(RANK_HINT, right_partner, id_, -1, card_indices, invalid_color, r);
         return m;
     } else {
         m = discard_worthless(s);
-        if (m.get_type() != INVALID_MOVE) return m;
+        if (m.get_type() != INVALID_MOVE) {
+            std::cout << "worthless" << std::endl;
+            return m;
+        }
         m = discard_old(s);
-        if (m.get_type() != INVALID_MOVE) return m;
+        if (m.get_type() != INVALID_MOVE) {
+            std::cout << "old" << std::endl;
+            return m;
+        }
         int best = 0;
         for (int i = 0; i < my_hand_size_; i++) {
             if (hand_knowledge_[id_][i].rank() > hand_knowledge_[id_][best].rank()) best = i;

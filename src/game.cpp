@@ -41,7 +41,6 @@ void game::run() {
     if (curr_state_.get_num_lives() == 0) {
         std::cout << "GAME OVER. SCORE:" << curr_score << std::endl;
     } else if (curr_state_.get_deck().empty()) {
-        std::cout << "deckempty" << std::endl;
         for (int i = 0; i < players_.size(); i++) {
             std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
             move next_move = (*(players_[curr_player])).play(curr_state_);
