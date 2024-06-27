@@ -62,7 +62,7 @@ cardknowledge::cardknowledge()
 bool cardknowledge::must_be(Color color) { return (this->color_ == color); }
 bool cardknowledge::must_be(Rank rank) { return (this->rank_ == rank); }
 bool cardknowledge::cannot_be(Card card)  { return cantBe_[card.color()][card.rank()]; }
-bool cardknowledge::cannot_be(Color color) 
+bool cardknowledge::cannot_be(Color color)
 {
     if (color_ != invalid_color) return (color_ != color);
     for (int v = 1; v < 6; v++) {
@@ -168,7 +168,7 @@ void cardknowledge::update(State s, const holmesbot &bot) {
         return;
       notWorthless:;
     }
-    
+
     if (!is_valuable) {
         for (int k = 1; k < 6; k++) {
             for (int r = 1; r < 6; r++) {
@@ -283,7 +283,7 @@ void holmesbot::wipe_out_playables(Card c) {
 void holmesbot::observe_before_play(State s, move m) {
     Card c = s.get_hands()[m.get_from()][m.get_card_index()]; // can observe since we're playing anyway, so the card is now public
     if (s.get_piles()[c.color()] + 1 == c.rank()) {
-        /* This card is getting played, not discarded. */
+//         This card is getting played, not discarded.
         if (!is_valuable(s, c)) {
             wipe_out_playables(c);
         }

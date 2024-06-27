@@ -48,7 +48,9 @@
 				4,
 				5,
 				6,
-				7
+				7,
+				8,
+				9
 			]
 		}
 	],
@@ -88,20 +90,24 @@
 				4,
 				5,
 				6,
-				7
+				7,
+				8,
+				9
 			]
 		},
 		{
 			"name" : "Header Files",
 			"sourceIndexes" : 
 			[
-				8,
-				9,
 				10,
 				11,
 				12,
 				13,
-				14
+				14,
+				15,
+				16,
+				17,
+				18
 			]
 		}
 	],
@@ -146,6 +152,12 @@
 		{
 			"backtrace" : 1,
 			"compileGroupIndex" : 0,
+			"path" : "bots/holmesbot.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
+			"compileGroupIndex" : 0,
 			"path" : "bots/humanplayer.cpp",
 			"sourceGroupIndex" : 0
 		},
@@ -157,12 +169,23 @@
 		},
 		{
 			"backtrace" : 1,
+			"compileGroupIndex" : 0,
+			"path" : "bots/sbot.cpp",
+			"sourceGroupIndex" : 0
+		},
+		{
+			"backtrace" : 1,
 			"path" : "include/card.h",
 			"sourceGroupIndex" : 1
 		},
 		{
 			"backtrace" : 1,
 			"path" : "include/game.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/holmesbot.h",
 			"sourceGroupIndex" : 1
 		},
 		{
@@ -183,6 +206,11 @@
 		{
 			"backtrace" : 1,
 			"path" : "include/randombot.h",
+			"sourceGroupIndex" : 1
+		},
+		{
+			"backtrace" : 1,
+			"path" : "include/sbot.h",
 			"sourceGroupIndex" : 1
 		},
 		{

@@ -153,6 +153,30 @@ bots/consolebot.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/consolebot.cpp.s
 .PHONY : bots/consolebot.cpp.s
 
+bots/holmesbot.o: bots/holmesbot.cpp.o
+.PHONY : bots/holmesbot.o
+
+# target to build an object file
+bots/holmesbot.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/holmesbot.cpp.o
+.PHONY : bots/holmesbot.cpp.o
+
+bots/holmesbot.i: bots/holmesbot.cpp.i
+.PHONY : bots/holmesbot.i
+
+# target to preprocess a source file
+bots/holmesbot.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/holmesbot.cpp.i
+.PHONY : bots/holmesbot.cpp.i
+
+bots/holmesbot.s: bots/holmesbot.cpp.s
+.PHONY : bots/holmesbot.s
+
+# target to generate assembly for a file
+bots/holmesbot.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/holmesbot.cpp.s
+.PHONY : bots/holmesbot.cpp.s
+
 bots/humanplayer.o: bots/humanplayer.cpp.o
 .PHONY : bots/humanplayer.o
 
@@ -200,6 +224,30 @@ bots/randombot.s: bots/randombot.cpp.s
 bots/randombot.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/randombot.cpp.s
 .PHONY : bots/randombot.cpp.s
+
+bots/sbot.o: bots/sbot.cpp.o
+.PHONY : bots/sbot.o
+
+# target to build an object file
+bots/sbot.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/sbot.cpp.o
+.PHONY : bots/sbot.cpp.o
+
+bots/sbot.i: bots/sbot.cpp.i
+.PHONY : bots/sbot.i
+
+# target to preprocess a source file
+bots/sbot.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/sbot.cpp.i
+.PHONY : bots/sbot.cpp.i
+
+bots/sbot.s: bots/sbot.cpp.s
+.PHONY : bots/sbot.s
+
+# target to generate assembly for a file
+bots/sbot.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/sbot.cpp.s
+.PHONY : bots/sbot.cpp.s
 
 src/card.o: src/card.cpp.o
 .PHONY : src/card.o
@@ -333,12 +381,18 @@ help:
 	@echo "... bots/consolebot.o"
 	@echo "... bots/consolebot.i"
 	@echo "... bots/consolebot.s"
+	@echo "... bots/holmesbot.o"
+	@echo "... bots/holmesbot.i"
+	@echo "... bots/holmesbot.s"
 	@echo "... bots/humanplayer.o"
 	@echo "... bots/humanplayer.i"
 	@echo "... bots/humanplayer.s"
 	@echo "... bots/randombot.o"
 	@echo "... bots/randombot.i"
 	@echo "... bots/randombot.s"
+	@echo "... bots/sbot.o"
+	@echo "... bots/sbot.i"
+	@echo "... bots/sbot.s"
 	@echo "... src/card.o"
 	@echo "... src/card.i"
 	@echo "... src/card.s"

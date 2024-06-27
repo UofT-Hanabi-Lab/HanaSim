@@ -7,7 +7,7 @@ class game {
 
 public:
     game(State init_state, std::vector<player*>);
-    void run();
+    int run();
     State get_curr_state();
 };
 

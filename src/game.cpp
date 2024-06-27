@@ -13,7 +13,7 @@ game::game(State init_state, std::vector<player*> players) : curr_state_(init_st
 }
 
 
-void game::run() {
+int game::run() {
     int curr_score = 0;
     std::cout << "STARTING GAME\n" << std::endl;
     int curr_player = 0;
@@ -59,12 +59,16 @@ void game::run() {
         }
         if (curr_state_.get_num_lives() == 0) {
             std::cout << "GAME OVER. SCORE:" << curr_score << std::endl;
+            return curr_score;
         } else if (curr_score == 25) {
             std::cout << "GAME WON!" << std::endl;
+            return curr_score;
         } else {
             std::cout << "GAME FINISHED. SCORE:" << curr_score << std::endl;
+            return curr_score;
         }
     } else {
         std::cout << "GAME WON!" << std::endl;
+        return curr_score;
     }
 }

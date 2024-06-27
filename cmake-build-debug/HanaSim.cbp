@@ -81,16 +81,25 @@
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/consolebot.cpp">
 			<Option target="HanaSim"/>
 		</Unit>
+		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/holmesbot.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/humanplayer.cpp">
 			<Option target="HanaSim"/>
 		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/randombot.cpp">
 			<Option target="HanaSim"/>
 		</Unit>
+		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/sbot.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/card.h">
 			<Option target="HanaSim"/>
 		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/game.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/holmesbot.h">
 			<Option target="HanaSim"/>
 		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/humanplayer.h">
@@ -103,6 +112,9 @@
 			<Option target="HanaSim"/>
 		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/randombot.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/sbot.h">
 			<Option target="HanaSim"/>
 		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/state.h">
