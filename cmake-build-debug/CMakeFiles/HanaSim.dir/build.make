@@ -195,19 +195,19 @@ CMakeFiles/HanaSim.dir/bots/randombot.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/HanaSim.dir/bots/randombot.cpp.s"
 	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/danielxu/Desktop/CSC494/HanaSim/bots/randombot.cpp -o CMakeFiles/HanaSim.dir/bots/randombot.cpp.s
 
-CMakeFiles/HanaSim.dir/bots/sbot.cpp.o: CMakeFiles/HanaSim.dir/flags.make
-CMakeFiles/HanaSim.dir/bots/sbot.cpp.o: /Users/danielxu/Desktop/CSC494/HanaSim/bots/sbot.cpp
-CMakeFiles/HanaSim.dir/bots/sbot.cpp.o: CMakeFiles/HanaSim.dir/compiler_depend.ts
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/danielxu/Desktop/CSC494/HanaSim/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/HanaSim.dir/bots/sbot.cpp.o"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/HanaSim.dir/bots/sbot.cpp.o -MF CMakeFiles/HanaSim.dir/bots/sbot.cpp.o.d -o CMakeFiles/HanaSim.dir/bots/sbot.cpp.o -c /Users/danielxu/Desktop/CSC494/HanaSim/bots/sbot.cpp
+CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o: CMakeFiles/HanaSim.dir/flags.make
+CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o: /Users/danielxu/Desktop/CSC494/HanaSim/bots/simplebot.cpp
+CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o: CMakeFiles/HanaSim.dir/compiler_depend.ts
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --progress-dir=/Users/danielxu/Desktop/CSC494/HanaSim/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_10) "Building CXX object CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -MD -MT CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o -MF CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o.d -o CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o -c /Users/danielxu/Desktop/CSC494/HanaSim/bots/simplebot.cpp
 
-CMakeFiles/HanaSim.dir/bots/sbot.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/HanaSim.dir/bots/sbot.cpp.i"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/danielxu/Desktop/CSC494/HanaSim/bots/sbot.cpp > CMakeFiles/HanaSim.dir/bots/sbot.cpp.i
+CMakeFiles/HanaSim.dir/bots/simplebot.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Preprocessing CXX source to CMakeFiles/HanaSim.dir/bots/simplebot.cpp.i"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /Users/danielxu/Desktop/CSC494/HanaSim/bots/simplebot.cpp > CMakeFiles/HanaSim.dir/bots/simplebot.cpp.i
 
-CMakeFiles/HanaSim.dir/bots/sbot.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/HanaSim.dir/bots/sbot.cpp.s"
-	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/danielxu/Desktop/CSC494/HanaSim/bots/sbot.cpp -o CMakeFiles/HanaSim.dir/bots/sbot.cpp.s
+CMakeFiles/HanaSim.dir/bots/simplebot.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green "Compiling CXX source to assembly CMakeFiles/HanaSim.dir/bots/simplebot.cpp.s"
+	/Library/Developer/CommandLineTools/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /Users/danielxu/Desktop/CSC494/HanaSim/bots/simplebot.cpp -o CMakeFiles/HanaSim.dir/bots/simplebot.cpp.s
 
 # Object files for target HanaSim
 HanaSim_OBJECTS = \
@@ -220,7 +220,7 @@ HanaSim_OBJECTS = \
 "CMakeFiles/HanaSim.dir/bots/holmesbot.cpp.o" \
 "CMakeFiles/HanaSim.dir/bots/humanplayer.cpp.o" \
 "CMakeFiles/HanaSim.dir/bots/randombot.cpp.o" \
-"CMakeFiles/HanaSim.dir/bots/sbot.cpp.o"
+"CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o"
 
 # External object files for target HanaSim
 HanaSim_EXTERNAL_OBJECTS =
@@ -234,8 +234,9 @@ HanaSim: CMakeFiles/HanaSim.dir/bots/consolebot.cpp.o
 HanaSim: CMakeFiles/HanaSim.dir/bots/holmesbot.cpp.o
 HanaSim: CMakeFiles/HanaSim.dir/bots/humanplayer.cpp.o
 HanaSim: CMakeFiles/HanaSim.dir/bots/randombot.cpp.o
-HanaSim: CMakeFiles/HanaSim.dir/bots/sbot.cpp.o
+HanaSim: CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o
 HanaSim: CMakeFiles/HanaSim.dir/build.make
+HanaSim: /Library/Frameworks/Python.framework/Versions/3.10/lib/libpython3.10.dylib
 HanaSim: CMakeFiles/HanaSim.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --green --bold --progress-dir=/Users/danielxu/Desktop/CSC494/HanaSim/cmake-build-debug/CMakeFiles --progress-num=$(CMAKE_PROGRESS_11) "Linking CXX executable HanaSim"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/HanaSim.dir/link.txt --verbose=$(VERBOSE)

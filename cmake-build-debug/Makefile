@@ -225,29 +225,29 @@ bots/randombot.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/randombot.cpp.s
 .PHONY : bots/randombot.cpp.s
 
-bots/sbot.o: bots/sbot.cpp.o
-.PHONY : bots/sbot.o
+bots/simplebot.o: bots/simplebot.cpp.o
+.PHONY : bots/simplebot.o
 
 # target to build an object file
-bots/sbot.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/sbot.cpp.o
-.PHONY : bots/sbot.cpp.o
+bots/simplebot.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o
+.PHONY : bots/simplebot.cpp.o
 
-bots/sbot.i: bots/sbot.cpp.i
-.PHONY : bots/sbot.i
+bots/simplebot.i: bots/simplebot.cpp.i
+.PHONY : bots/simplebot.i
 
 # target to preprocess a source file
-bots/sbot.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/sbot.cpp.i
-.PHONY : bots/sbot.cpp.i
+bots/simplebot.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/simplebot.cpp.i
+.PHONY : bots/simplebot.cpp.i
 
-bots/sbot.s: bots/sbot.cpp.s
-.PHONY : bots/sbot.s
+bots/simplebot.s: bots/simplebot.cpp.s
+.PHONY : bots/simplebot.s
 
 # target to generate assembly for a file
-bots/sbot.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/sbot.cpp.s
-.PHONY : bots/sbot.cpp.s
+bots/simplebot.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/simplebot.cpp.s
+.PHONY : bots/simplebot.cpp.s
 
 src/card.o: src/card.cpp.o
 .PHONY : src/card.o
@@ -390,9 +390,9 @@ help:
 	@echo "... bots/randombot.o"
 	@echo "... bots/randombot.i"
 	@echo "... bots/randombot.s"
-	@echo "... bots/sbot.o"
-	@echo "... bots/sbot.i"
-	@echo "... bots/sbot.s"
+	@echo "... bots/simplebot.o"
+	@echo "... bots/simplebot.i"
+	@echo "... bots/simplebot.s"
 	@echo "... src/card.o"
 	@echo "... src/card.i"
 	@echo "... src/card.s"

@@ -4,7 +4,7 @@
 # compile CXX with /Library/Developer/CommandLineTools/usr/bin/c++
 CXX_DEFINES = 
 
-CXX_INCLUDES = 
+CXX_INCLUDES = -I/Library/Frameworks/Python.framework/Versions/3.10/include/python3.10 -I/Users/danielxu/Desktop/CSC494/HanaSim/include
 
 CXX_FLAGSarm64 =  -std=c++17 -g -arch arm64 -isysroot /Library/Developer/CommandLineTools/SDKs/MacOSX14.4.sdk -fcolor-diagnostics
 

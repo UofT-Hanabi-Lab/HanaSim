@@ -24,6 +24,8 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="/Library/Frameworks/Python.framework/Versions/3.10/include/python3.10"/>
+					<Add directory="/Users/danielxu/Desktop/CSC494/HanaSim/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
@@ -44,6 +46,8 @@
 				<Option type="1"/>
 				<Option compiler="gcc"/>
 				<Compiler>
+					<Add directory="/Library/Frameworks/Python.framework/Versions/3.10/include/python3.10"/>
+					<Add directory="/Users/danielxu/Desktop/CSC494/HanaSim/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/bin/../include/c++/v1"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/lib/clang/15.0.0/include"/>
 					<Add directory="/Library/Developer/CommandLineTools/usr/include"/>
@@ -90,7 +94,7 @@
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/randombot.cpp">
 			<Option target="HanaSim"/>
 		</Unit>
-		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/sbot.cpp">
+		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/bots/simplebot.cpp">
 			<Option target="HanaSim"/>
 		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/card.h">
@@ -105,6 +109,9 @@
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/humanplayer.h">
 			<Option target="HanaSim"/>
 		</Unit>
+		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/matplotlibcpp.h">
+			<Option target="HanaSim"/>
+		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/move.h">
 			<Option target="HanaSim"/>
 		</Unit>
@@ -114,7 +121,7 @@
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/randombot.h">
 			<Option target="HanaSim"/>
 		</Unit>
-		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/sbot.h">
+		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/simplebot.h">
 			<Option target="HanaSim"/>
 		</Unit>
 		<Unit filename="/Users/danielxu/Desktop/CSC494/HanaSim/include/state.h">

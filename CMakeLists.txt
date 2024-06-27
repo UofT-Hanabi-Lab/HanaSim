@@ -12,10 +12,21 @@ FILE(GLOB Agents agents/*.cpp)
 set (SOURCES ${Sources} ${Bots} ${Agents})
 
 FILE(GLOB Headers include/*.h)
+
+set(HOMEBREW_PREFIX "/usr/local"
+        CACHE PATH "Path to Homebrew installation")
+
+
+
 set (HEADERS ${Headers})
 
-
+find_package(Python3 COMPONENTS Intrepreter Development NumPy)
+include_directories(${Python3_INCLUDE_DIRS} include)
+include_directories(/usr/local/include)
+link_directories(/usr/local/lib)
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
+target_link_libraries(${CMAKE_PROJECT_NAME} ${Python3_LIBRARIES})
+#target_link_libraries(${CMAKE_PROJECT_NAME} numpy)
 
 set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 #set (LDFLAGS "${LDFLAGS} -L/opt/homebrew/lib")

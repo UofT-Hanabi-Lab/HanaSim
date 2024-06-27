@@ -9,6 +9,9 @@
 #include "../include/holmesbot.h"
 #include "../include/humanplayer.h"
 #include "../include/simplebot.h"
+//#include "../include/matplotlibcpp.h"
+
+//namespace plt = matplotlibcpp;
 
 class Timer
 {
@@ -60,14 +63,15 @@ int main(int argc, char *argv[])
 //                    player* p1 = new simplebot(4,0,3);
 //        player* p2 = new simplebot(4,1,3);
 //        player* p3 = new simplebot(4,2,3);
-            player* p1 = new holmesbot(4, 0, 3); // creating three new random bots with ids 0,1,2 (ids need to be in order starting from 0)
-            player* p2 = new holmesbot(4, 1, 3);
-            player* p3 = new holmesbot(4, 2, 3);
+            player* p1 = new holmesbot(4, 0, 4); // creating three new random bots with ids 0,1,2 (ids need to be in order starting from 0)
+            player* p2 = new holmesbot(4, 1, 4);
+            player* p3 = new holmesbot(4, 2, 4);
+            player* p4 = new holmesbot(4, 3, 4);
 //        player* p3 = new randombot(4, 2);
 //        player* p1 = new humanplayer(4,0);
 //        player* p2 = new humanplayer(4,1);
-            std::vector<player*> players = {p1, p2, p3};
-            State init_state = State(3, 4);
+            std::vector<player*> players = {p1, p2, p3, p4};
+            State init_state = State(4, 4);
             for (std::vector<Card> hand : init_state.get_hands()) {
                 for (Card c : hand) {
                     c.str();
@@ -80,7 +84,8 @@ int main(int argc, char *argv[])
         float average_score = (float)total_score / (float)num_games;
         std::cout << "Ran " << num_games << " Games with Average Score: " << average_score << std::endl;
     }
-
+//    plt::plot({1,2,3,4}, "*");
+//    plt::show();
 
 
 }
