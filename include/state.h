@@ -24,5 +24,5 @@ public:
     std::vector<int> get_piles() const;
     std::vector<Card> get_deck() const;
 
-    void transition(move m);
+    void transition(move m, bool log);
 };

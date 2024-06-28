@@ -8,8 +8,11 @@
 
 class holmesbot;
 
+namespace HolmesBotInternal {
+
+
 class cardknowledge {
-    bool cantBe_[6][6];
+    bool cant_be_[6][6];
     Color color_;
     Rank rank_;
 public:
@@ -33,20 +36,20 @@ public:
     bool is_valuable;
     bool is_worthless;
 };
-
+}
 class holmesbot final : public player {
-    friend class cardknowledge;
+    friend class HolmesBotInternal::cardknowledge;
 
     int num_cards_;
     int id_;
     int located_count_[6][6];
     int played_count_[6][6];
-    std::vector<std::vector<cardknowledge>> hand_knowledge_; // what each player knows about their hand
+    std::vector<std::vector<HolmesBotInternal::cardknowledge>> hand_knowledge_; // what each player knows about their hand
     int lowest_playable_rank_;
     int my_hand_size_;
 
     bool is_valuable(State s, Card card) const;
-    bool could_be_valuable(State s, cardknowledge ck, int rank);
+    bool could_be_valuable(State s, HolmesBotInternal::cardknowledge ck, int rank);
     void shift_knowledge(int p_index, int c_index);
     bool update_located_count();
     void wipe_out_playables(Card c);

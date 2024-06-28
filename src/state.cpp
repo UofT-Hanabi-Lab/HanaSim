@@ -49,7 +49,7 @@ State::State(int num_players, int cards_per_hand) {
     piles_ = {0, 0, 0, 0, 0, 0}; // all piles are empty
 }
 
-void State::transition(move m) {
+void State::transition(move m, bool log) {
     if (m.get_type() == DISCARD) {
         Card discard = hands_[m.get_from()][m.get_card_index()];
         discards_.push_back(discard);
@@ -57,7 +57,7 @@ void State::transition(move m) {
                             discard);
         hands_[m.get_from()].erase(it);
         if (!(deck_.empty())) {
-            deck_.back().str();
+            if (log) deck_.back().str();
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
         }
@@ -71,7 +71,7 @@ void State::transition(move m) {
                                 playing_card);
             hands_[m.get_from()].erase(it);
             if (!(deck_.empty())) {
-                deck_.back().str();
+                if (log) deck_.back().str();
                 hands_[m.get_from()].push_back(deck_.back());
                 deck_.pop_back();
             }
@@ -85,7 +85,7 @@ void State::transition(move m) {
                                 playing_card);
             hands_[m.get_from()].erase(it);
             if (!(deck_.empty())) {
-                deck_.back().str();
+                if (log) deck_.back().str();
                 hands_[m.get_from()].push_back(deck_.back());
                 deck_.pop_back();
             }

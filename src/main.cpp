@@ -7,6 +7,7 @@
 #include "../include/game.h"
 #include "../include/randombot.h"
 #include "../include/holmesbot.h"
+#include "../include/smartbot.h"
 #include "../include/humanplayer.h"
 #include "../include/simplebot.h"
 //#include "../include/matplotlibcpp.h"
@@ -44,45 +45,84 @@ private:
 int main(int argc, char *argv[])
 {
     int num_games = 1;
-    std::string num;
-
-    if (argc == 2) {
-        int i = 0;
-        for (i = 0; argv[1][i] != '\0'; i++) {
-            num += argv[1][i];
+    int num_players = 2;
+    std::string bot_type;
+    bool log_games = false;
+    
+    if (argc == 1) {
+        std::cout << "Usage:" << std::endl;
+        std::cout << "./HanaSim num-games num-players bot-type --log" << std::endl;
+        std::cout << "Options for bot-type: holmes, smart, random, search, human" << std::endl;
+        std::cout << "You can also add a --log flag that will log the moves and scores of every game" << std::endl;
+        return 1;
+    } else if (argc >= 4) {\
+        std::string num_games_str;
+        for (int i = 0; argv[1][i] != '\0'; i++) {
+            num_games_str += argv[1][i];
         }
-        num_games = std::stoi(num);
+        num_games = std::stoi(num_games_str);
+
+        std::string num_players_str;
+        for (int i = 0; argv[2][i] != '\0'; i++) {
+            num_players_str += argv[2][i];
+        }
+        num_players = std::stoi(num_players_str);
+
+        for (int i = 0; argv[3][i] != '\0'; i++) {
+            bot_type += argv[3][i];
+        }
+
+        if (argc >= 5) {
+            std::string log_str;
+            for (int i = 0; argv[4][i] != '\0'; i++) {
+                log_str += argv[4][i];
+            }
+            if (log_str == "--log") log_games = true;
+        }
     }
     std::cout << "Welcome to HanaSim!" << std::endl;
     {
         Timer timer;
         int total_score = 0;
+        int perfects = 0;
 
         // sequential loop
-        for (int i=0; i < num_games; ++i){
-//                    player* p1 = new simplebot(4,0,3);
-//        player* p2 = new simplebot(4,1,3);
-//        player* p3 = new simplebot(4,2,3);
-            player* p1 = new holmesbot(4, 0, 4); // creating three new random bots with ids 0,1,2 (ids need to be in order starting from 0)
-            player* p2 = new holmesbot(4, 1, 4);
-            player* p3 = new holmesbot(4, 2, 4);
-            player* p4 = new holmesbot(4, 3, 4);
-//        player* p3 = new randombot(4, 2);
-//        player* p1 = new humanplayer(4,0);
-//        player* p2 = new humanplayer(4,1);
-            std::vector<player*> players = {p1, p2, p3, p4};
-            State init_state = State(4, 4);
-            for (std::vector<Card> hand : init_state.get_hands()) {
-                for (Card c : hand) {
-                    c.str();
+        for (int i=0; i < num_games; i++) {
+            std::vector<player*> players = {};
+            for (int id = 0; id < num_players; id++) {
+                player* p;
+                if (bot_type == "holmes") {
+                    p = new holmesbot(4, id, num_players);
+                } else if (bot_type == "smart") {
+                    p = new smartbot(4, id, num_players);
+                } else if (bot_type == "random") {
+                    p = new randombot(4, id);
+                } else if (bot_type == "search") {
+                    p = new simplebot(4, id, num_players);              
+                } else if (bot_type == "human") {
+                    p = new humanplayer(4, id);
+                }
+                players.push_back(p);
+            }
+            
+            State init_state = State(num_players, 4);
+            if (log_games) {
+                for (std::vector<Card> hand : init_state.get_hands()) {
+                    for (Card c : hand) {
+                        c.str();
+                    }
                 }
             }
-            game newgame(init_state, players);
 
-            total_score += newgame.run();
+            game newgame(init_state, players);
+            int score = newgame.run(log_games);
+            total_score += score;
+            if (score == 25) perfects++;
         }
         float average_score = (float)total_score / (float)num_games;
+        float prop_perf = (float) perfects / (float)num_games;
         std::cout << "Ran " << num_games << " Games with Average Score: " << average_score << std::endl;
+        std::cout << perfects << " games with perfect score (" << prop_perf << "%)" << std::endl;
     }
 //    plt::plot({1,2,3,4}, "*");
 //    plt::show();
