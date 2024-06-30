@@ -7,9 +7,9 @@ A class for a card in Hanabi.
 #pragma once
 
 // possible colors
-enum Color { red = 1, green, blue, yellow, white };
+enum Color { red = 1, green, blue, yellow, white, invalid_color };
 // possible ranks
-enum Rank { one = 1, two, three, four, five };
+enum Rank { one = 1, two, three, four, five, invalid_rank };
 
 class Card
 {
@@ -25,4 +25,6 @@ public:
     Rank rank();
 
     void str();
+
+    bool operator == (const Card c);
 };
