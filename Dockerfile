@@ -6,14 +6,18 @@ RUN apk add --no-cache python3 py3-pip
 
 
 WORKDIR /HanaSim
-COPY src ./
-COPY CMakeLists.txt ./
-COPY include ./
-COPY bots ./
+#COPY . /
 
-WORKDIR /HanaSim/build
-COPY src ./
-COPY CMakeLists.txt .
-COPY include ./
-COPY bots ./
-RUN cmake .
+COPY src/ src/
+COPY CMakeLists.txt ./
+COPY include/ include/
+COPY bots/ bots/
+#RUN ls -la /HanaSim/*
+
+RUN cmake . && make
+ENTRYPOINT [ "/HanaSim/HanaSim" ]
+CMD [ "echo", "Default argument from CMD instruction" ]
+#COPY src ./
+#COPY CMakeLists.txt .
+#COPY include ./
+#COPY bots ./

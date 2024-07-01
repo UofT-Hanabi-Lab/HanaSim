@@ -249,6 +249,30 @@ bots/simplebot.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/simplebot.cpp.s
 .PHONY : bots/simplebot.cpp.s
 
+bots/smartbot.o: bots/smartbot.cpp.o
+.PHONY : bots/smartbot.o
+
+# target to build an object file
+bots/smartbot.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/smartbot.cpp.o
+.PHONY : bots/smartbot.cpp.o
+
+bots/smartbot.i: bots/smartbot.cpp.i
+.PHONY : bots/smartbot.i
+
+# target to preprocess a source file
+bots/smartbot.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/smartbot.cpp.i
+.PHONY : bots/smartbot.cpp.i
+
+bots/smartbot.s: bots/smartbot.cpp.s
+.PHONY : bots/smartbot.s
+
+# target to generate assembly for a file
+bots/smartbot.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/HanaSim.dir/build.make CMakeFiles/HanaSim.dir/bots/smartbot.cpp.s
+.PHONY : bots/smartbot.cpp.s
+
 src/card.o: src/card.cpp.o
 .PHONY : src/card.o
 
@@ -393,6 +417,9 @@ help:
 	@echo "... bots/simplebot.o"
 	@echo "... bots/simplebot.i"
 	@echo "... bots/simplebot.s"
+	@echo "... bots/smartbot.o"
+	@echo "... bots/smartbot.i"
+	@echo "... bots/smartbot.s"
 	@echo "... src/card.o"
 	@echo "... src/card.i"
 	@echo "... src/card.s"

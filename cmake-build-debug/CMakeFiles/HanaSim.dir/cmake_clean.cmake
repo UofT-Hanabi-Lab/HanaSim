@@ -9,6 +9,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/HanaSim.dir/bots/randombot.cpp.o.d"
   "CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o"
   "CMakeFiles/HanaSim.dir/bots/simplebot.cpp.o.d"
+  "CMakeFiles/HanaSim.dir/bots/smartbot.cpp.o"
+  "CMakeFiles/HanaSim.dir/bots/smartbot.cpp.o.d"
   "CMakeFiles/HanaSim.dir/src/card.cpp.o"
   "CMakeFiles/HanaSim.dir/src/card.cpp.o.d"
   "CMakeFiles/HanaSim.dir/src/game.cpp.o"

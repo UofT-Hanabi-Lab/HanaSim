@@ -8,7 +8,6 @@ CMake Deprecation Warning:
   use the cmake-file-api(7) to view CMake-generated project build trees.
 
 
--- Could NOT find Python3 (missing: Intrepreter) (found version "3.10.6")
--- Configuring done (0.7s)
+-- Configuring done (0.0s)
 -- Generating done (0.0s)
 -- Build files have been written to: /Users/danielxu/Desktop/CSC494/HanaSim/cmake-build-debug
