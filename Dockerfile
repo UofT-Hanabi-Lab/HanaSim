@@ -2,6 +2,7 @@ FROM alpine:3.20
 RUN apk update
 RUN apk add --no-cache cmake make build-base
 RUN apk add --no-cache python3 py3-pip
+RUN apk add --no-cache libgomp
 
 
 

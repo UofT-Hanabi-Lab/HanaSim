@@ -1,6 +1,10 @@
 # HanaSim
 UofT Hanabi Simulator for ML development and testing.
 
+For local:
+Example: <br />
+    ./HanaSim  100 3 holmes holmes holmes
+
 
 For docker:
 
