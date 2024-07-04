@@ -1,6 +1,22 @@
 # HanaSim
 UofT Hanabi Simulator for ML development and testing.
 
+
+For local:
+Example: <br />
+    ./HanaSim  100 3 holmes holmes holmes <br />
+Note: approx 16~17 seconds for 1000 games for 3 holmes bot on Mac
+
+
+For docker:
+
+docker build --progress=plain -t hanasim . <br />
+docker run hanasim:latest {COMMAND LINE ARGS} <br />
+Example: <br />
+    docker run hanasim:latest 100 3 holmes holmes holmes <br />
+Note: approx 6~7 seconds for 1000 games for 3 holmes bot on Docker (sequential)
+
+
 # Bot performance (1000 games)
 ## HolmesBot
 2 players: 16.123, 0 games with perfect score (0%), run duration: 5258689us (5.25869s)
@@ -34,3 +50,4 @@ UofT Hanabi Simulator for ML development and testing.
 4 players: 16.845, 0 games with perfect score (0%), run duration: 89109993us (89.11s)
 
 5 players: 14.824, 0 games with perfect score (0%), run duration: 121239240us (121.239s)
+

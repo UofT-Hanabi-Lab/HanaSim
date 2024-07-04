@@ -1,8 +1,10 @@
 #include <iostream>
 #include <chrono>
 #include <string>
+#include <vector>
+#include <algorithm>
 #include <execution>
-//#include <omp.h> // brew install libomp
+#include <omp.h>
 
 #include "../include/game.h"
 #include "../include/randombot.h"
@@ -87,6 +89,8 @@ int main(int argc, char *argv[])
         int perfects = 0;
 
         // sequential loop
+//        omp_set_num_threads(1);
+        #pragma omp parallel for schedule(static) num_threads(1)
         for (int i=0; i < num_games; i++) {
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
@@ -98,13 +102,13 @@ int main(int argc, char *argv[])
                 } else if (bot_type == "random") {
                     p = new randombot(4, id);
                 } else if (bot_type == "search") {
-                    p = new simplebot(4, id, num_players);              
+                    p = new simplebot(4, id, num_players);
                 } else if (bot_type == "human") {
                     p = new humanplayer(4, id);
                 }
                 players.push_back(p);
             }
-            
+
             State init_state = State(num_players, 4);
             if (log_games) {
                 for (std::vector<Card> hand : init_state.get_hands()) {
@@ -119,10 +123,17 @@ int main(int argc, char *argv[])
             total_score += score;
             if (score == 25) perfects++;
         }
+
         float average_score = (float)total_score / (float)num_games;
         float prop_perf = (float) perfects / (float)num_games;
         std::cout << "Ran " << num_games << " Games with Average Score: " << average_score << std::endl;
         std::cout << perfects << " games with perfect score (" << prop_perf << "%)" << std::endl;
+
+//        omp_set_num_threads(4);
+//        #pragma omp parallel for num_threads(4)
+//        for (int i = 1; i <= 10; i++) {
+//            std::cout << i << std::endl;
+//        }
     }
 //    plt::plot({1,2,3,4}, "*");
 //    plt::show();

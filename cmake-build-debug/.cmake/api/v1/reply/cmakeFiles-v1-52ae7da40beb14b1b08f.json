@@ -120,12 +120,12 @@
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/FindPython3.cmake"
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/FindOpenMP.cmake"
 		},
 		{
 			"isCMake" : true,
 			"isExternal" : true,
-			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/FindPython/Support.cmake"
+			"path" : "/Applications/CLion.app/Contents/bin/cmake/mac/aarch64/share/cmake-3.27/Modules/CMakeParseImplicitLinkInfo.cmake"
 		},
 		{
 			"isCMake" : true,
