@@ -54,7 +54,7 @@ int main(int argc, char *argv[])
     if (argc == 1) {
         std::cout << "Usage:" << std::endl;
         std::cout << "./HanaSim num-games num-players bot-type --log" << std::endl;
-        std::cout << "Options for bot-type: holmes, smart, random, search, human" << std::endl;
+        std::cout << "Options for bot-type: holmes, smart, random, simple, human" << std::endl;
         std::cout << "You can also add a --log flag that will log the moves and scores of every game" << std::endl;
         return 1;
     } else if (argc >= 4) {\
@@ -101,7 +101,7 @@ int main(int argc, char *argv[])
                     p = new smartbot(4, id, num_players);
                 } else if (bot_type == "random") {
                     p = new randombot(4, id);
-                } else if (bot_type == "search") {
+                } else if (bot_type == "simple") {
                     p = new simplebot(4, id, num_players);
                 } else if (bot_type == "human") {
                     p = new humanplayer(4, id);

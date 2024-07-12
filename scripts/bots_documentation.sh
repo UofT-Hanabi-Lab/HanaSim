@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-bots=("holmes" "search" "random" "smart")
+bots=("holmes" "simple" "random" "smart")
 num_players=(2 3 4 5)
 
 
