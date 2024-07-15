@@ -108,20 +108,20 @@ std::vector<move> humanplayer::get_legal_moves(State s, int id) {
                 }
             }
             for (Color col : colors) {
-                moves.push_back(move(COL_HINT, i, id, -1, col_to_indices.at(col), col, invalid_rank));
+                moves.push_back(move(COL_HINT, i, id, col_to_indices.at(col), col));
             }
-            for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, -1, rank_to_indices.at(rank), invalid_color, rank));
+            for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, rank_to_indices.at(rank), rank));
         }
     }
     
     if (s.get_num_hints() < 8) {
         for (int i = 0; i < hands[id].size(); i++) {
-            moves.push_back(move(DISCARD, -1, id, i, {}, invalid_color, invalid_rank));
+            moves.push_back(move(DISCARD, id, i));
         }
     }
     
     for (int i = 0; i < hands[id].size(); i++) {
-        moves.push_back(move(PLAY, -1, id, i, {}, invalid_color, invalid_rank));
+        moves.push_back(move(PLAY, id, i));
     }
     
     return moves;

@@ -48,24 +48,24 @@ std::vector<move> randombot::get_legal_moves(State s, int id) {
                 for (int j = 0; j < hands[i].size(); j++) {
                     if (hands[i][j].color() == col) indices.push_back(j);
                 }
-                moves.push_back(move(COL_HINT, i, id, -1, indices, col, invalid_rank));
+                moves.push_back(move(COL_HINT, i, id, indices, col));
             };
             for (Rank rank : ranks) {
                 std::vector<int> indices;
                 for (int j = 0; j < hands[i].size(); j++) {
                     if (hands[i][j].rank() == rank) indices.push_back(j);
                 }
-                moves.push_back(move(RANK_HINT, i, id, -1, indices, invalid_color, rank));
+                moves.push_back(move(RANK_HINT, i, id, indices, rank));
             }
         }
     }
     if (s.get_num_hints() < 8) {
         for (int i = 0; i < hands[id].size(); i++) {
-            moves.push_back(move(DISCARD, -1, id, i, {}, invalid_color, invalid_rank));
+            moves.push_back(move(DISCARD, id, i));
         }
     }
     for (int i = 0; i < hands[id].size(); i++) {
-        moves.push_back(move(PLAY, -1, id, i, {}, invalid_color, invalid_rank));
+        moves.push_back(move(PLAY, id, i));
     }
     return moves;
 }

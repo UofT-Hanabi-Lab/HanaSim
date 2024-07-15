@@ -656,19 +656,19 @@ void smartbot::observe_before_discard(State s, move m) {
     shift_knowledge(m.get_from(), m.get_card_index(), s.get_deck().size() != 0);
 }
 
+bool search(std::vector<int> indices, int index) {
+    for (int i : indices) {
+        if (index == i) return true;
+    }
+    return false;
+}
 
 void smartbot::observe_color_hint(State s, move m) {
     bool identified = false;
     int inferred = -1;
     for (int i = s.get_hands()[m.get_to()].size() - 1; i >= 0; i--) {
-        bool found = false;
         bool was_maybe_playable = (hand_knowledge_[m.get_to()][i].playable(s) == MAYBE);
-        for (int j : m.get_card_indices()) {
-            if (j == i) {
-                found = true;
-            }
-        }
-        if (found) {
+        if (search(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_color());
             if (was_maybe_playable) {
                 if (hand_knowledge_[m.get_to()][i].playable(s) == YES) {
@@ -699,24 +699,14 @@ void smartbot::observe_color_hint(State s, move m) {
 
 void smartbot::observe_rank_hint(State s, move m) {
     int discard_ind = next_discard_index(s, (m.get_from() + 1) % hand_knowledge_.size());
-    bool zero_found = false;
-    bool discard_ind_found = false;
-    for (int j : m.get_card_indices()) {
-        if (j == discard_ind) {
-            discard_ind_found = true;
-        }
-        if (j == 0) {
-            zero_found = true;
-        }
-    }
     bool hint_stone_reclaim =
         (s.get_num_hints() == 8) &&
         (m.get_from() == (m.get_to() + 1) % hand_knowledge_.size()) &&
-        zero_found;
+        search(m.get_card_indices(), 0);
     bool is_warning =
         !hint_stone_reclaim &&
         (m.get_to() == (m.get_from() + 1) % hand_knowledge_.size()) &&
-        discard_ind_found &&
+        search(m.get_card_indices(), discard_ind) &&
         hand_knowledge_[m.get_to()][discard_ind].could_be_valuable(m.get_rank(), s);
     if (is_warning) {
         hand_knowledge_[m.get_to()][discard_ind].set_is_valuable(true, s);
@@ -726,14 +716,8 @@ void smartbot::observe_rank_hint(State s, move m) {
     bool identified = false;
     int inferred = -1;
     for (int i = s.get_hands()[m.get_to()].size() - 1; i >= 0; i--) {
-        bool found = false;
         bool was_maybe_playable = (hand_knowledge_[m.get_to()][i].playable(s) == MAYBE);
-        for (int j : m.get_card_indices()) {
-            if (j == i) {
-                found = true;
-            }
-        }
-        if (found) {
+        if (search(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_rank());
             if (was_maybe_playable) {
                 if (hand_knowledge_[m.get_to()][i].playable(s) == YES) {
@@ -764,7 +748,7 @@ void smartbot::observe_rank_hint(State s, move m) {
 
 move smartbot::discard_finesse(State s) {
     if (s.get_num_hints() == 8) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
     std::vector<Card> playable_cards;
@@ -776,7 +760,7 @@ move smartbot::discard_finesse(State s) {
         }
     }
     if (playable_cards.empty()) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
 
@@ -795,11 +779,11 @@ move smartbot::discard_finesse(State s) {
             }
         }
         if (count == 1) {
-            move m = move(DISCARD, -1, id_, playable_indices[i], {}, invalid_color, invalid_rank);
+            move m = move(DISCARD, id_, playable_indices[i]);
             return m;
         }
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     return m;
 }
 
@@ -826,10 +810,10 @@ move smartbot::play_lowest_playable(State s) {
         }
     }
     if (best_i != -1) {
-        move m = move(PLAY, -1, id_, best_i, {}, invalid_color, invalid_rank);
+        move m = move(PLAY, id_, best_i);
         return m;
     } else {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
 }
@@ -858,10 +842,10 @@ move smartbot::discard_worthless(State s) {
         }
     }
     if (best_i != -1) {
-        move m = move(DISCARD, -1, id_, best_i, {}, invalid_color, invalid_rank);
+        move m = move(DISCARD, id_, best_i);
         return m;
     } else {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;        
     }
 }
@@ -884,11 +868,11 @@ move smartbot::play_mystery(State s) {
             }
         }
         if (best_i != -1) {
-            move m = move(PLAY, -1, id_, best_i, {}, invalid_color, invalid_rank);
+            move m = move(PLAY, id_, best_i);
             return m;
         }
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     return m;
 }
 
@@ -896,10 +880,10 @@ move smartbot::play_mystery(State s) {
 move smartbot::discard_old(State s) {
     int best_i = next_discard_index(s, id_);
     if (best_i != -1) {
-        move m = move(DISCARD, -1, id_, best_i, {}, invalid_color, invalid_rank);
+        move m = move(DISCARD, id_, best_i);
         return m;
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     return m;
 }
 
@@ -912,6 +896,25 @@ int reduction_in_entropy(std::vector<cardknowledge> old_knowl, std::vector<cardk
     return res;
 }
 
+std::vector<int> search_indices(std::vector<Card> hand, Color col) {
+    std::vector<int> indices = {};
+    for (int i = 0; i < hand.size(); i++) {
+        if (hand[i].color() == col) {
+            indices.push_back(i);
+        }
+    }
+    return indices;
+}
+
+std::vector<int> search_indices(std::vector<Card> hand, Rank rank) {
+    std::vector<int> indices = {};
+    for (int i = 0; i < hand.size(); i++) {
+        if (hand[i].rank() == rank) {
+            indices.push_back(i);
+        }
+    }
+    return indices;
+}
 
 template<class F>
 std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, int partner_index, F&& is_okay) {
@@ -924,18 +927,13 @@ std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, 
     }
     int best_f = 0;
     std::vector<cardknowledge> old_knowl = hand_knowledge_[partner_index];
-    move best = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move best = move(INVALID_MOVE);
     for (int k = 1; k < 6; k++) {
         if (!cols[k]) {
             continue;
         }
-        std::vector<int> indices = {};
-        for (int i = 0; i < partner_hand.size(); i++) {
-            if (partner_hand[i].color() == Color(k)) {
-                indices.push_back(i);
-            }
-        }
-        move m = move(COL_HINT, partner_index, id_, -1, indices, Color(k), invalid_rank);
+        std::vector<int> indices = search_indices(partner_hand, Color(k));
+        move m = move(COL_HINT, partner_index, id_, indices, Color(k));
         std::vector<cardknowledge> new_knowl = old_knowl;
         for (int i = 0; i < partner_hand.size(); i++) {
             if (partner_hand[i].color() == Color(k)){
@@ -958,13 +956,8 @@ std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, 
         if (!ranks[r]) {
             continue;
         }
-        std::vector<int> indices = {};
-        for (int i = 0; i < partner_hand.size(); i++) {
-            if (partner_hand[i].rank() == Rank(r)) {
-                indices.push_back(i);
-            }
-        }
-        move m = move(RANK_HINT, partner_index, id_, -1, indices, invalid_color, Rank(r));
+        std::vector<int> indices = search_indices(partner_hand, Rank(r));
+        move m = move(RANK_HINT, partner_index, id_, indices, Rank(r));
         std::vector<cardknowledge> new_knowl = old_knowl;
         for (int i = 0; i < partner_hand.size(); i++) {
             if (partner_hand[i].rank() == Rank(r)){
@@ -1015,15 +1008,9 @@ std::tuple<move, int> smartbot::best_hint_for_partner(State s, int partner_index
             if (old_knowl[c].playable(s) != MAYBE) {
                 continue;
             }
-            bool found = false;
-            for (int i = 0; i < m.get_card_indices().size(); i++) {
-                if (m.get_card_indices()[i] == c) {
-                    found = true;
-                }
-            }
             if (new_knowl[c].playable(s) == YES) {
                 reveals_playable = true;
-            } else if (new_knowl[c].playable(s) == MAYBE && found) {
+            } else if (new_knowl[c].playable(s) == MAYBE && search(m.get_card_indices(), c)) {
                 if (is_misleading == MAYBE) {
                     is_misleading = (is_actually_playable[c] ? NO : YES);
                 }
@@ -1039,18 +1026,18 @@ std::tuple<move, int> smartbot::best_hint_for_partner(State s, int partner_index
 
 move smartbot::give_valuable_warning(State s) {
     if (s.get_num_hints() == 0) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
     int player_to_warn = (id_ + 1) % hand_knowledge_.size();
     int disc_ind = next_discard_index(s, player_to_warn);
     if (disc_ind == -1) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
     Card c = s.get_hands()[player_to_warn][disc_ind];
     if (!is_valuable(s, c)) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;        
     }
 
@@ -1059,23 +1046,18 @@ move smartbot::give_valuable_warning(State s) {
     if (std::get<1>(best_hint_tuple) > 0) {
         return std::get<0>(best_hint_tuple);
     }
-    std::vector<int> indices;
-    for (int i = 0; i < s.get_hands()[player_to_warn].size(); i++) {
-        if (s.get_hands()[player_to_warn][i].rank() == c.rank()) {
-            indices.push_back(i);
-        }
-    }
-    move m = move(RANK_HINT, player_to_warn, id_, -1, indices, invalid_color, c.rank());
+    std::vector<int> indices = search_indices(s.get_hands()[player_to_warn], c.rank());
+    move m = move(RANK_HINT, player_to_warn, id_, indices, c.rank());
     return m;
 }
 
 
 move smartbot::give_helpful_hint(State s) {
     if (s.get_num_hints() == 0) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
-    move best = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move best = move(INVALID_MOVE);
     int best_f = 0;
     for (int i = 1; i < hand_knowledge_.size(); i++) {
         int partner = (id_ + i) % hand_knowledge_.size();
@@ -1086,7 +1068,7 @@ move smartbot::give_helpful_hint(State s) {
         }
     }
     if (best_f == 0) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     } else {
         return best;
@@ -1143,13 +1125,8 @@ move smartbot::play(State s) {
 
     if (s.get_num_hints() == 8) {
         int right_partner = (id_ + hand_knowledge_.size() - 1) % hand_knowledge_.size();
-        std::vector<int> indices = {};
-        for (int i = 0; i < s.get_hands()[right_partner].size(); i++) {
-            if (s.get_hands()[right_partner][i].rank() == s.get_hands()[right_partner][0].rank()) {
-                indices.push_back(i);
-            }
-        }
-        m = move(RANK_HINT, right_partner, id_, -1, indices, invalid_color, s.get_hands()[right_partner][0].rank());
+        std::vector<int> indices = search_indices(s.get_hands()[right_partner], s.get_hands()[right_partner][0].rank());
+        m = move(RANK_HINT, right_partner, id_, indices, s.get_hands()[right_partner][0].rank());
         return m;
     } else {
         m = discard_old(s);
@@ -1168,7 +1145,7 @@ move smartbot::play(State s) {
                 best = i;
             }
         }
-        m = move(DISCARD, -1, id_, best, {}, invalid_color, invalid_rank);
+        m = move(DISCARD, id_, best);
         return m;
     }
 }

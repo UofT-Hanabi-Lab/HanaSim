@@ -4,8 +4,19 @@
 
 #include "../include/move.h"
 
-move::move(move_type type, int to, int from, int card_index, std::vector<int> card_indices, Color color, Rank rank) : 
-    type_(type), to_(to), from_(from), card_index_(card_index), card_indices_(card_indices), color_(color), rank_(rank) {
+move::move(move_type type) :
+    type_(type), to_(-1), from_(-1), card_index_(-1), card_indices_({}), color_(invalid_color), rank_(invalid_rank) {
+}
+move::move(move_type type, int from, int card_index) :
+    type_(type), to_(-1), from_(from), card_index_(card_index), card_indices_({}), color_(invalid_color), rank_(invalid_rank) {
+}
+
+move::move(move_type type, int to, int from, std::vector<int> card_indices, Color color) :
+    type_(type), to_(to), from_(from), card_index_(-1), card_indices_(card_indices), color_(color), rank_(invalid_rank) {
+}
+
+move::move(move_type type, int to, int from, std::vector<int> card_indices, Rank rank) :
+    type_(type), to_(to), from_(from), card_index_(-1), card_indices_(card_indices), color_(invalid_color), rank_(rank) {
 }
 
 move_type move::get_type() {

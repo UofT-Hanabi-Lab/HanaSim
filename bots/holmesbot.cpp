@@ -249,15 +249,18 @@ void holmesbot::observe_before_play(State s, move m) {
     shift_knowledge(m.get_from(), m.get_card_index());
 }
 
+bool search(std::vector<int> indices, int index) {
+    for (int i : indices) {
+        if (index == i) return true;
+    }
+    return false;
+}
+
 void holmesbot::observe_color_hint(State s, move m) {
     int next_rank = s.get_piles()[m.get_color()] + 1;
     next_rank = std::min(next_rank, 5);
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
-        bool found = false;
-        for (int j : m.get_card_indices()) {
-            if (j == i) found = true;
-        }
-        if (found) {
+        if (search(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_color());
             if (hand_knowledge_[m.get_to()][i].rank() == invalid_rank && !(hand_knowledge_[m.get_to()][i].is_worthless)) {
                 hand_knowledge_[m.get_to()][i].set_must_be(Rank(next_rank));
@@ -281,14 +284,8 @@ int holmesbot::next_discard_index(State s, int player_index) {
 
 void holmesbot::observe_rank_hint(State s, move m) {
     int discard_ind = next_discard_index(s, m.get_to());
-    bool discard_ind_found = false;
-    bool zero_found = false;
-    for (int j : m.get_card_indices()) {
-        if (j == discard_ind) discard_ind_found = true;
-        if (j == 0) zero_found = true;
-    }
-    bool is_warning = discard_ind_found && could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank());
-    if (s.get_num_hints() == 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && zero_found) return;
+    bool is_warning = search(m.get_card_indices(), discard_ind) && could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank());
+    if (s.get_num_hints() == 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && search(m.get_card_indices(), 0)) return;
     if (is_warning) {
         hand_knowledge_[m.get_to()][discard_ind].is_valuable = true;
         if (m.get_rank() == lowest_playable_rank_) {
@@ -296,11 +293,7 @@ void holmesbot::observe_rank_hint(State s, move m) {
         }
     }
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
-        bool found = false;
-        for (int j : m.get_card_indices()) {
-            if (j == i) found = true;
-        }
-        if (found) {
+        if (search(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_rank());
             if (hand_knowledge_[m.get_to()][i].color() == invalid_color && !is_warning && !hand_knowledge_[m.get_to()][i].is_worthless) {
                 hand_knowledge_[m.get_to()][i].is_playable = true;
@@ -334,21 +327,21 @@ move holmesbot::play_lowest_playable(State s) {
         }
     }
     if (best_i != -1) {
-        move m = move(PLAY, -1, id_, best_i, {}, invalid_color, invalid_rank);
+        move m = move(PLAY, id_, best_i);
         return m;
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     return m;
 }
 
 move holmesbot::discard_worthless(State s) {
     for (int i = 0; i < s.get_hands()[id_].size(); i++) {
         if (hand_knowledge_[id_][i].is_worthless) {
-            move m = move(DISCARD, -1, id_, i, {}, invalid_color, invalid_rank);
+            move m = move(DISCARD, id_, i);
             return m;
         }
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     return m;
 }
 
@@ -357,21 +350,21 @@ move holmesbot::play_mystery(State s) {
     if (s.get_deck().size() <= table[s.get_num_lives()]) {
         for (int i = my_hand_size_ - 1; i >= 0; i--) {
             if (hand_knowledge_[id_][i].is_worthless || (hand_knowledge_[id_][i].color() != invalid_color && hand_knowledge_[id_][i].rank() != invalid_rank)) continue;
-            move m = move(PLAY, -1, id_, i, {}, invalid_color, invalid_rank);
+            move m = move(PLAY, id_, i);
             return m;
         }
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     return m;
 }
 
 move holmesbot::discard_old(State s) {
     for (int i = 0; i < my_hand_size_; i++) {
         if (hand_knowledge_[id_][i].is_valuable) continue;
-        move m = move(DISCARD, -1, id_, i, {}, invalid_color, invalid_rank);
+        move m = move(DISCARD, id_, i);
         return m;
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     return m;
 }
 
@@ -381,7 +374,7 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
     for (int i = 0; i < partner_hand.size(); i++) {
         is_actually_playable[i] = s.get_piles()[partner_hand[i].color()] + 1 == partner_hand[i].rank();
     }
-    move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+    move m = move(INVALID_MOVE);
     int highest_info = 0;
     for (int k = 1; k < 6; k++) {
         int info = 0;
@@ -400,7 +393,7 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
         if (misinformative) continue;
         if (info > highest_info) {
             highest_info = info;
-            m = move(COL_HINT, partner_index, id_, -1, card_indices, Color(k), invalid_rank);
+            m = move(COL_HINT, partner_index, id_, card_indices, Color(k));
         }
     }
 
@@ -428,7 +421,7 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
         if (misinformative) continue;
         if (info > highest_info) {
             highest_info = info;
-            m = move(RANK_HINT, partner_index, id_, -1, card_indices, invalid_color, Rank(r));
+            m = move(RANK_HINT, partner_index, id_, card_indices, Rank(r));
         }
     }
     return std::make_tuple(m, highest_info);
@@ -438,15 +431,15 @@ move holmesbot::give_valuable_warning(State s) {
     int player_to_warn = (id_ + 1) % hand_knowledge_.size();
     int discard_index = next_discard_index(s, player_to_warn);
     if (discard_index == -1) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
     if (!(is_valuable(s, s.get_hands()[player_to_warn][discard_index]))) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
     if (s.get_num_hints() == 0) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
     move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn));
@@ -460,16 +453,16 @@ move holmesbot::give_valuable_warning(State s) {
         }
     }
 
-    move m  = move(RANK_HINT, player_to_warn, id_, -1, card_indices, invalid_color, s.get_hands()[player_to_warn][discard_index].rank());
+    move m  = move(RANK_HINT, player_to_warn, id_, card_indices, s.get_hands()[player_to_warn][discard_index].rank());
     return m;
 }
 
 move holmesbot::give_helpful_hint(State s) {
     if (s.get_num_hints() == 0) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
-    move best_hint = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);;
+    move best_hint = move(INVALID_MOVE);
     int highest_info = 0;
     for (int i = 1; i < hand_knowledge_.size(); i++) {
         int partner = (id_ + i) % hand_knowledge_.size();
@@ -481,7 +474,7 @@ move holmesbot::give_helpful_hint(State s) {
         }
     }
     if (best_hint.get_type() == INVALID_MOVE) {
-        move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+        move m = move(INVALID_MOVE);
         return m;
     }
     return best_hint;
@@ -514,7 +507,7 @@ move holmesbot::play(State s) {
                 card_indices.push_back(i);
             }
         }
-        m = move(RANK_HINT, right_partner, id_, -1, card_indices, invalid_color, r);
+        m = move(RANK_HINT, right_partner, id_, card_indices, r);
         return m;
     } else {
         m = discard_worthless(s);
@@ -529,7 +522,7 @@ move holmesbot::play(State s) {
         for (int i = 0; i < my_hand_size_; i++) {
             if (hand_knowledge_[id_][i].rank() > hand_knowledge_[id_][best].rank()) best = i;
         }
-        m = move(DISCARD, -1, id_, best, {}, invalid_color, invalid_rank);
+        m = move(DISCARD, id_, best);
         return m;
     }
 }
