@@ -26,7 +26,7 @@ Note: approx 6~7 seconds for 1000 games for 3 holmes bot on Docker (sequential)
 4 players: 15.342, 0 games with perfect score (0%), run duration: 14409079us (14.4091s)
 
 5 players: 13.649, 0 games with perfect score (0%), run duration: 20674030us (20.674s)
-## SearchBot
+## SimpleBot
 2 players: 9.443, 0 games with perfect score (0%), run duration: 815536us (0.815536s)
 
 3 players: 10.356, 0 games with perfect score (0%), run duration: 1128006us (1.12801s)
