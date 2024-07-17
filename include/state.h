@@ -15,7 +15,7 @@ class State {
     std::vector<int> piles_; // rank of top most card in each pile (0 if pile is empty)
 
 public:
-    State(int num_players, int cards_per_hand);
+    State(int num_players);
 
     std::vector<std::vector<Card>> get_hands() const;
     int get_num_hints() const;

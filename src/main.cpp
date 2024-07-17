@@ -133,7 +133,7 @@ int main(int argc, char *argv[])
                 players.push_back(p);
             }
 
-            State init_state = State(num_players, 4);
+            State init_state = State(num_players);
             if (log_games) {
                 for (std::vector<Card> hand : init_state.get_hands()) {
                     for (Card c : hand) {

@@ -5,9 +5,14 @@
 
 #include "../include/state.h"
 
-State::State(int num_players, int cards_per_hand) {
+State::State(int num_players) {
     num_players_ = num_players;
-    cards_per_hand_ = cards_per_hand;
+
+    cards_per_hand_ = 4;
+    // if there are 2 or 3 players, there are 5 cards per hand
+    if (num_players < 4) {
+        cards_per_hand_++;
+    }
     hint_tokens_ = 8;
     lives_ = 3;
     deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five), 
