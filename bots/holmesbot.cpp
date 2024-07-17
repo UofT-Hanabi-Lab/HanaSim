@@ -249,7 +249,7 @@ void holmesbot::observe_before_play(State s, move m) {
     shift_knowledge(m.get_from(), m.get_card_index());
 }
 
-bool search(std::vector<int> indices, int index) {
+bool search_for_ind(std::vector<int> indices, int index) {
     for (int i : indices) {
         if (index == i) return true;
     }
@@ -260,7 +260,7 @@ void holmesbot::observe_color_hint(State s, move m) {
     int next_rank = s.get_piles()[m.get_color()] + 1;
     next_rank = std::min(next_rank, 5);
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
-        if (search(m.get_card_indices(), i)) {
+        if (search_for_ind(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_color());
             if (hand_knowledge_[m.get_to()][i].rank() == invalid_rank && !(hand_knowledge_[m.get_to()][i].is_worthless)) {
                 hand_knowledge_[m.get_to()][i].set_must_be(Rank(next_rank));
@@ -284,8 +284,8 @@ int holmesbot::next_discard_index(State s, int player_index) {
 
 void holmesbot::observe_rank_hint(State s, move m) {
     int discard_ind = next_discard_index(s, m.get_to());
-    bool is_warning = search(m.get_card_indices(), discard_ind) && could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank());
-    if (s.get_num_hints() == 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && search(m.get_card_indices(), 0)) return;
+    bool is_warning = search_for_ind(m.get_card_indices(), discard_ind) && could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank());
+    if (s.get_num_hints() == 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && search_for_ind(m.get_card_indices(), 0)) return;
     if (is_warning) {
         hand_knowledge_[m.get_to()][discard_ind].is_valuable = true;
         if (m.get_rank() == lowest_playable_rank_) {
@@ -293,7 +293,7 @@ void holmesbot::observe_rank_hint(State s, move m) {
         }
     }
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
-        if (search(m.get_card_indices(), i)) {
+        if (search_for_ind(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_rank());
             if (hand_knowledge_[m.get_to()][i].color() == invalid_color && !is_warning && !hand_knowledge_[m.get_to()][i].is_worthless) {
                 hand_knowledge_[m.get_to()][i].is_playable = true;
