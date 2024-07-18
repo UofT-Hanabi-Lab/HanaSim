@@ -22,7 +22,10 @@ class move
     Rank rank_; // invalid_rank if not a rank hint
 
 public:
-    move(move_type type, int to, int from, int card_index, std::vector<int> card_indices, Color color, Rank rank);
+    move(move_type type);
+    move(move_type type, int from, int card_index);
+    move(move_type type, int to, int from, std::vector<int> card_indices, Color color);
+    move(move_type type, int to, int from, std::vector<int> card_indices, Rank rank);
     move_type get_type();
     int get_to();
     int get_from();

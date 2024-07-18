@@ -278,10 +278,10 @@ move simplebot::play_lowest_playable(State s) {
        }
    }
    if (best_i != -1) {
-       move m = move(PLAY, -1, id_, best_i, {}, invalid_color, invalid_rank);
+       move m = move(PLAY, id_, best_i);
        return m;
    }
-   move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+   move m = move(INVALID_MOVE);
    return m;
 }
 
@@ -292,7 +292,7 @@ std::tuple<move, int> simplebot::best_hint_for_partner(State s, int partner_inde
    for (int i = 0; i < partner_hand.size(); i++) {
        is_actually_playable[i] = s.get_piles()[partner_hand[i].color()] + 1 == partner_hand[i].rank();
    }
-   move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+   move m = move(INVALID_MOVE);
    int highest_info = 0;
    for (int k = 1; k < 6; k++) {
        int info = 0;
@@ -342,7 +342,7 @@ std::tuple<move, int> simplebot::best_hint_for_partner(State s, int partner_inde
        if (misinformative) continue;
        if (info > highest_info) {
            highest_info = info;
-           m = move(RANK_HINT, partner_index, id_, -1, card_indices, invalid_color, Rank(r));
+           m = move(RANK_HINT, partner_index, id_, card_indices, Rank(r));
        }
    }
    return std::make_tuple(m, highest_info);
@@ -352,10 +352,10 @@ std::tuple<move, int> simplebot::best_hint_for_partner(State s, int partner_inde
 
 move simplebot::give_helpful_hint(State s) {
    if (s.get_num_hints() == 0) {
-       move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+       move m = move(INVALID_MOVE);
        return m;
    }
-   move best_hint = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);;
+   move best_hint = move(INVALID_MOVE);
    int highest_info = 0;
    for (int i = 1; i < hand_knowledge_.size(); i++) {
        int partner = (id_ + i) % hand_knowledge_.size();
@@ -367,7 +367,7 @@ move simplebot::give_helpful_hint(State s) {
        }
    }
    if (best_hint.get_type() == INVALID_MOVE) {
-       move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+       move m = move(INVALID_MOVE);
        return m;
    }
    return best_hint;
@@ -376,10 +376,10 @@ move simplebot::give_helpful_hint(State s) {
 move simplebot::discard_old(State s) {
    for (int i = 0; i < my_hand_size_; i++) {
        if (hand_knowledge_[id_][i].is_playable) continue;
-       move m = move(DISCARD, -1, id_, i, {}, invalid_color, invalid_rank);
+       move m = move(DISCARD, id_, i);
        return m;
    }
-   move m = move(INVALID_MOVE, -1, -1, -1, {}, invalid_color, invalid_rank);
+   move m = move(INVALID_MOVE);
    return m;
 }
 
@@ -425,7 +425,7 @@ move simplebot::play(State s)
                card_indices.push_back(i);
            }
        }
-       m = move(RANK_HINT, right_partner, id_, -1, card_indices, invalid_color, r);
+       m = move(RANK_HINT, right_partner, id_, card_indices, r);
        return m;
    } else {
        m = discard_old(s);
@@ -436,7 +436,7 @@ move simplebot::play(State s)
        for (int i = 0; i < my_hand_size_; i++) {
            if (hand_knowledge_[id_][i].rank() > hand_knowledge_[id_][best].rank()) best = i;
        }
-       m = move(DISCARD, -1, id_, best, {}, invalid_color, invalid_rank);
+       m = move(DISCARD, id_, best);
        return m;
    }
 }
