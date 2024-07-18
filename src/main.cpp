@@ -5,6 +5,7 @@
 #include <algorithm>
 #include <execution>
 #include <omp.h>
+//#include <torch.h>
 
 #include "../include/game.h"
 #include "../include/randombot.h"
@@ -128,6 +129,9 @@ int main(int argc, char *argv[])
         float prop_perf = (float) perfects / (float)num_games;
         std::cout << "Ran " << num_games << " Games with Average Score: " << average_score << std::endl;
         std::cout << perfects << " games with perfect score (" << prop_perf << "%)" << std::endl;
+//
+//        torch::Tensor tensor = torch::rand({2, 3});
+//        std::cout << tensor << std::endl;
 
 //        omp_set_num_threads(4);
 //        #pragma omp parallel for num_threads(4)
