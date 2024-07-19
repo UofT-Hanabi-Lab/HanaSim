@@ -10,26 +10,30 @@ State::State(int num_players, int cards_per_hand) {
     cards_per_hand_ = cards_per_hand;
     hint_tokens_ = 8;
     lives_ = 3;
-    deck_ = {};
-    for (int col = red; col != white; col++) {
-        for (int rank = one; rank <= five; rank++) {
-            int num_rank;
-            switch(rank) {
-                case one:
-                    num_rank = 3;
-                    break;
-                case five:
-                    num_rank = 1;
-                    break;
-                default:
-                    num_rank = 2;
-            }
-            for (int i = 0; i < num_rank; i++) {
-                deck_.push_back(Card(static_cast<Color>(col), static_cast<Rank>(rank)));
+    deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five), 
+              Card(blue, one), Card(blue, one), Card(blue, one), Card(blue, two), Card(blue, two), Card(blue, three), Card(blue, three), Card(blue, four), Card(blue, four), Card(blue, five),
+              Card(yellow, one), Card(yellow, one), Card(yellow, one), Card(yellow, two), Card(yellow, two), Card(yellow, three), Card(yellow, three), Card(yellow, four), Card(yellow, four), Card(yellow, five),
+              Card(green, one), Card(green, one), Card(green, one), Card(green, two), Card(green, two), Card(green, three), Card(green, three), Card(green, four), Card(green, four), Card(green, five),
+              Card(white, one), Card(white, one), Card(white, one), Card(white, two), Card(white, two), Card(white, three), Card(white, three), Card(white, four), Card(white, four), Card(white, five)};
+    // for (int col = red; col != white; col++) {
+    //     for (int rank = one; rank <= five; rank++) {
+    //         int num_rank;
+    //         switch(rank) {
+    //             case one:
+    //                 num_rank = 3;
+    //                 break;
+    //             case five:
+    //                 num_rank = 1;
+    //                 break;
+    //             default:
+    //                 num_rank = 2;
+    //         }
+    //         for (int i = 0; i < num_rank; i++) {
+    //             deck_.push_back(Card(static_cast<Color>(col), static_cast<Rank>(rank)));
                 
-            }
-        }
-    }
+    //         }
+    //     }
+    // }
     // Shuffling the deck
     std::random_device rd;
     std::default_random_engine gen(rd());
