@@ -48,16 +48,17 @@ int main(int argc, char *argv[])
 {
     int num_games = 1;
     int num_players = 2;
-    std::string bot_type;
     bool log_games = false;
+    std::vector<std::string> bot_types = {};
     
     if (argc == 1) {
         std::cout << "Usage:" << std::endl;
-        std::cout << "./HanaSim num-games num-players bot-type --log" << std::endl;
+        std::cout << "./HanaSim num-games num-players bot1-type ... botn-type --log" << std::endl;
+        std::cout << "where n is num-players" << std::endl;
         std::cout << "Options for bot-type: holmes, smart, random, simple, human" << std::endl;
         std::cout << "You can also add a --log flag that will log the moves and scores of every game" << std::endl;
         return 1;
-    } else if (argc >= 4) {\
+    } else if (argc >= 3) {
         std::string num_games_str;
         for (int i = 0; argv[1][i] != '\0'; i++) {
             num_games_str += argv[1][i];
@@ -69,9 +70,32 @@ int main(int argc, char *argv[])
             num_players_str += argv[2][i];
         }
         num_players = std::stoi(num_players_str);
+        if (num_players < 2 || num_players > 5 || num_games <= 0) {
+            std::cout << "num-games must be positive and num-players must be between 2 and 5" << std::endl;
+            return 1;
+        }
 
-        for (int i = 0; argv[3][i] != '\0'; i++) {
-            bot_type += argv[3][i];
+        std::string log_str;
+        for (int i = 0; argv[argc - 1][i] != '\0'; i++) {
+            log_str += argv[argc - 1][i];
+        }
+        if (log_str == "--log") log_games = true;
+
+        if (argc != 3 + num_players + (log_games ? 1 : 0)) {
+            std::cout << "Must give num-player bot types" << std::endl;
+            return 1;
+        } else {
+            for (int i = 0; i < num_players; i++) {
+                std::string bot_type;
+                for (int j = 0; argv[3 + i][j] != '\0'; j++) {
+                    bot_type += argv[3 + i][j];
+                }
+                if (bot_type != "human" && bot_type != "random" && bot_type != "simple" && bot_type != "holmes" && bot_type != "smart") {
+                    std::cout << "bot-type must be a valid choice (random, holmes, human, simple, or smart)" << std::endl;
+                    return 1;
+                }
+                bot_types.push_back(bot_type);
+            }
         }
 
         if (argc >= 5) {
@@ -95,15 +119,15 @@ int main(int argc, char *argv[])
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
                 player* p;
-                if (bot_type == "holmes") {
+                if (bot_types[id] == "holmes") {
                     p = new holmesbot(4, id, num_players);
-                } else if (bot_type == "smart") {
+                } else if (bot_types[id] == "smart") {
                     p = new smartbot(4, id, num_players);
-                } else if (bot_type == "random") {
+                } else if (bot_types[id] == "random") {
                     p = new randombot(4, id);
-                } else if (bot_type == "simple") {
+                } else if (bot_types[id] == "simple") {
                     p = new simplebot(4, id, num_players);
-                } else if (bot_type == "human") {
+                } else if (bot_types[id] == "human") {
                     p = new humanplayer(4, id);
                 }
                 players.push_back(p);
