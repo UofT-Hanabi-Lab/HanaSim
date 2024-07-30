@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="HanaSim"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="gcc"/>
+		<Option virtualFolders="CMake Files\;CMake Files\include\;CMake Files\include\libtorch\;CMake Files\include\libtorch\share\;CMake Files\include\libtorch\share\cmake\;CMake Files\include\libtorch\share\cmake\Torch\;CMake Files\include\libtorch\share\cmake\Caffe2\;CMake Files\include\libtorch\share\cmake\Caffe2\public\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 all"/>
+					<CompileFile command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="HanaSim">
+				<Option output="/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/HanaSim" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DUSE_DISTRIBUTED"/>
+					<Add option="-DUSE_C10D_GLOO"/>
+					<Add option="-DUSE_RPC"/>
+					<Add option="-DUSE_TENSORPIPE"/>
+					<Add directory="/tmp/tmp.zB8BHBXaKg/include/libtorch/include"/>
+					<Add directory="/tmp/tmp.zB8BHBXaKg/include/libtorch/include/torch/csrc/api/include"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 HanaSim"/>
+					<CompileFile command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="HanaSim/fast">
+				<Option output="/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/HanaSim" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="gcc"/>
+				<Compiler>
+					<Add option="-DUSE_DISTRIBUTED"/>
+					<Add option="-DUSE_C10D_GLOO"/>
+					<Add option="-DUSE_RPC"/>
+					<Add option="-DUSE_TENSORPIPE"/>
+					<Add directory="/tmp/tmp.zB8BHBXaKg/include/libtorch/include"/>
+					<Add directory="/tmp/tmp.zB8BHBXaKg/include/libtorch/include/torch/csrc/api/include"/>
+					<Add directory="/usr/include/c++/11"/>
+					<Add directory="/usr/include/x86_64-linux-gnu/c++/11"/>
+					<Add directory="/usr/include/c++/11/backward"/>
+					<Add directory="/usr/lib/gcc/x86_64-linux-gnu/11/include"/>
+					<Add directory="/local/include"/>
+					<Add directory="/usr/include/x86_64-linux-gnu"/>
+					<Add directory="/usr/include"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 HanaSim/fast"/>
+					<CompileFile command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 edit_cache"/>
+					<CompileFile command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+					<DistClean command="/local/bin/gmake -j48 -f &quot;/tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host/Makefile&quot;  VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/bots/consolebot.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/bots/holmesbot.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/bots/humanplayer.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/bots/randombot.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/bots/simplebot.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/bots/smartbot.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/card.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/game.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/holmesbot.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/humanplayer.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/matplotlibcpp.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/move.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/player.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/randombot.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/simplebot.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/smartbot.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/state.h">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/src/card.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/src/game.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/src/main.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/src/move.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/src/state.cpp">
+			<Option target="HanaSim"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/libtorch/share/cmake/Torch/TorchConfig.cmake">
+			<Option virtualFolder="CMake Files\include\libtorch\share\cmake\Torch\"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/libtorch/share/cmake/Torch/TorchConfigVersion.cmake">
+			<Option virtualFolder="CMake Files\include\libtorch\share\cmake\Torch\"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/libtorch/share/cmake/Caffe2/Caffe2Config.cmake">
+			<Option virtualFolder="CMake Files\include\libtorch\share\cmake\Caffe2\"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/libtorch/share/cmake/Caffe2/Caffe2Targets-release.cmake">
+			<Option virtualFolder="CMake Files\include\libtorch\share\cmake\Caffe2\"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/libtorch/share/cmake/Caffe2/Caffe2Targets.cmake">
+			<Option virtualFolder="CMake Files\include\libtorch\share\cmake\Caffe2\"/>
+		</Unit>
+		<Unit filename="/tmp/tmp.zB8BHBXaKg/include/libtorch/share/cmake/Caffe2/public/utils.cmake">
+			<Option virtualFolder="CMake Files\include\libtorch\share\cmake\Caffe2\public\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>

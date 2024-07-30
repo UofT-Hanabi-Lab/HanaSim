@@ -24,9 +24,23 @@ set (HEADERS ${Headers})
 #link_directories(/usr/local/lib)
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
 
+#if (NOT ANDROID)
+#    find_library(C10_LIBRARY c10 PATHS "${TORCH_INSTALL_PREFIX}/lib")
+#elseif (APPLE)
+#    find_library(C10_LIBRARY c10 NO_CMAKE_FIND_ROOT_PATH PATH_SUFFIXES .dylib  PATHS "${TORCH_INSTALL_PREFIX}/lib")
+#else()
+#    find_library(C10_LIBRARY c10 NO_CMAKE_FIND_ROOT_PATH PATHS "${TORCH_INSTALL_PREFIX}/lib")
+#endif()
+
+list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/include/libtorch")
+find_package(Torch REQUIRED)
+include_directories(SYSTEM ${TORCH_INCLUDE_DIRS})
+target_link_libraries(${CMAKE_PROJECT_NAME} ${TORCH_LIBRARIES})
+
+
 find_package(OpenMP)
 if(OpenMP_CXX_FOUND)
-    target_link_libraries(${CMAKE_PROJECT_NAME} PUBLIC OpenMP::OpenMP_CXX)
+    target_link_libraries(${CMAKE_PROJECT_NAME} OpenMP::OpenMP_CXX)
 endif()
 
 #target_link_libraries(${CMAKE_PROJECT_NAME} ${Python3_LIBRARIES})

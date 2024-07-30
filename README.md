@@ -25,6 +25,46 @@ cmake .. & make
 
 ### Mac
 
+From the `HanaSim` directory:
+
+```
+mkdir build
+cd build
+cmake .. & make
+```
+
+To install OpenMP:
+
+```
+brew install libomp
+```
+Add the following lines into the ./zshrc file:
+```
+export OpenMP_ROOT=$(brew --prefix)/opt/libomp
+export PATH="/opt/homebrew/bin:$PATH"
+```
+Then
+```
+source ~/.zshrc
+```
+
+
+
+To install PyTorch/Libtorch (OpenMP must be installed to run Libtorch):
+
+Visit: https://pytorch.org/get-started/locally/
+
+Install the Mac Libtorch version, move the .zip file into HanaSim/include, and unpack the .zip file
+
+Running the simulator will cause a "Library not loaded: @rpath/libomp.dylib" error. 
+
+To resolve this error, locate the "libomp.dylib" executable in your homebrew folder 
+
+For example: /opt/homebrew/Cellar/libomp/18.1.8/lib
+
+Copy the executable and paste it into /usr/local/lib, or any other folders from the error message. 
+
+
 ## Running the simulator
 
 After the `./HanaSim` executable is created, you can run it with the following arguments:
