@@ -1,3 +1,27 @@
+/*
+MIT License
+
+Copyright (c) Facebook, Inc. and its affiliates.
+Copyright (c) 2017 Arthur O'Dwyer
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
 
 #include <torch/script.h>
 #include <mutex>
@@ -10,7 +34,7 @@
 using TensorDict = std::unordered_map<std::string, torch::Tensor>;
 using TorchTensorDict = torch::Dict<std::string, torch::Tensor>;
 
-inline TensorDict iValueToTensorDict(const torch::IValue& value, torch::DeviceType device, bool detach) {
+inline TensorDict iValue_to_tensor_dict(const torch::IValue& value, torch::DeviceType device, bool detach) {
     std::unordered_map<std::string, torch::Tensor> map;
     auto dict = value.toGenericDict();
     for (auto& name2tensor : dict) {
@@ -26,13 +50,12 @@ inline TensorDict iValueToTensorDict(const torch::IValue& value, torch::DeviceTy
 }
 
 // TODO: this may be simplified with constructor in the future version
-inline TorchTensorDict tensorDictToTorchDict(
-    const TensorDict& tensorDict, const torch::Device& device) {
-  TorchTensorDict dict;
-  for (const auto& name2tensor : tensorDict) {
-    dict.insert(name2tensor.first, name2tensor.second.to(device));
-  }
-  return dict;
+inline TorchTensorDict tensor_dict_to_torch_dict(const TensorDict& tensor_dict, const torch::Device& device) {
+    TorchTensorDict dict;
+    for (const auto& name2tensor : tensor_dict) {
+        dict.insert(name2tensor.first, name2tensor.second.to(device));
+    }
+    return dict;
 }
 
 class FutureReply {
