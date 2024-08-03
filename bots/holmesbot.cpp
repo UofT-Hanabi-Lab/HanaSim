@@ -2,7 +2,7 @@
 #include <algorithm>
 #include <assert.h>
 
-#include "../include/holmesbot.h"
+#include "include/holmesbot.h"
 
 using namespace HolmesBotInternal;
 
