@@ -1,10 +1,10 @@
 #pragma once
 
 #include "asyncmodelwrapper.h"
-#include "player.h"
+#include "../../include/player.h"
 #include <memory>
 #include <iostream>
-#include "smartbot.h"
+#include "../../bots/include/smartbot.h"
 #include "batcher.h"
 #include "agentUtils.h"
 

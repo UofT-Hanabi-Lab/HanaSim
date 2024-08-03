@@ -1,6 +1,6 @@
 #include <cstring>
 #include <iostream>
-#include "../include/smartbot.h"
+#include "include/smartbot.h"
 
 
 using namespace SmartBotInternal;

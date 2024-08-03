@@ -1,6 +1,6 @@
 #pragma once
-#include "state.h"
-#include "move.h"
+#include "../../include/state.h"
+#include "../../include/move.h"
 
 namespace HleParams {
     // read in parameters from environment variable

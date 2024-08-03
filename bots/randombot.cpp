@@ -5,7 +5,7 @@
 #include <iostream>
 
 
-#include "../include/randombot.h"
+#include "include/randombot.h"
 
 
 

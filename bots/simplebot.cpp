@@ -1,7 +1,7 @@
 #include <cstring>
 #include <algorithm>
 #include <cassert>
-#include "../include/simplebot.h"
+#include "include/simplebot.h"
 
 using namespace SimpleBotInternal;
 

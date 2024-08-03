@@ -7,11 +7,11 @@
 #include <omp.h>
 
 #include "../include/game.h"
-#include "../include/randombot.h"
-#include "../include/holmesbot.h"
-#include "../include/smartbot.h"
-#include "../include/humanplayer.h"
-#include "../include/simplebot.h"
+#include "../bots/include/randombot.h"
+#include "../bots/include/holmesbot.h"
+#include "../bots/include/smartbot.h"
+#include "../bots/include/humanplayer.h"
+#include "../bots/include/simplebot.h"
 //#include "../include/matplotlibcpp.h"
 
 //namespace plt = matplotlibcpp;

@@ -1,7 +1,7 @@
 #include <tuple>
 #include <iostream>
 
-#include "player.h"
+#include "../../include/player.h"
 
 
 #pragma once
