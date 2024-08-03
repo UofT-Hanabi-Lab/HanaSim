@@ -107,6 +107,10 @@ int State::get_num_hints() const {
 int State::get_num_lives() const {
     return lives_;
 }
+
+int State::get_num_players() const {
+    return num_players_;
+}
 std::vector<Card> State::get_discards() const {
     return discards_;
 }
@@ -120,4 +124,6 @@ std::vector<Card> State::get_deck() const {
 std::vector<std::vector<Card>> State::get_hands() const {
     return hands_;
 }
+
+
 

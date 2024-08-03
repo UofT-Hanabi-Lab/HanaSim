@@ -20,6 +20,7 @@ public:
     std::vector<std::vector<Card>> get_hands() const;
     int get_num_hints() const;
     int get_num_lives() const;
+    int get_num_players() const;
     std::vector<Card> get_discards() const;
     std::vector<int> get_piles() const;
     std::vector<Card> get_deck() const;
