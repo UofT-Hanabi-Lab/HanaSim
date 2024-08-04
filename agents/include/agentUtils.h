@@ -1,6 +1,7 @@
 #pragma once
 #include "../../include/state.h"
 #include "../../include/move.h"
+#include <iostream>
 
 namespace HleParams {
     // read in parameters from environment variable
@@ -277,3 +278,20 @@ public:
         return res;
     }
 };
+
+int move_to_index(move m, State s, int id, int num_cards, int num_players) {
+    int NUM_COLORS = 5;
+    int NUM_RANKS = 5;
+    int max_reveal_color = (num_players - 1) * NUM_COLORS;
+    int targ_offset = (m.get_to() + num_players - id) % num_players;
+    if (m.get_type() == DISCARD) {
+        return m.get_card_index();
+    } else if (m.get_type() == PLAY) {
+        return m.get_card_index() + num_cards;
+    } else if (m.get_type() == COL_HINT) {
+        return ((targ_offset - 1) * NUM_COLORS) + (m.get_color() - 1) + (2 * num_cards);
+    } else if (m.get_type() == RANK_HINT) {
+        return ((targ_offset - 1) * NUM_RANKS) + (m.get_rank() - 1) + (2 * num_cards) + max_reveal_color;
+    }
+    return -1;
+}

@@ -22,7 +22,8 @@
 
 
 class sadagent final : public player {
-    int me_, numPlayers_, handSize_;
+    int id_, num_players_, num_cards_;
+    std::string model_name_;
     int frame_idx_ = 0;
 
     // std::shared_ptr<SimulServer> simulserver_;
@@ -36,10 +37,10 @@ class sadagent final : public player {
     int player_about_to_draw_ = -1;
     /* keep track of the last card that I played or discarded
      * to get around server limitations */
-    move last_move_;
-    move the_move_;
+    move last_move_ = move(INVALID_MOVE);
+    move the_move_ = move(INVALID_MOVE);
     // int last_move_index_;
-    Rank last_move_indices_; // should correspond to HanaSim rank?
+    std::vector<int> last_move_indices_;
     Card last_active_card_ = Card(red, five);
 
     int prev_score_ = 0; // server.currentScore();
@@ -47,30 +48,34 @@ class sadagent final : public player {
 
     int debug_last_player_ = 1;
     int debug_last_obs_ = 2;
-    at::Tensor applyModel(const HleSerializedMove &frame);
-    void checkBeliefs_(State s);
+    at::Tensor apply_model(const HleSerializedMove &frame);
+    void check_beliefs_(State s);
 
     std::map<int, float> action_probs_;
     double action_unc_ = 0;
 //    std::mt19937 gen_; // FIXME: seed?
 
-    void updateActionProbs(
+    void update_action_probs(
             at::Tensor model_output,
-            const std::vector<move> &legal_moves,
+            std::vector<move> &legal_moves,
             int num_moves,
-            const State s
+            State s
     );
 
+    void observe_before_move(State s);
+    void observe_discard(State s, move m);
+    void observe_play(State s, move m);
+    void observe_color_hint(State s, move m);
+    void observe_rank_hint(State s, move m);
+    void observe_after_move(State s);
+
 public:
-    sadagent(int n_cards, int id, int n_players);
-    void pleaseObserveBeforeMove(State s);
-    void pleaseMakeMove(State s);
-    void pleaseObserveBeforeDiscard(State s, move m);
-    void pleaseObserveBeforePlay(State s, move m);
-    void pleaseObserveColorHint(State s, move m);
-    void pleaseObserveValueHint(State s, move m);
-    void pleaseObserveAfterMove(State s);
-    const std::map<int, float> &getActionProbs();
-    void setActionUncertainty(float boltzmann_unc);
-    sadagent *clone();
+    sadagent(int n_cards, int id, int n_players, std::string model_name);
+
+    const std::map<int, float> &get_action_probs();
+    void set_action_uncertainty(float boltzmann_unc);
+    move play(State s);
+    void observe(State s, move m);
+    int get_id();
+    int get_n_cards();
 };
