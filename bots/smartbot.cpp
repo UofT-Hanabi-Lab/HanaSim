@@ -1150,6 +1150,7 @@ move smartbot::play(State s) {
     }
 }
 
+void smartbot::observe_after(State s) {}
 
 int smartbot::get_id() {
     return id_;

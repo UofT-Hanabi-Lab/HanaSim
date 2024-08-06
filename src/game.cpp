@@ -30,6 +30,10 @@ int game::run(bool log_game) {
         }
         
         curr_state_.transition(next_move, log_game);
+
+        for (int i = 0; i < players_.size(); i++) {
+            (*(players_[i])).observe_after(curr_state_);
+        }
         int score = 0;
         for (int top : curr_state_.get_piles()) {
             score += top;
@@ -50,6 +54,9 @@ int game::run(bool log_game) {
                 (*(players_[i])).observe(curr_state_, next_move);
             }
             curr_state_.transition(next_move, log_game);
+            for (int i = 0; i < players_.size(); i++) {
+                (*(players_[i])).observe_after(curr_state_);
+            }
             int score = 0;
             for (int top : curr_state_.get_piles()) {
                 score += top;

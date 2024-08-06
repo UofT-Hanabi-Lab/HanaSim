@@ -142,3 +142,5 @@ move humanplayer::play(State s) {
     std::cout << "selected move " << num <<std::endl;
     return legal_moves[num];
 }
+
+void humanplayer::observe_after(State s) {}

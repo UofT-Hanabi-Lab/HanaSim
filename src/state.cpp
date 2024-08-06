@@ -10,6 +10,7 @@ State::State(int num_players, int cards_per_hand) {
     cards_per_hand_ = cards_per_hand;
     hint_tokens_ = 8;
     lives_ = 3;
+    active_player_ = 0;
     deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five), 
               Card(blue, one), Card(blue, one), Card(blue, one), Card(blue, two), Card(blue, two), Card(blue, three), Card(blue, three), Card(blue, four), Card(blue, four), Card(blue, five),
               Card(yellow, one), Card(yellow, one), Card(yellow, one), Card(yellow, two), Card(yellow, two), Card(yellow, three), Card(yellow, three), Card(yellow, four), Card(yellow, four), Card(yellow, five),
@@ -99,6 +100,11 @@ void State::transition(move m, bool log) {
     } else { // A hint was given
         hint_tokens_--;
     }
+    active_player_ = (active_player_ + 1) % num_players_;
+}
+
+int State::get_active_player() const {
+    return active_player_;
 }
 
 int State::get_num_hints() const {

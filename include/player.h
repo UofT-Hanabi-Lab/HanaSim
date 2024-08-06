@@ -21,6 +21,7 @@ public:
     player() {};
     virtual move play(State s) = 0; // abstract method
     //virtual move play(State s, int curr_player) = 0; // abstract method
+    virtual void observe_after(State s) = 0;
     virtual void observe(State s, move m) = 0; // abstract method
     int get_id();
     int get_n_cards();

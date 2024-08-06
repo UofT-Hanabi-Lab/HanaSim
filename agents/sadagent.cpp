@@ -109,3 +109,79 @@ void sadagent::update_action_probs(at::Tensor model_output, std::vector<move> &l
     }
 }
 
+void sadagent::observe_before(State s) {
+    debug_last_player_ = s.get_active_player();
+    debug_last_obs_ = 0;
+    if (hand_distribution_v0_.size() == 0) {
+        hand_distribution_v0_.reserve(s.get_num_players());
+        for (int i = 0; i < s.get_num_players(); i++) {
+            hand_distribution_v0_.emplace_back(s, i);
+        }
+    }
+    check_beliefs_(s);
+    HleSerializedMove frame = HleSerializedMove(s, last_move_, last_active_card_, last_move_indices_, prev_score_, prev_num_hint_, hand_distribution_v0_);
+    auto output = apply_model(frame);
+
+    if (s.get_active_player() == id_) {
+        int num_moves = frame.numMoves();
+        auto out_data = output.data_ptr<float>();
+        std::vector<move> legal_moves = get_legal_moves(s, id_);
+        float best_pred = -1e9;
+        for (move m : legal_moves) {
+            int i = move_to_index(m, s, id_, num_cards_, num_players_);
+            if (out_data[i] > best_pred) {
+                the_move_ = m;
+                best_pred = out_data[i];
+            }
+        }
+        if (action_unc_ > 0) {
+            update_action_probs(output, legal_moves, num_moves, s);
+        }
+    }
+}
+
+void sadagent::observe_discard(State s, move m) {
+    debug_last_obs_ = 1;
+    last_move_ = m;
+    last_active_card_ = s.get_hands()[m.get_from()][m.get_card_index()];
+    player_about_to_draw_ = m.get_from();
+}
+
+void sadagent::observe_play(State s, move m) {
+    debug_last_obs_ = 1;
+    last_move_ = m;
+    last_active_card_ = s.get_hands()[m.get_from()][m.get_card_index()];
+    int score = 0;
+    for (int i : s.get_piles()) {
+        score += i;
+    }
+    prev_score_ = score;
+    prev_num_hint_ = s.get_num_hints();
+    player_about_to_draw_ = m.get_from();
+}
+
+void sadagent::observe_color_hint(State s, move m) {
+    debug_last_obs_ = 1;
+    last_move_ = m;
+    last_move_indices_ = m.get_card_indices();
+    hand_distribution_v0_[m.get_to()].updateFromHint(m, s);
+}
+
+void sadagent::observe_rank_hint(State s, move m) {
+    debug_last_obs_ = 1;
+    last_move_ = m;
+    last_move_indices_ = m.get_card_indices();
+    hand_distribution_v0_[m.get_to()].updateFromHint(m, s);
+}
+
+void sadagent::observe_after(State s) {
+    debug_last_obs_ = 2;
+    if (player_about_to_draw_ != -1) {
+        std::vector<int> deck_count = get_deck_count(s, -1);
+        for (int p = 0; p < num_players_; p++) {
+            hand_distribution_v0_[p].updateFromRevealedCard(last_active_card_, deck_count, s);
+        }
+        hand_distribution_v0_[player_about_to_draw_].updateFromDraw(deck_count, last_move_.get_card_index(), s, num_cards_);
+        player_about_to_draw_ = -1;
+    }
+}

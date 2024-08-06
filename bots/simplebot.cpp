@@ -440,3 +440,5 @@ move simplebot::play(State s)
        return m;
    }
 }
+
+void simplebot::observe_after(State s) {}

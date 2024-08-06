@@ -62,7 +62,7 @@ class sadagent final : public player {
             State s
     );
 
-    void observe_before_move(State s);
+    void observe_before(State s);
     void observe_discard(State s, move m);
     void observe_play(State s, move m);
     void observe_color_hint(State s, move m);
@@ -76,6 +76,7 @@ public:
     void set_action_uncertainty(float boltzmann_unc);
     move play(State s);
     void observe(State s, move m);
+    void observe_after(State s);
     int get_id();
     int get_n_cards();
 };

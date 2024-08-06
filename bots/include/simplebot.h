@@ -72,6 +72,7 @@ public:
    simplebot(int n_cards, int id, int n_players);
    std::vector<move> get_legal_moves(State s, int id);
    move play(State s);
+   void observe_after(State s);
    void observe(State s, move m);
    int get_id();
    int get_n_cards();

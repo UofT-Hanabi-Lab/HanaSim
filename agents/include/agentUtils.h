@@ -2,6 +2,8 @@
 #include "../../include/state.h"
 #include "../../include/move.h"
 #include <iostream>
+#include <set>
+
 
 namespace HleParams {
     // read in parameters from environment variable
@@ -111,7 +113,7 @@ struct FactorizedBeliefs {
         return res;
     }
     
-    void updateFromHint(move m, std::vector<int> c_indices, State s) {
+    void updateFromHint(move m, State s) {
         handSize = s.get_hands()[p_].size();
         for (int j = 0; j < 25; j++) {
             Card c = index_to_card(j);
@@ -119,8 +121,8 @@ struct FactorizedBeliefs {
             bool matches = m.get_type() == COL_HINT ? (m.get_color() == c.color()) : (m.get_rank() == c.rank());
             for (int i = 0; i < handSize; i ++) {
                 bool found = false;
-                for (int l = 0; l < c_indices.size(); l++) {
-                    if (c_indices[l] == i) {
+                for (int l = 0; l < m.get_card_indices().size(); l++) {
+                    if (m.get_card_indices()[l] == i) {
                         found = true; 
                         break;
                     }
@@ -134,8 +136,8 @@ struct FactorizedBeliefs {
         if (m.get_type() == COL_HINT) {
             for (int i = 0; i < handSize; i ++) {
                 bool found = false;
-                for (int l = 0; l < c_indices.size(); l++) {
-                    if (c_indices[l] == i) {
+                for (int l = 0; l < m.get_card_indices().size(); l++) {
+                    if (m.get_card_indices()[l] == i) {
                         found = true; 
                         break;
                     }
@@ -145,8 +147,8 @@ struct FactorizedBeliefs {
         } else {
             for (int i = 0; i < handSize; i ++) {
                 bool found = false;
-                for (int l = 0; l < c_indices.size(); l++) {
-                    if (c_indices[l] == i) {
+                for (int l = 0; l < m.get_card_indices().size(); l++) {
+                    if (m.get_card_indices()[l] == i) {
                         found = true; 
                         break;
                     }
@@ -163,7 +165,7 @@ struct FactorizedBeliefs {
             counts[i].set(card_id, counts[i].get(card_id) == 0 ? 0 : remaining);
         }
     }
-    
+
     void updateFromDraw(const std::vector<int> deck_count, int card_index, State s, int num_cards) {
         handSize = s.get_hands()[p_].size();
         for (int i = card_index; i < std::min(handSize, num_cards - 1); i++) {
@@ -304,7 +306,7 @@ public:
     HleSerializedMove(State s,
                       move lastMove,
                       Card lastCard,  // for play/discard
-                      Card lastMoveIndices,  // for hint color/rank
+                      std::vector<int> lastMoveIndices,  // for hint color/rank
                       int prevScore,
                       int prevNumHint,
                       const std::vector<FactorizedBeliefs> &v0Beliefs)
@@ -460,3 +462,45 @@ int move_to_index(move m, State s, int id, int num_cards, int num_players) {
     return -1;
 }
 
+std::vector<move> get_legal_moves(State s, int id) {
+    std::vector<move> moves;
+    moves = {};
+    std::vector<std::vector<Card>> hands = s.get_hands();
+    if (s.get_num_hints() > 0) {
+        for (int i = 0; i < hands.size(); i++) {
+            std::set<Color> colors;
+            std::set<Rank> ranks;
+            if (i == id) {
+                continue;
+            }
+            for (int j = 0; j < hands[i].size(); j++) {
+                Card c = hands[i][j];
+                colors.insert(c.color());
+                ranks.insert(c.rank());
+            }
+            for (Color col : colors) {
+                std::vector<int> indices;
+                for (int j = 0; j < hands[i].size(); j++) {
+                    if (hands[i][j].color() == col) indices.push_back(j);
+                }
+                moves.push_back(move(COL_HINT, i, id, indices, col));
+            };
+            for (Rank rank : ranks) {
+                std::vector<int> indices;
+                for (int j = 0; j < hands[i].size(); j++) {
+                    if (hands[i][j].rank() == rank) indices.push_back(j);
+                }
+                moves.push_back(move(RANK_HINT, i, id, indices, rank));
+            }
+        }
+    }
+    if (s.get_num_hints() < 8) {
+        for (int i = 0; i < hands[id].size(); i++) {
+            moves.push_back(move(DISCARD, id, i));
+        }
+    }
+    for (int i = 0; i < hands[id].size(); i++) {
+        moves.push_back(move(PLAY, id, i));
+    }
+    return moves;
+}

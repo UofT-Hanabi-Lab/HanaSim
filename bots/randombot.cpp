@@ -13,6 +13,7 @@
 randombot::randombot(int n_cards, int id) : num_cards_(n_cards), id_(id) {    
 }
 
+void randombot::observe_after(State s) {}
 
 void randombot::observe(State s, move m) {};
 

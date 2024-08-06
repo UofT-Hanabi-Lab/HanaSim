@@ -527,6 +527,8 @@ move holmesbot::play(State s) {
     }
 }
 
+void holmesbot::observe_after(State s) {}
+
 int holmesbot::get_id() {
     return id_;
 }
