@@ -9,11 +9,6 @@ namespace HleParams {
     const int GREEDY_ACTION = 1; // TODO replaced line above
 } // namespace HleParams
 
-typedef std::map<Card, int> DeckComposition;
-void addToDeck(const std::vector<Card> &cards, DeckComposition &deck);
-void removeFromDeck(const std::vector<Card> &cards, DeckComposition &deck);
-DeckComposition getCurrentDeckComposition(const State s, int who);
-
 
 struct TwoBitArray {
     TwoBitArray() {}
@@ -31,13 +26,182 @@ struct TwoBitArray {
     }
 };
 
+int card_to_index(Card c) {
+    return (((int) c.color() - 1) * 5) + ((int) c.rank() - 1);
+}
+
+Card index_to_card(int i) {
+    return Card(Color((i / 5) + 1), Rank((i % 5) + 1));
+}
+
+void add_to_deck(const std::vector<Card> &cards, std::vector<int> &deck_count) {
+    for (auto &c : cards) deck_count[card_to_index(c)]++;
+}
+
+void remove_from_deck(const std::vector<Card> &cards, std::vector<int> &deck_count) {
+    for (auto &c : cards) deck_count[card_to_index(c)]--;
+}
+
+std::vector<int> get_deck_count(State s, int id) {
+    std::vector<int> deck_count = {};
+    for (int k = 1; k < 6; k++) {
+        for (int r = 1; r < 6; r++) {
+            deck_count.push_back(r == 1 ? 3 : (r == 5 ? 1 : 2));
+        }
+    }
+    remove_from_deck(s.get_discards(), deck_count);
+    std::vector<Card> pile_cards;
+    for (int k = 1; k < 6; k++) {
+        for (int r = 1; r <= s.get_piles()[k]; r++) {
+            Card c = Card(Color(k), Rank(r));
+            pile_cards.push_back(c);
+        }
+    }
+    remove_from_deck(pile_cards, deck_count);
+
+    for (int i = 0; i < s.get_num_players(); i++){
+        if (id == -1 || i == id) continue; // id == -1 means public
+        remove_from_deck(s.get_hands()[i], deck_count);
+    }
+    return deck_count;
+}
+
 struct FactorizedBeliefs {
-    FactorizedBeliefs(State s, int player);
-    std::array<std::array<float, 25>, 5> get() const;
-    void log();
-    void updateFromHint(move m, Card c_indices, State s);
-    void updateFromRevealedCard(Card played_card, const DeckComposition &deck, State s);
-    void updateFromDraw(const DeckComposition &deck, int card_index, State s);
+    FactorizedBeliefs(State s, int player, int num_cards) {
+        p_ = player;
+        std::vector<int> deck_count = get_deck_count(s, player);
+        for (int k = 1; k < 6; k++) {
+            for (int r = 1; r < 6; r++) {
+                Card c = Card(Color(k), Rank(r));
+                for (int i = 0; i< 5; i++) {
+                    if (i >= num_cards) {
+                        counts[i].set(card_to_index(c), 0);
+                    } else {
+                        counts[i].set(card_to_index(c), deck_count[card_to_index(c)]);
+                    }
+                }
+            }
+        }
+
+        for (int i = 0; i < 5; i++) {
+            for (int j = 0; j < 5; j++) {
+                colorRevealed.set(i * 5 + j, 0);
+                rankRevealed.set(i * 5 + j, 0);
+            }
+        }
+        handSize = s.get_hands()[p_].size();
+    }
+
+    std::array<std::array<float, 25>, 5> get() const {
+        std::array<std::array<float, 25>, 5> res;
+        for (int i = 0; i < handSize; i++) {
+            double total = 0;
+            for (int j = 0; j < 25; j++) {
+                total += counts[i].get(j);
+            }
+            for (int j = 0; j < 25; j++) {
+                res[i][j] = counts[i].get(j) / total;
+            }
+        }
+        for (int i = handSize; i < counts.size(); i++) {
+            for (int j = 0; j < 25; j++) {
+                res[i][j] = 0;
+            }
+        }
+        return res;
+    }
+    
+    void updateFromHint(move m, std::vector<int> c_indices, State s) {
+        handSize = s.get_hands()[p_].size();
+        for (int j = 0; j < 25; j++) {
+            Card c = index_to_card(j);
+            int card_value = m.get_type() == COL_HINT ? c.color() : c.rank();
+            bool matches = m.get_type() == COL_HINT ? (m.get_color() == c.color()) : (m.get_rank() == c.rank());
+            for (int i = 0; i < handSize; i ++) {
+                bool found = false;
+                for (int l = 0; l < c_indices.size(); l++) {
+                    if (c_indices[l] == i) {
+                        found = true; 
+                        break;
+                    }
+                }
+                bool consistent = found ? matches : !matches;
+                if (!consistent) {
+                    counts[i].set(j, 0);
+                }
+            }
+        }
+        if (m.get_type() == COL_HINT) {
+            for (int i = 0; i < handSize; i ++) {
+                bool found = false;
+                for (int l = 0; l < c_indices.size(); l++) {
+                    if (c_indices[l] == i) {
+                        found = true; 
+                        break;
+                    }
+                }
+                if (found) colorRevealed.set(i * 5 + ((int) m.get_color() - 1), 1);
+            }
+        } else {
+            for (int i = 0; i < handSize; i ++) {
+                bool found = false;
+                for (int l = 0; l < c_indices.size(); l++) {
+                    if (c_indices[l] == i) {
+                        found = true; 
+                        break;
+                    }
+                }
+                if (found) rankRevealed.set(i * 5 + ((int) m.get_rank() - 1), 1);
+            }
+        }
+    }
+
+    void updateFromRevealedCard(Card played_card, const std::vector<int> deck_count, State s) {
+        int card_id = card_to_index(played_card);
+        int remaining = deck_count[card_id];
+        for (int i = 0; i < handSize; i++) {
+            counts[i].set(card_id, counts[i].get(card_id) == 0 ? 0 : remaining);
+        }
+    }
+    
+    void updateFromDraw(const std::vector<int> deck_count, int card_index, State s, int num_cards) {
+        handSize = s.get_hands()[p_].size();
+        for (int i = card_index; i < std::min(handSize, num_cards - 1); i++) {
+            for (int j = 0; j < 25; j++) {
+                counts[i].set(j, counts[i + 1].get(j));
+            }
+            for (int j = 0; j < 5; j++) {
+                colorRevealed.set(i * 5 + j, colorRevealed.get((i + 1) * 5 + j));
+                rankRevealed.set(i * 5 + j, rankRevealed.get((i + 1) * 5 + j));
+            }
+        }
+        if (handSize == num_cards) {
+            // draw the new card
+            for (int j = 0; j < 25; j++) {
+                counts[handSize - 1].set(j, 0);
+            }
+            for (int i = 0; i < deck_count.size(); i++) {
+                counts[handSize - 1].set(i, deck_count[i]);
+            }
+
+            // we know nothing about this new card
+            for (int j = 0; j < 5; j++) {
+                colorRevealed.set((handSize - 1) * 5 + j, 0);
+                rankRevealed.set((handSize - 1) * 5 + j, 0);
+            }
+        } else {
+            // no more card to draw, nil the last card
+            for (int j = 0; j < 25; j++) {
+                counts[handSize].set(j, 0);
+            }
+
+            // nil the last card
+            for (int j = 0; j < 5; ++j) {
+                colorRevealed.set(handSize * 5 + j, 0);
+                rankRevealed.set(handSize * 5 + j, 0);
+            }
+        }
+    }
 
     std::array<TwoBitArray, 5> counts;
 
@@ -295,3 +459,4 @@ int move_to_index(move m, State s, int id, int num_cards, int num_players) {
     }
     return -1;
 }
+
