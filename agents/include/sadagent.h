@@ -1,7 +1,6 @@
 #pragma once
 
 #include "asyncmodelwrapper.h"
-#include "../../include/player.h"
 #include <memory>
 #include <iostream>
 #include "../../bots/include/smartbot.h"
@@ -48,7 +47,7 @@ class sadagent final : public player {
 
     int debug_last_player_ = 1;
     int debug_last_obs_ = 2;
-    at::Tensor apply_model(const HleSerializedMove &frame);
+    at::Tensor apply_model(HleSerializedMove &frame);
     void check_beliefs_(State s);
 
     std::map<int, float> action_probs_;
@@ -67,7 +66,6 @@ class sadagent final : public player {
     void observe_play(State s, move m);
     void observe_color_hint(State s, move m);
     void observe_rank_hint(State s, move m);
-    void observe_after_move(State s);
 
 public:
     sadagent(int n_cards, int id, int n_players, std::string model_name);
@@ -79,4 +77,6 @@ public:
     void observe_after(State s);
     int get_id();
     int get_n_cards();
+    const std::map<int, float> &getActionProbs() const;
+    void setActionUncertainty(float boltzmann_unc);
 };

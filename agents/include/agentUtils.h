@@ -1,6 +1,7 @@
 #pragma once
-#include "../../include/state.h"
+#include "../../include/player.h"
 #include "../../include/move.h"
+#include "threadpool.h"
 #include <iostream>
 #include <set>
 
@@ -117,8 +118,8 @@ struct FactorizedBeliefs {
         handSize = s.get_hands()[p_].size();
         for (int j = 0; j < 25; j++) {
             Card c = index_to_card(j);
-            int card_value = m.get_type() == COL_HINT ? c.color() : c.rank();
-            bool matches = m.get_type() == COL_HINT ? (m.get_color() == c.color()) : (m.get_rank() == c.rank());
+            int card_value = m.get_type() == COL_HINT ? ((int) c.color()) : ((int) c.rank());
+            bool matches = m.get_type() == COL_HINT ? ((int) m.get_color() == c.color()) : ((int) m.get_rank() == c.rank());
             for (int i = 0; i < handSize; i ++) {
                 bool found = false;
                 for (int l = 0; l < m.get_card_indices().size(); l++) {
@@ -263,6 +264,7 @@ private:
 
     const int numPlayers_;
     const int handSize_;
+    int id_;
 
     const int numColors_ = 5;
     const int numRanks_ = 5;
@@ -304,6 +306,7 @@ private:
 
 public:
     HleSerializedMove(State s,
+                      int id,
                       move lastMove,
                       Card lastCard,  // for play/discard
                       std::vector<int> lastMoveIndices,  // for hint color/rank
@@ -311,7 +314,8 @@ public:
                       int prevNumHint,
                       const std::vector<FactorizedBeliefs> &v0Beliefs)
             : numPlayers_(s.get_num_players())
-            , handSize_(1) // TODO: need to replace with HandSizeFromRules(numPlayers_) but for HanaSim
+            , id_(id)
+            , handSize_(5) // TODO: need to replace with HandSizeFromRules(numPlayers_) but for HanaSim
 
     {
         handSection_ = encodeHands(s);
@@ -350,87 +354,193 @@ public:
     }
 
     std::vector<float> encodeHands(State s) {
+        std::vector<float> handSection(handSectionLen_, 0);
+
+        // self-hand is all zero
+        int codeOffset = bitsPerHand_;
+        for (int playerOffset = 1; playerOffset < numPlayers_; ++playerOffset) {
+            const int pidx = (playerOffset + id_) % numPlayers_;
+            std::vector<Card> hand = s.get_hands()[pidx];
+            for (int cidx = 0; cidx < (int)hand.size(); ++cidx) {
+                int index = card_to_index(hand[cidx]);
+                assert(index < bitsPerCard_);
+                handSection[codeOffset + index] = 1;
+                codeOffset += bitsPerCard_;
+            }
+            codeOffset += bitsPerCard_ * (handSize_ - (int)hand.size());
+        }
+
+        for (int playerOffset = 0; playerOffset < numPlayers_; ++playerOffset) {
+            const int pidx = (playerOffset + id_) % numPlayers_;
+            int size = s.get_hands()[pidx].size();
+            assert(size <= handSize_);
+            if (size < handSize_) {
+                handSection[codeOffset] = 1;
+            }
+            codeOffset += 1;
+        }
+        return handSection;
     }
 
     std::vector<float> encodeBoard(State s) {
+        std::vector<float> boardSection(boardSectionLen_, 0);
+        int codeOffset = 0;
 
+        int remainingDeck = s.get_deck().size();
+        std::fill(boardSection.begin(), boardSection.begin() + remainingDeck, 1);
+        codeOffset += maxRemainingDeckSize_;
+
+        for (int i = 0; i < numColors_; ++i) {
+            int pile_top = s.get_piles()[i + 1];
+            if (pile_top == 0) {
+                codeOffset += numRanks_;
+                continue;
+            }
+            int index = pile_top - 1;
+            boardSection[codeOffset + index] = 1;
+            codeOffset += numRanks_;
+        }
+
+        int remainingInfo = s.get_num_hints();
+        auto infoStart = boardSection.begin() + codeOffset;
+        std::fill(infoStart, infoStart + remainingInfo, 1);
+        codeOffset += maxNumInfoTokens_;
+
+        int remainingLife = s.get_num_lives();
+        auto lifeStart = boardSection.begin() + codeOffset;
+        std::fill(lifeStart, lifeStart + remainingLife, 1);
+        return boardSection;
     }
 
     std::vector<float> encodeDiscard(State s) {
+        std::vector<float> discardSection(maxDeckSize_, 0);
 
+        std::vector<int> discardCount(numColors_ * numRanks_, 0);
+        for (Card c : s.get_discards()) {
+            ++discardCount[card_to_index(c)];
+        }
+
+        int offset = 0;
+        for (int c = 0; c < numColors_; ++c) {
+            for (int r = 0; r < numRanks_; ++r) {
+                int numDiscarded = discardCount[c * numRanks_ + r];
+                int numCard = NumberCardInstance(c, r);
+                for (int i = 0; i < numCard; ++i) {
+                    discardSection[offset + i] = i < numDiscarded ? 1 : 0;
+                }
+                offset += numCard;
+            }
+        }
+        return discardSection;
     }
 
     std::vector<float> encodeLastAction(State s,
             move lastMove,
             Card lastCard,               // for play/discard
-            Card lastMoveIndices, // for hint color/rank
+            std::vector<int> lastMoveIndices, // for hint color/rank
             int prevScore,
             int prevNumHint) {
+        std::vector<float> lastAction(lastActionSectionLen_, 0);
+        // first step, no prev action
+        if (lastMove.get_type() == INVALID_MOVE) {
+            return lastAction;
+        }
+
+        int offset = 0;
+        int lastActivePlayer = (s.get_active_player() + numPlayers_ - 1) % numPlayers_;
+        int relativeIdx = (numPlayers_ + lastActivePlayer - id_) % numPlayers_;
+        lastAction[relativeIdx] = 1;
+        offset += numPlayers_;
+
+        // move type
+        int typeIdx = (int)lastMove.get_type() - 1;
+        lastAction[offset + typeIdx] = 1;
+        offset += numMoveTypes_;
+
+        if (lastMove.get_type() == COL_HINT || lastMove.get_type() == RANK_HINT) {
+            int targetPlayer = (lastMove.get_to() + numPlayers_ - id_) % numPlayers_;
+            lastAction[offset + targetPlayer] = 1;
+        }
+        offset += numPlayers_;
+
+        // color revealed
+        if (lastMove.get_type() == COL_HINT) {
+            lastAction[offset + ((int)lastMove.get_color() - 1)] = 1;
+        }
+        offset += numColors_;
+
+        // value revealed
+        if (lastMove.get_type() == RANK_HINT) {
+            lastAction[offset + ((int)lastMove.get_rank() - 1)] = 1;
+        }
+        offset += numRanks_;
+
+        // reveal outcome
+        if (lastMove.get_type() == RANK_HINT || lastMove.get_type() == COL_HINT) {
+            for (int i = 0; i < handSize_; i++) {
+                for (int j = 0; j < lastMoveIndices.size(); j++) {
+                    if (lastMoveIndices[j] == i) lastAction[offset + i] = 1; break; 
+                }
+            }
+        }
+        offset += handSize_;
+
+        // position played/discarded
+        if (lastMove.get_type() == PLAY || lastMove.get_type() == DISCARD) {
+            lastAction[offset + lastMove.get_card_index()] = 1;
+        }
+        offset += handSize_;
+
+        // card played/discarded
+        if (lastMove.get_type() == PLAY || lastMove.get_type() == DISCARD) {
+            lastAction[offset + card_to_index(lastCard)] = 1;
+        }
+        offset += bitsPerCard_;
+
+        // std::cout << offset << ", " << LAST_ACTION_SIZE << std::endl;
+        // whether success play
+        if (lastMove.get_type() == PLAY) {
+            int curr_score = 0;
+            for (int top : s.get_piles()) curr_score += top;
+            if (curr_score > prevScore) {
+                lastAction[offset] = 1;
+            }
+            if (s.get_num_hints() > prevNumHint) {
+                lastAction[offset + 1] = 1;
+            }
+        }
+        offset += 2;
+        return lastAction;
     }
 
     std::vector<float> encodeBelief( State s, const std::vector<FactorizedBeliefs>& v0Beliefs) {
+        std::vector<float> beliefSection(beliefSectionLen_, 0);
+
+        int offset = 0;
+        for (int playerOffset = 0; playerOffset < numPlayers_; ++playerOffset) {
+            int player = (playerOffset + id_) % numPlayers_;
+            const auto& belief = v0Beliefs[player];
+            auto beliefArray = belief.get();
+            for (int cardIdx = 0; cardIdx < handSize_; ++cardIdx) {
+                for (int i = 0; i < bitsPerCard_; ++i) {
+                    beliefSection[offset + i] = beliefArray[cardIdx][i];
+                }
+                offset += bitsPerCard_;
+
+                for (int i = 0; i < numColors_; ++i) {
+                    beliefSection[offset] = belief.colorRevealed.get(cardIdx * 5 + i);
+                    ++offset;
+                }
+
+                for (int i = 0; i < numRanks_; ++i) {
+                    beliefSection[offset] = belief.rankRevealed.get(cardIdx * 5 + i);
+                    ++offset;
+                }
+            }
+        }
+        return beliefSection;
     }
-
-    void dumpArray() const {
-        assert(false);
-        // printf("SerializedMove: ");
-        // const float *data = reinterpret_cast<const float *>(this);
-        // for (int i = 0; i < sizeof(*this) / sizeof(float); i++) {
-        //   printf("%.1f ", data[i]);
-        // }
-        // printf("\n");
-    }
-
-    void write(std::ostream &out) const {
-        assert(false);
-        // out.write(reinterpret_cast<const char*>(this), sizeof(*this));
-        // out.flush();
-    }
-
-    void log(std::ostream &out) const {
-        auto s = toArray();
-        std::cout << "size of feature: " << s.size() << std::endl;
-        out << "hands" << std::endl;
-        for (auto v : handSection_) {
-            out << v << " ";
-        }
-        out << std::endl;
-
-        out << "board" << std::endl;
-        for (auto v : boardSection_) {
-            out << v << " ";
-        }
-        out << std::endl;
-
-        out << "discard" << std::endl;
-        for (auto v : discardSection_) {
-            out << v << " ";
-        }
-        out << std::endl;
-
-        out << "last action" << std::endl;
-        for (auto v : lastActionSection_) {
-            out << v << " ";
-        }
-        out << std::endl;
-
-        out << "card knowledge" << std::endl;
-        for (auto v : beliefSection_) {
-            out << v << " ";
-        }
-        out << std::endl;
-    }
-
-    float sum() const {
-        auto v = toArray();
-        float s = 0;
-        for (auto val : v) {
-            s += val;
-        }
-        return s;
-    }
-
-    std::vector<float> toArray() const {
+    std::vector<float> toArray() {
         std::vector<float> res;
         res.insert(res.end(), handSection_.begin(), handSection_.end());
         res.insert(res.end(), boardSection_.begin(), boardSection_.end());
@@ -443,6 +553,7 @@ public:
         // std::cout << "size of feature: " << res.size() << std::endl;
         return res;
     }
+
 };
 
 int move_to_index(move m, State s, int id, int num_cards, int num_players) {
@@ -503,4 +614,12 @@ std::vector<move> get_legal_moves(State s, int id) {
         moves.push_back(move(PLAY, id, i));
     }
     return moves;
+}
+
+inline ThreadPool &getThreadPool() {
+    static std::shared_ptr<ThreadPool> pool;
+    if (!pool || pool->stop) {
+        pool.reset(new ThreadPool(10)); // HARD-CODED 10 threads
+    }
+    return *pool;
 }

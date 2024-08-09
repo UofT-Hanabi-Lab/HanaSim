@@ -46,7 +46,7 @@ endif()
 #target_link_libraries(${CMAKE_PROJECT_NAME} ${Python3_LIBRARIES})
 #target_link_libraries(${CMAKE_PROJECT_NAME} numpy)
 
-set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
+set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++20")
 
 
 #set (LDFLAGS "${LDFLAGS} -L/opt/homebrew/lib")

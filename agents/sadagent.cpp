@@ -1,5 +1,4 @@
 #include "include/sadagent.h"
-#include "include/agentUtils.h"
 #include "../bots/include/smartbot.h"
 
 #include <random>
@@ -19,6 +18,14 @@ torch::jit::script::Module get_torchbot_module(const std::string &path) {
         torchbot_module_initialized = true;
     }
     return torchbot_module;
+}
+
+std::shared_ptr<AsyncModelWrapper> get_torchbot_async_module(const std::string &path) {
+  auto &tp = getThreadPool();
+  if (!tp.model) {
+    tp.model = std::make_shared<AsyncModelWrapper>(path, "cuda:0", 400);
+  }
+  return tp.model;
 }
 
 TensorDict make_init_hx() {
@@ -115,11 +122,11 @@ void sadagent::observe_before(State s) {
     if (hand_distribution_v0_.size() == 0) {
         hand_distribution_v0_.reserve(s.get_num_players());
         for (int i = 0; i < s.get_num_players(); i++) {
-            hand_distribution_v0_.emplace_back(s, i);
+            hand_distribution_v0_.emplace_back(s, i, num_cards_);
         }
     }
     check_beliefs_(s);
-    HleSerializedMove frame = HleSerializedMove(s, last_move_, last_active_card_, last_move_indices_, prev_score_, prev_num_hint_, hand_distribution_v0_);
+    HleSerializedMove frame = HleSerializedMove(s, id_, last_move_, last_active_card_, last_move_indices_, prev_score_, prev_num_hint_, hand_distribution_v0_);
     auto output = apply_model(frame);
 
     if (s.get_active_player() == id_) {
@@ -184,4 +191,83 @@ void sadagent::observe_after(State s) {
         hand_distribution_v0_[player_about_to_draw_].updateFromDraw(deck_count, last_move_.get_card_index(), s, num_cards_);
         player_about_to_draw_ = -1;
     }
+}
+
+torch::Tensor sadagent::apply_model(HleSerializedMove &frame) {
+    std::vector<float> frame_vec = frame.toArray();
+    auto feats = torch::zeros({(long int) frame_vec.size()});
+    auto feats_data = feats.data_ptr<float>();
+    for (size_t i = 0; i < frame_vec.size(); i++) {
+        if (frame_vec[i] != frame_vec[i]) {
+            std::cerr << "input data " << i << " = " << frame_vec[i] << std::endl;
+            throw std::runtime_error("Inputs are NaN");
+        }
+        feats_data[i] = frame_vec[i];
+    }
+
+    // std::vector<torch::jit::IValue> inputs;
+    // inputs.push_back(feats);
+    // inputs.push_back(*hx_);
+
+  // Execute the model and turn its output into a tensor.
+    // std::cerr << "Got NN input of size" << feats.sizes() << std::endl;
+    // std::vector<torch::jit::IValue> outputs = get_torchbot_module(model_name_).forward(inputs).toTuple()->elements();
+    // assert(outputs.size() == 2);
+    // at::Tensor output = outputs[0].toTensor();
+    // std::cerr << "Got NN output of size " << output.sizes() << std::endl;
+    // hx_ = std::make_shared<torch::jit::IValue>(outputs[1]);
+
+    TensorDict input = hx_;
+    input["s"] = feats;
+    auto output = get_torchbot_async_module(model_name_)->forward(input);
+    auto afind = output.find("a");
+    auto action = afind->second;
+    output.erase(afind);
+    hx_ = std::move(output);
+
+    return action;
+}
+
+void sadagent::check_beliefs_(const State s) {
+  for (int p = 0; p < s.get_num_players(); p++) {
+    auto v0 = hand_distribution_v0_[p].get();
+    auto true_hand = s.get_hands()[p];
+    for (int card_index = 0; card_index < s.get_hands()[p].size(); card_index++) {
+      if (v0[card_index][card_to_index(true_hand[card_index])] == 0) {
+        throw std::runtime_error("Bad v0 beliefs: " + std::to_string(card_index));
+      }
+    }
+  }
+}
+
+void sadagent::observe(State s, move m) {
+    observe_before(s);
+    if (m.get_type() == PLAY) {
+        observe_play(s, m);
+    } else if (m.get_type() == DISCARD) {
+        observe_discard(s, m);
+    } else if (m.get_type() == COL_HINT) {
+        observe_color_hint(s, m);
+    } else if (m.get_type() == RANK_HINT) {
+        observe_rank_hint(s, m);
+    }  
+}
+
+move sadagent::play(State s) {
+    return the_move_;
+}
+
+int sadagent::get_id() {
+    return id_;
+}
+int sadagent::get_n_cards() {
+    return num_cards_;
+}
+
+const std::map<int, float> &sadagent::getActionProbs() const {
+    return action_probs_;
+}
+
+void sadagent::setActionUncertainty(float action_unc) {
+    action_unc_ = action_unc;
 }

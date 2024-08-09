@@ -105,16 +105,16 @@ class AsyncModelWrapper {
             duration = duration_cast<microseconds>(stop - start).count();
             timer_["post_process"] += duration;
             }
-        }
+    }
 
-        ~AsyncModelWrapper() {
-            {
-                std::unique_lock<std::mutex> lock(batcher_.m_next_slot_);
-                batcher_.exit_ = true;
-            }
-            batcher_.cv_get_batch_.notify_all();
-            forward_thread_.join();
-        } 
+    ~AsyncModelWrapper() {
+        {
+            std::unique_lock<std::mutex> lock(batcher_.m_next_slot_);
+            batcher_.exit_ = true;
+        }
+        batcher_.cv_get_batch_.notify_all();
+        forward_thread_.join();
+    } 
 
 
     private:
