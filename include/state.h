@@ -11,11 +11,13 @@ class State {
     int hint_tokens_;
     int lives_;
     std::vector<Card> deck_;
+    std::vector<Card> init_deck_;
     std::vector<Card> discards_;
     std::vector<int> piles_; // rank of top most card in each pile (0 if pile is empty)
 
 public:
-    State(int num_players, int cards_per_hand);
+    State(int num_players);
+    State(int num_players, std::vector<Card> deck); // provide an already shuffled deck
 
     std::vector<std::vector<Card>> get_hands() const;
     int get_num_hints() const;
@@ -25,4 +27,5 @@ public:
     std::vector<Card> get_deck() const;
 
     void transition(move m, bool log);
+    void reset();
 };

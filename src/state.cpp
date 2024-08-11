@@ -5,11 +5,8 @@
 
 #include "../include/state.h"
 
-State::State(int num_players, int cards_per_hand) {
-    num_players_ = num_players;
-    cards_per_hand_ = cards_per_hand;
-    hint_tokens_ = 8;
-    lives_ = 3;
+State::State(int num_players) {
+
     deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five), 
               Card(blue, one), Card(blue, one), Card(blue, one), Card(blue, two), Card(blue, two), Card(blue, three), Card(blue, three), Card(blue, four), Card(blue, four), Card(blue, five),
               Card(yellow, one), Card(yellow, one), Card(yellow, one), Card(yellow, two), Card(yellow, two), Card(yellow, three), Card(yellow, three), Card(yellow, four), Card(yellow, four), Card(yellow, five),
@@ -38,13 +35,40 @@ State::State(int num_players, int cards_per_hand) {
     std::random_device rd;
     std::default_random_engine gen(rd());
     std::shuffle(deck_.begin(), deck_.end(), gen);
+    num_players_ = num_players;
+    hint_tokens_ = 8;
+    lives_ = 3;
+    init_deck_ = {};
+    for (int i = 0; i < deck_.size(); i++) init_deck_.push_back(deck_[i]);
+    cards_per_hand_ = (num_players <= 3) ? 5 : 4;
     // Distributing cards to players
     hands_ = {};
     for (int p = 0; p < num_players_; p++) {
         std::vector<Card> hand = {};
         for (int n = 0; n < cards_per_hand_; n++) {
             hand.push_back(deck_.back());
+            deck_.pop_back();
+        }
+        hands_.push_back(hand);
+    }
+    discards_ = {};
+    piles_ = {0, 0, 0, 0, 0, 0}; // all piles are empty
+}
 
+State::State(int num_players, std::vector<Card> deck) {
+    num_players_ = num_players;
+    hint_tokens_ = 8;
+    lives_ = 3;
+    deck_ = deck;
+    init_deck_ = {};
+    for (int i = 0; i < deck_.size(); i++) init_deck_.push_back(deck_[i]);
+    cards_per_hand_ = (num_players <= 3) ? 5 : 4;
+    // Distributing cards to players
+    hands_ = {};
+    for (int p = 0; p < num_players_; p++) {
+        std::vector<Card> hand = {};
+        for (int n = 0; n < cards_per_hand_; n++) {
+            hand.push_back(deck_.back());
             deck_.pop_back();
         }
         hands_.push_back(hand);
@@ -121,3 +145,19 @@ std::vector<std::vector<Card>> State::get_hands() const {
     return hands_;
 }
 
+void State::reset() {
+    deck_ = init_deck_;
+    lives_ = 3;
+    hint_tokens_ = 8;
+    hands_ = {};
+    for (int p = 0; p < num_players_; p++) {
+        std::vector<Card> hand = {};
+        for (int n = 0; n < cards_per_hand_; n++) {
+            hand.push_back(deck_.back());
+            deck_.pop_back();
+        }
+        hands_.push_back(hand);
+    }
+    discards_ = {};
+    piles_ = {0, 0, 0, 0, 0, 0};
+}

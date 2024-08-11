@@ -160,6 +160,13 @@ holmesbot::holmesbot(int n_cards, int id, int n_players) {
     for (int i = 0; i < n_players; i++) {
         hand_knowledge_[i].resize(n_cards);
     }
+    for (int i = 0; i < n_players; i++) {
+        for (int j = 0; j < n_cards; j++) {
+            hand_knowledge_[i][j].is_playable = false;
+            hand_knowledge_[i][j].is_valuable = false;
+            hand_knowledge_[i][j].is_worthless = false;
+        }
+    }
     std::memset(played_count_, '\0', sizeof played_count_);
 }
 
@@ -483,18 +490,22 @@ move holmesbot::give_helpful_hint(State s) {
 move holmesbot::play(State s) {
     move m = give_valuable_warning(s);
     if (m.get_type() != INVALID_MOVE) {
+        std::cout << "warn" << std::endl;
         return m;
     }
     m = play_lowest_playable(s);
     if (m.get_type() != INVALID_MOVE) {
+        std::cout << "lowplay" << std::endl;
         return m;
     }
     m = give_helpful_hint(s);
     if (m.get_type() != INVALID_MOVE) {
+        std::cout << "help" << std::endl;
         return m;
     }
     m = play_mystery(s);
     if (m.get_type() != INVALID_MOVE) {
+        std::cout << "mystery" << std::endl;
         return m;
     }
 

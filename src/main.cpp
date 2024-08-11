@@ -114,7 +114,9 @@ int main(int argc, char *argv[])
 
         // sequential loop
 //        omp_set_num_threads(1);
-        #pragma omp parallel for schedule(static) num_threads(1)
+        
+        //#pragma omp parallel for schedule(static) num_threads(1)
+        State init_state = State(num_players);
         for (int i=0; i < num_games; i++) {
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
@@ -133,7 +135,7 @@ int main(int argc, char *argv[])
                 players.push_back(p);
             }
 
-            State init_state = State(num_players, 4);
+            
             if (log_games) {
                 for (std::vector<Card> hand : init_state.get_hands()) {
                     for (Card c : hand) {
@@ -146,6 +148,10 @@ int main(int argc, char *argv[])
             int score = newgame.run(log_games);
             total_score += score;
             if (score == 25) perfects++;
+            for (int id = 0; id < num_players; id++) {
+                delete ((holmesbot*) players[id]);
+            }
+            init_state.reset();
         }
 
         float average_score = (float)total_score / (float)num_games;

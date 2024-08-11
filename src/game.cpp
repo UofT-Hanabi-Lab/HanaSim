@@ -57,17 +57,16 @@ int game::run(bool log_game) {
             curr_score = score;
             turn++;
             curr_player = (curr_player + 1) % players_.size();
+            if (curr_state_.get_num_lives() == 0) {
+                if (log_game) std::cout << "GAME OVER. SCORE:" << curr_score << std::endl;
+                return curr_score;
+            } else if (curr_score == 25) {
+                if (log_game) std::cout << "GAME WON!" << std::endl;
+                return curr_score;
+            }
         }
-        if (curr_state_.get_num_lives() == 0) {
-            if (log_game) std::cout << "GAME OVER. SCORE:" << curr_score << std::endl;
-            return curr_score;
-        } else if (curr_score == 25) {
-            if (log_game) std::cout << "GAME WON!" << std::endl;
-            return curr_score;
-        } else {
-            if (log_game) std::cout << "GAME FINISHED. SCORE:" << curr_score << std::endl;
-            return curr_score;
-        }
+        if (log_game) std::cout << "GAME FINISHED. SCORE:" << curr_score << std::endl;
+        return curr_score;
     } else {
         if (log_game) std::cout << "GAME WON!" << std::endl;
         return curr_score;
