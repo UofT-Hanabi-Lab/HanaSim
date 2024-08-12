@@ -467,12 +467,12 @@ bool cardknowledge::could_be_valuable(int rank, State s) {
     new_knowl.set_must_be(Rank(rank));
     return (new_knowl.valuable(s) != NO);
 }
-smartbot::smartbot(int n_cards, int id, int n_players) {
+smartbot::smartbot(int id, int n_players) {
     id_ = id;
-    num_cards_ = n_cards;
+    num_cards_ = (n_players <= 3) ? 5 : 4;
     hand_knowledge_.resize(n_players);
     for (int i = 0; i < n_players; i++) {
-        hand_knowledge_[i].resize(n_cards, cardknowledge(this));
+        hand_knowledge_[i].resize(num_cards_, cardknowledge(this));
     }
     memset(played_count_, '\0', sizeof played_count_);
 }

@@ -116,26 +116,26 @@ int main(int argc, char *argv[])
 //        omp_set_num_threads(1);
         
         //#pragma omp parallel for schedule(static) num_threads(1)
-        State init_state = State(num_players);
+        //State init_state = State(num_players);
         for (int i=0; i < num_games; i++) {
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
                 player* p;
                 if (bot_types[id] == "holmes") {
-                    p = new holmesbot(4, id, num_players);
+                    p = new holmesbot(id, num_players);
                 } else if (bot_types[id] == "smart") {
-                    p = new smartbot(4, id, num_players);
+                    p = new smartbot(id, num_players);
                 } else if (bot_types[id] == "random") {
-                    p = new randombot(4, id);
+                    p = new randombot(num_players, id);
                 } else if (bot_types[id] == "simple") {
-                    p = new simplebot(4, id, num_players);
+                    p = new simplebot(id, num_players);
                 } else if (bot_types[id] == "human") {
-                    p = new humanplayer(4, id);
+                    p = new humanplayer(id, num_players);
                 }
                 players.push_back(p);
             }
 
-            
+            State init_state = State(num_players);
             if (log_games) {
                 for (std::vector<Card> hand : init_state.get_hands()) {
                     for (Card c : hand) {
@@ -144,14 +144,11 @@ int main(int argc, char *argv[])
                 }
             }
 
-            game newgame(init_state, players);
+            game newgame = game(init_state, players);
             int score = newgame.run(log_games);
             total_score += score;
             if (score == 25) perfects++;
-            for (int id = 0; id < num_players; id++) {
-                delete ((holmesbot*) players[id]);
-            }
-            init_state.reset();
+            //init_state.reset();
         }
 
         float average_score = (float)total_score / (float)num_games;

@@ -71,7 +71,7 @@ class holmesbot final : public player {
 
 
 public:
-    holmesbot(int n_cards, int id, int n_players);
+    holmesbot(int id, int n_players);
     std::vector<move> get_legal_moves(State s, int id);
     move play(State s);
     void observe(State s, move m);

@@ -9,7 +9,7 @@ class humanplayer : public player {
 
 
 public:
-    humanplayer(int n_cards, int id);
+    humanplayer(int id, int num_players);
     std::vector<move> get_legal_moves(State s, int id);
     move play(State s);
     void observe(State s, move m);

@@ -69,7 +69,7 @@ class simplebot final : public player {
    move play_mystery(State s);
 
 public:
-   simplebot(int n_cards, int id, int n_players);
+   simplebot(int id, int n_players);
    std::vector<move> get_legal_moves(State s, int id);
    move play(State s);
    void observe(State s, move m);

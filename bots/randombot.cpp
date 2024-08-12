@@ -10,7 +10,7 @@
 
 
 
-randombot::randombot(int n_cards, int id) : num_cards_(n_cards), id_(id) {    
+randombot::randombot(int id, int num_players) : num_cards_((num_players <= 3) ? 5 : 4), id_(id) {    
 }
 
 

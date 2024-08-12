@@ -8,7 +8,7 @@
 
 
 
-humanplayer::humanplayer(int n_cards, int id) : num_cards_(n_cards), id_(id) {
+humanplayer::humanplayer(int id, int num_players) : num_cards_((num_players <= 3) ? 5 : 4), id_(id) {
 }
 
 void humanplayer::observe(State s, move m) {};

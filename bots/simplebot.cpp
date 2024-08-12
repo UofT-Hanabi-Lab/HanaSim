@@ -91,13 +91,13 @@ void cardknowledge::set_cannot_be(Rank rank)
    }
 }
 
-simplebot::simplebot(int n_cards, int id, int n_players)
+simplebot::simplebot(int id, int n_players)
 {
-   num_cards_ = n_cards;
+   num_cards_ = (n_players <= 3) ? 5 : 4;
    id_ = id;
    hand_knowledge_.resize(n_players);
    for (int i = 0; i < n_players; i++) {
-       hand_knowledge_[i].resize(n_cards);
+       hand_knowledge_[i].resize(num_cards_);
    }
 }
 
