@@ -16,6 +16,8 @@ randombot::randombot(int id, int num_players) : num_cards_((num_players <= 3) ? 
 
 void randombot::observe(State s, move m) {};
 
+void randombot::observe_before_move(State s) {};
+
 
 int randombot::get_id() {
     return id_;

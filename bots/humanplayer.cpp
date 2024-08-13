@@ -12,6 +12,7 @@ humanplayer::humanplayer(int id, int num_players) : num_cards_((num_players <= 3
 }
 
 void humanplayer::observe(State s, move m) {};
+void humanplayer::observe_before_move(State s) {};
 
 int humanplayer::get_id() {
     return id_;

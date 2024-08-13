@@ -253,7 +253,6 @@ void simplebot::observe_rank_hint(State s, move m) {
 }
 
 void simplebot::observe(State s, move m) {
-   observe_before_move(s);
    if (m.get_type() == PLAY) {
        observe_before_play(s, m);
    } else if (m.get_type() == DISCARD) {

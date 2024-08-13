@@ -20,6 +20,10 @@ int game::run(bool log_game) {
     int turn = 1;
     while ((curr_score < 25) && (curr_state_.get_num_lives() > 0) && !(curr_state_.get_deck().empty())) {
         if (log_game) std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
+        for (int i = 0; i < players_.size(); i++) {
+            State s = curr_state_;
+            (*(players_[i])).observe_before_move(curr_state_);
+        }
         move next_move = (*(players_[curr_player])).play(curr_state_);
         if (log_game) next_move.str();
 
@@ -44,6 +48,10 @@ int game::run(bool log_game) {
     } else if (curr_state_.get_deck().empty()) {
         for (int i = 0; i < players_.size(); i++) {
             if (log_game) std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
+            for (int i = 0; i < players_.size(); i++) {
+                State s = curr_state_;
+                (*(players_[i])).observe_before_move(curr_state_);
+            }
             move next_move = (*(players_[curr_player])).play(curr_state_);
             if (log_game) next_move.str();
             for (int i = 0; i < players_.size(); i++) {

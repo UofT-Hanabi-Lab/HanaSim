@@ -117,6 +117,11 @@ int main(int argc, char *argv[])
         
         //#pragma omp parallel for schedule(static) num_threads(1)
         //State init_state = State(num_players);
+        // std::vector<Card> deck = { Card(yellow, three), Card(blue, five), Card(red, three), Card(white, one), Card(green, one), Card(white, four), Card(yellow, one), Card(yellow, one), Card(white, one), Card(red, five), 
+        // Card(red, two), Card(blue, four), Card(blue, three), Card(white, two), Card(green, three), Card(blue, one), Card(red, four), Card(white, two), Card(blue, one), Card(red, one), Card(yellow, five), Card(blue, three),
+        // Card(green, one), Card(green, four), Card(green, two), Card(red, three), Card(yellow, four), Card(blue, two), Card(green, four), Card(white, four), Card(blue, one), Card(green, two), Card(yellow, two), 
+        // Card(green, one), Card(blue, two), Card(green, three), Card(blue, four), Card(yellow, three), Card(white, five), Card(red, one), Card(white, three), Card(yellow, one), Card(white, one), Card(red, one), Card(yellow, two), 
+        // Card(red, four), Card(white, three), Card(red, two), Card(yellow, four), Card(green, five)};
         for (int i=0; i < num_games; i++) {
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {

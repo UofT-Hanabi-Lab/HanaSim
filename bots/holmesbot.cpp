@@ -178,10 +178,11 @@ bool holmesbot::could_be_valuable(State s, cardknowledge ck, int rank) {
 }
 
 void holmesbot::shift_knowledge(int p_index, int c_index) {
-    for (int i = c_index; i + 1 < hand_knowledge_[p_index].size(); i++) {
-        hand_knowledge_[p_index][i] = hand_knowledge_[p_index][i + 1];
+    std::vector<cardknowledge> &vec = hand_knowledge_[p_index];
+    for (int i = c_index; i + 1 < vec.size(); i++) {
+        vec[i] = vec[i + 1];
     }
-    hand_knowledge_[p_index].back() = cardknowledge();
+    vec.back() = cardknowledge();
 }
 
 bool holmesbot::update_located_count() {
@@ -305,7 +306,6 @@ void holmesbot::observe_rank_hint(State s, move m) {
 }
 
 void holmesbot::observe(State s, move m) {
-    observe_before_move(s);
     if (m.get_type() == PLAY) {
         observe_before_play(s, m);
     } else if (m.get_type() == DISCARD) {

@@ -55,7 +55,6 @@ class simplebot final : public player {
 //    void shift_knowledge(int p_index, int c_index);
    void invalidateKnol(int p_index, int c_index);
    void wipeOutPlayables(Card c);
-   void observe_before_move(State s);
    void observe_before_play(State s, move m);
    void observe_before_discard(State s, move m);
    void observe_color_hint(State s, move m);
@@ -73,6 +72,7 @@ public:
    std::vector<move> get_legal_moves(State s, int id);
    move play(State s);
    void observe(State s, move m);
+   void observe_before_move(State s);
    int get_id();
    int get_n_cards();
 };
