@@ -109,7 +109,6 @@ class smartbot final : public player {
     void no_warning_given(int from, State s);
 
 
-    void observe_before_move(State s);
     void observe_before_play(State s, move m);
     void observe_before_discard(State s, move m);
     void observe_color_hint(State s, move m);
@@ -133,10 +132,11 @@ class smartbot final : public player {
 
 
 public:
-    smartbot(int n_cards, int id, int n_players);
+    smartbot(int id, int n_players);
     std::vector<move> get_legal_moves(State s, int id);
     move play(State s);
     void observe(State s, move m);
+    void observe_before_move(State s);
     int get_id();
     int get_n_cards();
 };

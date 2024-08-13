@@ -9,10 +9,11 @@ class randombot : public player {
 
 
 public:
-    randombot(int n_cards, int id);
+    randombot(int id, int num_players);
     std::vector<move> get_legal_moves(State s, int id);
     move play(State s);
     void observe(State s, move m);
+    void observe_before_move(State s);
     int get_id();
     int get_n_cards();
 };

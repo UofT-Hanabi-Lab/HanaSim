@@ -114,26 +114,33 @@ int main(int argc, char *argv[])
 
         // sequential loop
 //        omp_set_num_threads(1);
-        #pragma omp parallel for schedule(static) num_threads(1)
+        
+        //#pragma omp parallel for schedule(static) num_threads(1)
+        //State init_state = State(num_players);
+        // std::vector<Card> deck = { Card(yellow, three), Card(blue, five), Card(red, three), Card(white, one), Card(green, one), Card(white, four), Card(yellow, one), Card(yellow, one), Card(white, one), Card(red, five), 
+        // Card(red, two), Card(blue, four), Card(blue, three), Card(white, two), Card(green, three), Card(blue, one), Card(red, four), Card(white, two), Card(blue, one), Card(red, one), Card(yellow, five), Card(blue, three),
+        // Card(green, one), Card(green, four), Card(green, two), Card(red, three), Card(yellow, four), Card(blue, two), Card(green, four), Card(white, four), Card(blue, one), Card(green, two), Card(yellow, two), 
+        // Card(green, one), Card(blue, two), Card(green, three), Card(blue, four), Card(yellow, three), Card(white, five), Card(red, one), Card(white, three), Card(yellow, one), Card(white, one), Card(red, one), Card(yellow, two), 
+        // Card(red, four), Card(white, three), Card(red, two), Card(yellow, four), Card(green, five)};
         for (int i=0; i < num_games; i++) {
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
                 player* p;
                 if (bot_types[id] == "holmes") {
-                    p = new holmesbot(4, id, num_players);
+                    p = new holmesbot(id, num_players);
                 } else if (bot_types[id] == "smart") {
-                    p = new smartbot(4, id, num_players);
+                    p = new smartbot(id, num_players);
                 } else if (bot_types[id] == "random") {
-                    p = new randombot(4, id);
+                    p = new randombot(num_players, id);
                 } else if (bot_types[id] == "simple") {
-                    p = new simplebot(4, id, num_players);
+                    p = new simplebot(id, num_players);
                 } else if (bot_types[id] == "human") {
-                    p = new humanplayer(4, id);
+                    p = new humanplayer(num_players, id);
                 }
                 players.push_back(p);
             }
 
-            State init_state = State(num_players, 4);
+            State init_state = State(num_players);
             if (log_games) {
                 for (std::vector<Card> hand : init_state.get_hands()) {
                     for (Card c : hand) {
@@ -142,10 +149,11 @@ int main(int argc, char *argv[])
                 }
             }
 
-            game newgame(init_state, players);
+            game newgame = game(init_state, players);
             int score = newgame.run(log_games);
             total_score += score;
             if (score == 25) perfects++;
+            //init_state.reset();
         }
 
         float average_score = (float)total_score / (float)num_games;

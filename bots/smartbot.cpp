@@ -467,12 +467,12 @@ bool cardknowledge::could_be_valuable(int rank, State s) {
     new_knowl.set_must_be(Rank(rank));
     return (new_knowl.valuable(s) != NO);
 }
-smartbot::smartbot(int n_cards, int id, int n_players) {
+smartbot::smartbot(int id, int n_players) {
     id_ = id;
-    num_cards_ = n_cards;
+    num_cards_ = (n_players <= 3) ? 5 : 4;
     hand_knowledge_.resize(n_players);
     for (int i = 0; i < n_players; i++) {
-        hand_knowledge_[i].resize(n_cards, cardknowledge(this));
+        hand_knowledge_[i].resize(num_cards_, cardknowledge(this));
     }
     memset(played_count_, '\0', sizeof played_count_);
 }
@@ -555,9 +555,9 @@ bool smartbot::update_located_count() {
 
 
 int smartbot::next_discard_index(State s, int player_index) {
-    int best_f = 0;
+    double best_f = 0;
     int best_i = -1;
-    for (int i = 0; i < s.get_hands()[player_index].size(); i++) {
+    for (int i = 0; i < hand_knowledge_[player_index].size(); i++) {
         if (hand_knowledge_[player_index][i].playable(s) == YES) {
             return -1;
         }
@@ -568,7 +568,7 @@ int smartbot::next_discard_index(State s, int player_index) {
             continue;
         }
 
-
+        
         double f = 100 + hand_knowledge_[player_index][i].prob_worthless(s);
         if (f > best_f) {
             best_f = f;
@@ -1077,7 +1077,6 @@ move smartbot::give_helpful_hint(State s) {
 
 
 void smartbot::observe(State s, move m) {
-    observe_before_move(s);
     if (m.get_type() == PLAY) {
         observe_before_play(s, m);
     } else if (m.get_type() == DISCARD) {

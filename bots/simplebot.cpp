@@ -91,13 +91,13 @@ void cardknowledge::set_cannot_be(Rank rank)
    }
 }
 
-simplebot::simplebot(int n_cards, int id, int n_players)
+simplebot::simplebot(int id, int n_players)
 {
-   num_cards_ = n_cards;
+   num_cards_ = (n_players <= 3) ? 5 : 4;
    id_ = id;
    hand_knowledge_.resize(n_players);
    for (int i = 0; i < n_players; i++) {
-       hand_knowledge_[i].resize(n_cards);
+       hand_knowledge_[i].resize(num_cards_);
    }
 }
 
@@ -253,7 +253,6 @@ void simplebot::observe_rank_hint(State s, move m) {
 }
 
 void simplebot::observe(State s, move m) {
-   observe_before_move(s);
    if (m.get_type() == PLAY) {
        observe_before_play(s, m);
    } else if (m.get_type() == DISCARD) {

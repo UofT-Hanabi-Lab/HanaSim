@@ -8,10 +8,12 @@
 
 
 
-humanplayer::humanplayer(int n_cards, int id) : num_cards_(n_cards), id_(id) {
+humanplayer::humanplayer(int num_players, int id) : num_cards_((num_players <= 3) ? 5 : 4), id_(id) {
 }
 
 void humanplayer::observe(State s, move m) {};
+
+void humanplayer::observe_before_move(State s) {};
 
 int humanplayer::get_id() {
     return id_;
@@ -44,10 +46,7 @@ int rank_convert(Rank r) {
     return num;
 }
 
-void humanplayer::print_move(move m, int index){
-//    move::move(move_type type, int to, int from, int card_index, Color color, Rank rank) :
-//    type_(type), to_(to), from_(from), card_index_(card_index), color_(color), rank_(rank) {
-//    }
+void humanplayer::print_move(move m, int index) {
     move_type type = m.get_type();
     int card_index = m.get_card_index();
     Color color = m.get_color();
