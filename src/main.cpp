@@ -10,7 +10,7 @@
 #include "../bots/include/randombot.h"
 #include "../bots/include/holmesbot.h"
 #include "../bots/include/smartbot.h"
-#include "../bots/include/humanplayer.h"
+#include "../include/humanplayer.h"
 #include "../bots/include/simplebot.h"
 //#include "../include/matplotlibcpp.h"
 

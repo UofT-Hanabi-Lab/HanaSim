@@ -3,7 +3,7 @@
 #include <algorithm>
 #include <iterator>
 #include <iostream>
-#include "include/humanplayer.h"
+#include "../include/humanplayer.h"
 #include "../include/move.h"
 
 

@@ -1,6 +1,9 @@
 .vscode
 build/
 
+HanaSim
+HanaTest
+
 # Compiled source #
 ###################
 *.com
