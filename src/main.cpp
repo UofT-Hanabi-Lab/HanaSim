@@ -150,7 +150,6 @@ int main(int argc, char *argv[])
             }
 
             game newgame = game(init_state, players);
-            std::cout << "here";
             int score = newgame.run(log_games);
             total_score += score;
             if (score == 25) perfects++;
