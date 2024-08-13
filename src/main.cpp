@@ -131,7 +131,7 @@ int main(int argc, char *argv[])
                 } else if (bot_types[id] == "smart") {
                     p = new smartbot(id, num_players);
                 } else if (bot_types[id] == "random") {
-                    p = new randombot(num_players, id);
+                    p = new randombot(id, num_players);
                 } else if (bot_types[id] == "simple") {
                     p = new simplebot(id, num_players);
                 } else if (bot_types[id] == "human") {
@@ -150,6 +150,7 @@ int main(int argc, char *argv[])
             }
 
             game newgame = game(init_state, players);
+            std::cout << "here";
             int score = newgame.run(log_games);
             total_score += score;
             if (score == 25) perfects++;
