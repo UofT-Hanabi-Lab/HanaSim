@@ -9,7 +9,7 @@ OBJ = $(patsubst %.cpp, %.o, $(SRC))
 sim: $(OBJ) #tentataive for now because we don't want to compile test.cpp. compile with all object files.
 	$(CXX) $(CXXFLAGS) -o HanaSim $^
 
-test: test.o 
+test: test.o
 	$(CXX) $(CXXFLAGS) -o HanaTest test.o
 
 # bots/%.o: bots/%.cpp bots/include/%.h

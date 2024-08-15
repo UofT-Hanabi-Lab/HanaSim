@@ -15,15 +15,6 @@
 #include "../bots/include/simplebot.h"
 //#include "../include/matplotlibcpp.h"
 
-#include "../bots/holmesbot.cpp"
-#include "../bots/simplebot.cpp"
-#include "../bots/smartbot.cpp"
-#include "../bots/randombot.cpp"
-#include "../src/humanplayer.cpp"
-#include "../src/card.cpp"
-#include "../src/game.cpp"
-#include "../src/move.cpp"
-#include "../src/state.cpp"
 
 //namespace plt = matplotlibcpp;
 
