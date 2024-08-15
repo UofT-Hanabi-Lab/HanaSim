@@ -2,6 +2,7 @@
 #include "move.h"
 #include <vector>
 
+#pragma once
 
 class State {
 

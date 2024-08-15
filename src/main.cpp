@@ -4,7 +4,8 @@
 #include <vector>
 #include <algorithm>
 #include <execution>
-#include <omp.h>
+//#include <omp.h>
+#include "/opt/homebrew/Cellar/libomp/18.1.8/include/omp.h"
 
 #include "../include/game.h"
 #include "../bots/include/randombot.h"
@@ -13,6 +14,16 @@
 #include "../include/humanplayer.h"
 #include "../bots/include/simplebot.h"
 //#include "../include/matplotlibcpp.h"
+
+#include "../bots/holmesbot.cpp"
+#include "../bots/simplebot.cpp"
+#include "../bots/smartbot.cpp"
+#include "../bots/randombot.cpp"
+#include "../src/humanplayer.cpp"
+#include "../src/card.cpp"
+#include "../src/game.cpp"
+#include "../src/move.cpp"
+#include "../src/state.cpp"
 
 //namespace plt = matplotlibcpp;
 

@@ -1,7 +1,0 @@
-/usr/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" -S /tmp/tmp.zB8BHBXaKg -B /tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host
--- Configuring done
--- Generating done
--- Build files have been written to: /tmp/tmp.zB8BHBXaKg/cmake-build-debug-remote-host
-
-Cannot get compiler information:
-	Unable to create a temporary file
