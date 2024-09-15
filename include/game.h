@@ -1,5 +1,5 @@
 #include "player.h"
-
+#pragma once
 
 class game {
     std::vector<player*> players_;

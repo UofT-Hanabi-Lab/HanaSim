@@ -141,3 +141,17 @@ move humanplayer::play(State s) {
     std::cout << "selected move " << num <<std::endl;
     return legal_moves[num];
 }
+
+move humanplayer::play(State s, int num) {
+    std::vector<move> legal_moves = get_legal_moves(s, id_);
+    std::vector<move> m;
+    int move_index = 0;
+    print_hands(s);
+    for (auto & element : legal_moves) {
+        print_move(element, move_index);
+        move_index++;
+    }
+//    std::cout  << "select which move to make ";
+    std::cout << "selected move " << num <<std::endl;
+    return legal_moves[num];
+}

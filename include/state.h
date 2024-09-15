@@ -2,7 +2,7 @@
 #include "move.h"
 #include <vector>
 
-
+#pragma once
 class State {
 
     int num_players_;

@@ -12,6 +12,7 @@ public:
     humanplayer(int num_players, int id);
     std::vector<move> get_legal_moves(State s, int id);
     move play(State s);
+    move play(State s, int num);
     void observe(State s, move m);
     void observe_before_move(State s);
     int get_id();
