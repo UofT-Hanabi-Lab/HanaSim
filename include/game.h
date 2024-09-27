@@ -9,5 +9,7 @@ public:
     game(State init_state, std::vector<player*>);
     int run(bool log_game);
     State get_curr_state();
+
+    int run_test(bool log_game, std::vector<int> test_moves);
 };
 

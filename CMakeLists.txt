@@ -15,7 +15,9 @@ FILE(GLOB Headers include/*.h)
 set (HEADERS ${Headers}
         tests/tests.cpp
         tests/test_game.cpp
-        tests/test_game.h)
+        tests/test_game.h
+        src/game.cpp
+        src/game.cpp)
 
 
 #set(HOMEBREW_PREFIX "/usr/local"

@@ -17,8 +17,9 @@
 
 //#include "../bots/holmesbot.cpp"
 #include "../src/card.cpp"
-//#include "../src/game.cpp"
-#include "test_game.cpp"
+#include "../src/game.cpp"
+//
+// #include "test_game.cpp"
 #include "../src/move.cpp"
 #include "../src/state.cpp"
 #include "../src/humanplayer.cpp"
@@ -70,16 +71,14 @@ int test_create_two_human_player(){
     players.push_back(p2);
     std::vector<Card> deck = test_shuffle_using_seed(494);
     State init_state = State(2, deck);
-    test_game newgame = test_game(init_state, players);
+    game newgame = game(init_state, players);
     std::cout << "tested human player" << std::endl;
     std::vector<int> test_moves;
-    int score = newgame.run(true, test_moves);
+    int score = newgame.run_test(true, test_moves);
     return score;
-    return 0;
 }
 
 int main() {
-
     std::cout << "Tests running :)" << std::endl;
     test_shuffle_using_seed(494);
     test_create_two_human_player();

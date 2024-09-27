@@ -142,7 +142,7 @@ move humanplayer::play(State s) {
     return legal_moves[num];
 }
 
-move humanplayer::play(State s, int num) {
+move humanplayer::play_prechosen(State s, int num) {
     std::vector<move> legal_moves = get_legal_moves(s, id_);
     std::vector<move> m;
     int move_index = 0;
