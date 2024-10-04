@@ -3,6 +3,7 @@
 #include <numeric>
 
 #include "../include/game.h"
+#include "../include/humanplayer.h"
 
 
 State game::get_curr_state() {
@@ -24,8 +25,12 @@ int game::run(bool log_game) {
             State s = curr_state_;
             (*(players_[i])).observe_before_move(curr_state_);
         }
-        move next_move = (*(players_[curr_player])).play(curr_state_);
-        if (log_game) next_move.str();
+
+
+        std::cout << "1234556\n" << std::endl;
+        move next_move = (*(players_[curr_player])).play(curr_state_); // holmesbot code breaks here
+        if (log_game) next_move.str(); 
+        std::cout << "1234556\n" << std::endl;
 
 
         for (int i = 0; i < players_.size(); i++) {
@@ -81,7 +86,7 @@ int game::run(bool log_game) {
     }
 }
 
-int game::run_test(bool log_game, std::vector<int> test_moves) {
+int game::run_test(bool log_game, std::vector<move> test_moves) {
     int curr_score = 0;
     if (log_game) std::cout << "STARTING TEST GAME\n" << std::endl;
     int curr_player = 0;
@@ -92,16 +97,33 @@ int game::run_test(bool log_game, std::vector<int> test_moves) {
             State s = curr_state_;
             (*(players_[i])).observe_before_move(curr_state_);
         }
-        std::cout << "hello "<< std::endl;
-        int num = 9;
-        move next_move = (*(players_[curr_player])).play_prechosen(curr_state_, num); //here
+
+        move chosen = test_moves.back();
+        test_moves.pop_back();
+        //std::vector<move> legal_moves = (players_[curr_player])->get_legal_moves(curr_state_, curr_player);
+                std::cout << "hello "<< std::endl;
+        move next_move = (*(players_[curr_player])).play_prechosen(curr_state_, chosen); //here
+                std::cout << "hello123 "<< std::endl;
+        //next_move = chosen; 
+
+
+        // int c = count(legal_moves.begin(), legal_moves.end(), chosen);
+        // std::cout << c << "helo" << std::endl;
+        // if (c== 1){
+        //     throw std::invalid_argument( "received invalid move" );
+        // }
+
+
         if (log_game) next_move.str();
 
-
+std::cout << "broken?? "<< std::endl;
         for (int i = 0; i < players_.size(); i++) {
             State s = curr_state_;
-            (*(players_[i])).observe(curr_state_, next_move);
+            std::cout << "broken??123 "<< std::endl;
+            (*(players_[i])).observe(curr_state_, next_move); //broken here
+            std::cout << "broken??312 "<< std::endl;
         }
+        std::cout << "broken? "<< std::endl;
 
         curr_state_.transition(next_move, log_game);
         int score = 0;
@@ -120,11 +142,23 @@ int game::run_test(bool log_game, std::vector<int> test_moves) {
             if (log_game) std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
             for (int i = 0; i < players_.size(); i++) {
                 State s = curr_state_;
+
                 (*(players_[i])).observe_before_move(curr_state_);
             }
-            std::cout << "hello "<< std::endl;
-            int num = 9;
-            move next_move = (*(players_[curr_player])).play_prechosen(curr_state_, num); // here
+            
+            move chosen = test_moves.back();
+            test_moves.pop_back();
+            // std::vector<move> legal_moves = (players_[curr_player])->get_legal_moves(curr_state_, curr_id);
+            move next_move = (*(players_[curr_player])).play_prechosen(curr_state_, chosen); //here
+            //next_move = chosen; 
+           
+           
+            // int c = count(legal_moves.begin(), legal_moves.end(), chosen);
+            // std::cout << c << "helo" << std::endl;
+            // if (c==1){
+            //     throw std::invalid_argument( "received invalid move" );
+            // }
+
             if (log_game) next_move.str();
             for (int i = 0; i < players_.size(); i++) {
                 (*(players_[i])).observe(curr_state_, next_move);

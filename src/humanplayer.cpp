@@ -142,16 +142,25 @@ move humanplayer::play(State s) {
     return legal_moves[num];
 }
 
-move humanplayer::play_prechosen(State s, int num) {
+
+move humanplayer::play_prechosen(State s, move chosen_m) {
+    std::cout  << "HELLLLO";
     std::vector<move> legal_moves = get_legal_moves(s, id_);
-    std::vector<move> m;
     int move_index = 0;
     print_hands(s);
+    bool valid = false;
     for (auto & element : legal_moves) {
+        if(valid == false){
+            valid = element.compare(chosen_m);
+        }
         print_move(element, move_index);
         move_index++;
     }
+    if(valid == false){
+        throw std::invalid_argument("received invalid move");
+    }
+    std::cout  << "valid move chosen";
 //    std::cout  << "select which move to make ";
-    std::cout << "selected move " << num <<std::endl;
-    return legal_moves[num];
+    //std::cout << "selected move " << num <<std::endl;
+    return chosen_m;
 }

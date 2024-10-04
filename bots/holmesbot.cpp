@@ -1,5 +1,9 @@
 #include <cstring>
 #include <algorithm>
+#include <random>
+#include <set>
+#include <iterator>
+#include <iostream>
 #include <assert.h>
 
 #include "include/holmesbot.h"
@@ -306,8 +310,11 @@ void holmesbot::observe_rank_hint(State s, move m) {
 }
 
 void holmesbot::observe(State s, move m) {
+    std::cout << "testtest "<< std::endl;
     if (m.get_type() == PLAY) {
+        std::cout << "1 "<< std::endl;
         observe_before_play(s, m);
+        std::cout << "2 "<< std::endl;
     } else if (m.get_type() == DISCARD) {
         observe_before_discard(s, m);
     } else if (m.get_type() == COL_HINT) {
@@ -428,8 +435,11 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
 }
 
 move holmesbot::give_valuable_warning(State s) {
-    int player_to_warn = (id_ + 1) % hand_knowledge_.size();
+    std::cout << "here123\n" << std::endl;
+    int player_to_warn = (id_ + 1) % hand_knowledge_.size(); // for some reason, this line breaks the code 
+        std::cout << "here\n" << std::endl;
     int discard_index = next_discard_index(s, player_to_warn);
+        std::cout << "hello\n" << std::endl;
     if (discard_index == -1) {
         move m = move(INVALID_MOVE);
         return m;
@@ -481,6 +491,7 @@ move holmesbot::give_helpful_hint(State s) {
 }
 
 move holmesbot::play(State s) {
+        std::cout << "MOVE CHOSEN\n" << std::endl;
     move m = give_valuable_warning(s);
     if (m.get_type() != INVALID_MOVE) {
         return m;
@@ -523,8 +534,62 @@ move holmesbot::play(State s) {
             if (hand_knowledge_[id_][i].rank() > hand_knowledge_[id_][best].rank()) best = i;
         }
         m = move(DISCARD, id_, best);
+        
         return m;
     }
+}
+
+move holmesbot::play_prechosen(State s, move chosen_m) {
+    return chosen_m;
+}
+
+std::vector<move> holmesbot::get_legal_moves(State s, int id){
+    std::vector<move> moves;
+    moves = {};
+    std::vector<std::vector<Card>> hands = s.get_hands();
+    if (s.get_num_hints() > 0) {
+        for (int i = 0; i < hands.size(); i++) {
+            std::set<Color> colors;
+            std::set<Rank> ranks;
+            std::map<Color, std::vector<int>> col_to_indices{};
+            std::map<Rank, std::vector<int>> rank_to_indices{};
+            if (i == id) {
+                continue;
+            }
+            std::cout << hands[i].size() << std::endl;
+            for (int j = 0; j < hands[i].size(); j++) {
+                Card c = hands[i][j];
+                colors.insert(c.color());
+                if (auto search = col_to_indices.find(c.color()); search == col_to_indices.end()) {
+                    col_to_indices.insert({c.color(), {j}});
+                } else {
+                    col_to_indices.at(c.color()).push_back(j);
+                }
+                ranks.insert(c.rank());
+                if (auto search = rank_to_indices.find(c.rank()); search == rank_to_indices.end()) {
+                    rank_to_indices.insert({c.rank(), {j}});
+                } else {
+                    rank_to_indices.at(c.rank()).push_back(j);
+                }
+            }
+            for (Color col : colors) {
+                moves.push_back(move(COL_HINT, i, id, col_to_indices.at(col), col));
+            }
+            for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, rank_to_indices.at(rank), rank));
+        }
+    }
+    
+    if (s.get_num_hints() < 8) {
+        for (int i = 0; i < hands[id].size(); i++) {
+            moves.push_back(move(DISCARD, id, i));
+        }
+    }
+    
+    for (int i = 0; i < hands[id].size(); i++) {
+        moves.push_back(move(PLAY, id, i));
+    }
+    
+    return moves;
 }
 
 int holmesbot::get_id() {

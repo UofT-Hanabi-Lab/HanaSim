@@ -15,7 +15,7 @@
 //#include "../bots/include/simplebot.h"
 //#include "../include/matplotlibcpp.h"
 
-//#include "../bots/holmesbot.cpp"
+#include "../bots/holmesbot.cpp"
 #include "../src/card.cpp"
 #include "../src/game.cpp"
 //
@@ -45,6 +45,18 @@ void print_card(Card c){
   	}
 }
 
+// move create_move(move_type type, int to_player, int from_player, std::vector<int> card_indices, int color_or_rank){
+//     if(int(type) == 1){ // color hint
+//         return move(type, to_player, from_player, card_indices, (Color) color_or_rank);
+//     }
+//     if(int(type) == 2){ // rank hint
+//         return move(type, to_player, from_player, card_indices, (Rank) color_or_rank);
+//     }
+//     if(int(type) == 3 || int(type) == 4){ // play
+//         return move(type, from_player, card_indices[0]);
+//     }
+// }
+
 
 std::vector<Card> deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five),
               Card(blue, one), Card(blue, one), Card(blue, one), Card(blue, two), Card(blue, two), Card(blue, three), Card(blue, three), Card(blue, four), Card(blue, four), Card(blue, five),
@@ -63,6 +75,27 @@ std::vector<Card> test_shuffle_using_seed(int seed){
 }
 
 
+int test_create_two_human_player_custom(){
+    player* p1 = new humanplayer(2, 0);
+    player* p2 = new humanplayer(2, 1);
+    std::vector<player*> players = {};
+    players.push_back(p1);
+    players.push_back(p2);
+    std::vector<Card> deck = test_shuffle_using_seed(494);
+    State init_state = State(2, deck);
+    game newgame = game(init_state, players);
+    std::cout << "tested human player" << std::endl;
+
+    // custom list of moves
+    std::vector<move> test_moves = {move((move_type)3, 0, 2), move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
+    move((move_type)3, 1, 2), move((move_type)3, 0, 2)};
+
+    std::reverse(test_moves.begin(), test_moves.end());
+    //for (int i: test_moves) std::cout << i << ' ';
+    int score = newgame.run_test(true, test_moves);
+    return score;
+}
+
 int test_create_two_human_player(){
     player* p1 = new humanplayer(2, 0);
     player* p2 = new humanplayer(2, 1);
@@ -73,7 +106,26 @@ int test_create_two_human_player(){
     State init_state = State(2, deck);
     game newgame = game(init_state, players);
     std::cout << "tested human player" << std::endl;
-    std::vector<int> test_moves;
+    int score = newgame.run(true);
+    return score;
+}
+
+int test_create_two_holmesbot_custom(){
+    player* p1 = new holmesbot(2, 0);
+    player* p2 = new holmesbot(2, 1);
+    std::vector<player*> players = {};
+    players.push_back(p1);
+    players.push_back(p2);
+    std::vector<Card> deck = test_shuffle_using_seed(494);
+    State init_state = State(2, deck);
+    game newgame = game(init_state, players);
+    std::cout << "tested holmesbot custom" << std::endl;
+
+    // custom list of moves
+    std::vector<move> test_moves = {move((move_type)3, 0, 2), move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
+    move((move_type)3, 1, 2), move((move_type)3, 0, 2)};
+
+    std::reverse(test_moves.begin(), test_moves.end());
     int score = newgame.run_test(true, test_moves);
     return score;
 }
@@ -81,6 +133,10 @@ int test_create_two_human_player(){
 int main() {
     std::cout << "Tests running :)" << std::endl;
     test_shuffle_using_seed(494);
-    test_create_two_human_player();
+    //test_create_two_human_player_custom();
+    test_create_two_holmesbot_custom();
+    //test_create_two_human_player();
     return 0;
 }
+
+//5 15 15 

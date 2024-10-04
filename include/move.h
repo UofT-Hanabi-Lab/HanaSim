@@ -33,5 +33,6 @@ public:
     Color get_color();
     Rank get_rank();
     std::vector<int> get_card_indices();
+    bool compare(move m);
     void str();
 };
