@@ -111,8 +111,8 @@ int test_create_two_human_player(){
 }
 
 int test_create_two_holmesbot_custom(){
-    player* p1 = new holmesbot(2, 0);
-    player* p2 = new holmesbot(2, 1);
+    player* p1 = new holmesbot(0, 2);
+    player* p2 = new holmesbot(1, 2);
     std::vector<player*> players = {};
     players.push_back(p1);
     players.push_back(p2);
