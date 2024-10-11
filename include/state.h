@@ -1,6 +1,8 @@
 #include "card.h"
 #include "move.h"
 #include <vector>
+#include <set>
+
 
 #pragma once
 class State {
@@ -19,6 +21,7 @@ public:
     State(int num_players);
     State(int num_players, std::vector<Card> deck); // provide an already shuffled deck
 
+    std::vector<move> get_legal_moves(int id);
     std::vector<std::vector<Card>> get_hands() const;
     int get_num_hints() const;
     int get_num_lives() const;

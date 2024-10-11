@@ -101,9 +101,7 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
         move chosen = test_moves.back();
         test_moves.pop_back();
         //std::vector<move> legal_moves = (players_[curr_player])->get_legal_moves(curr_state_, curr_player);
-                std::cout << "hello "<< std::endl;
         move next_move = (*(players_[curr_player])).play_prechosen(curr_state_, chosen); //here
-                std::cout << "hello123 "<< std::endl;
         //next_move = chosen; 
 
 
@@ -116,14 +114,10 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
 
         if (log_game) next_move.str();
 
-std::cout << "broken?? "<< std::endl;
         for (int i = 0; i < players_.size(); i++) {
             State s = curr_state_;
-            std::cout << "broken??123 "<< std::endl;
             (*(players_[i])).observe(curr_state_, next_move); //broken here
-            std::cout << "broken??312 "<< std::endl;
         }
-        std::cout << "broken? "<< std::endl;
 
         curr_state_.transition(next_move, log_game);
         int score = 0;

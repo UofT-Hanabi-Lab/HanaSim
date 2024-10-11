@@ -10,7 +10,6 @@ class humanplayer : public player {
 
 public:
     humanplayer(int num_players, int id);
-    std::vector<move> get_legal_moves(State s, int id);
     move play(State s);
     move play_prechosen(State s, move m);
     void observe(State s, move m);

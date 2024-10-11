@@ -6,7 +6,7 @@
 using namespace SmartBotInternal;
 
 
-cardknowledge::cardknowledge(smartbot *bot) {
+smart_cardknowledge::smart_cardknowledge(smartbot *bot) {
     bot_ = bot;
     possibilities_ = -1;
     color_ = -2;
@@ -17,22 +17,22 @@ cardknowledge::cardknowledge(smartbot *bot) {
 }
 
 
-bool cardknowledge::must_be(Color color) {
+bool smart_cardknowledge::must_be(Color color) {
     return (this->color_ == color);
 }
 
 
-bool cardknowledge::must_be(Rank rank) {
+bool smart_cardknowledge::must_be(Rank rank) {
     return (this->rank_ == rank);
 }
 
 
-bool cardknowledge::cannot_be(Card card)  {
+bool smart_cardknowledge::cannot_be(Card card)  {
     return cant_be_[card.color()][card.rank()];
 }
 
 
-bool cardknowledge::cannot_be(Color color) {
+bool smart_cardknowledge::cannot_be(Color color) {
     if (color_ != -1) {
         return (color_ != color);
     }
@@ -45,7 +45,7 @@ bool cardknowledge::cannot_be(Color color) {
 }
 
 
-bool cardknowledge::cannot_be(Rank rank) {
+bool smart_cardknowledge::cannot_be(Rank rank) {
     if (this->rank_ != -1) {
         return (this->rank_ != rank);
     }
@@ -58,7 +58,7 @@ bool cardknowledge::cannot_be(Rank rank) {
 }
 
 
-void cardknowledge::befuddle_by_discard() {
+void smart_cardknowledge::befuddle_by_discard() {
     /* Discard could make non-valuable cards valauble and non-worthless cards worthless */
     if (worthless_ != YES) {
         valuable_ = worthless_ = MAYBE;
@@ -67,7 +67,7 @@ void cardknowledge::befuddle_by_discard() {
 }
 
 
-void cardknowledge::befuddle_by_play(bool success) {
+void smart_cardknowledge::befuddle_by_play(bool success) {
     if (success) {
         playable_ = MAYBE;
         prob_playable_ = -1.0f;
@@ -82,7 +82,7 @@ void cardknowledge::befuddle_by_play(bool success) {
 }
 
 
-void cardknowledge::set_must_be(Color color) {
+void smart_cardknowledge::set_must_be(Color color) {
     for (int k = 1; k < 6; k++) {
         for (int r = 0; r < 6; r++) {
             if (k != color) cant_be_[k][r] = true;
@@ -103,7 +103,7 @@ void cardknowledge::set_must_be(Color color) {
 }
 
 
-void cardknowledge::set_must_be(Rank rank) {
+void smart_cardknowledge::set_must_be(Rank rank) {
     for (int v = 1; v < 6; v++) {
         for (int k = 1; k < 6; k++) {
             if (v != rank) cant_be_[k][v] = true;
@@ -126,7 +126,7 @@ void cardknowledge::set_must_be(Rank rank) {
 }
 
 
-void cardknowledge::set_must_be(Card card) {
+void smart_cardknowledge::set_must_be(Card card) {
     for (int v = 1; v < 6; v++) {
         for (int k = 1; k < 6; k++) {
             cant_be_[k][v] = !(k == card.color() && v == card.rank());
@@ -147,7 +147,7 @@ void cardknowledge::set_must_be(Card card) {
 }
 
 
-void cardknowledge::set_cannot_be(Color color) {
+void smart_cardknowledge::set_cannot_be(Color color) {
     for (int v = 1; v < 6; v++) {
         cant_be_[color][v] = true;
     }
@@ -170,7 +170,7 @@ void cardknowledge::set_cannot_be(Color color) {
 }
 
 
-void cardknowledge::set_cannot_be(Rank rank) {
+void smart_cardknowledge::set_cannot_be(Rank rank) {
     for (int k = 0; k < 6; k++) {
         cant_be_[k][rank] = true;
     }
@@ -193,7 +193,7 @@ void cardknowledge::set_cannot_be(Rank rank) {
 }
 
 
-void cardknowledge::set_is_playable(bool playable, State s) {
+void smart_cardknowledge::set_is_playable(bool playable, State s) {
     for (int k = 1; k < 6; k++) {
         for (int r = 1; r < 6; r++) {
             if (cant_be_[k][r]) {
@@ -228,7 +228,7 @@ void cardknowledge::set_is_playable(bool playable, State s) {
 }
 
 
-void cardknowledge::set_is_valuable(bool valuable, State s) {
+void smart_cardknowledge::set_is_valuable(bool valuable, State s) {
     for (int k = 1; k < 6; k++) {
         for (int r = 1; r < 6; r++) {
             if (cant_be_[k][r]) {
@@ -261,7 +261,7 @@ void cardknowledge::set_is_valuable(bool valuable, State s) {
 }
 
 
-void cardknowledge::set_is_worthless(bool worthless, State s) {
+void smart_cardknowledge::set_is_worthless(bool worthless, State s) {
     for (int k = 1; k < 6; k++) {
         for (int r = 1; r < 6; r++) {
             if (cant_be_[k][r]) {
@@ -297,7 +297,7 @@ void cardknowledge::set_is_worthless(bool worthless, State s) {
 }
 
 
-void cardknowledge::compute_identity() {
+void smart_cardknowledge::compute_identity() {
     if (color_ != -2 && rank_ != -2) {
         return;
     }
@@ -323,7 +323,7 @@ void cardknowledge::compute_identity() {
 }
 
 
-void cardknowledge::compute_possibilities() {
+void smart_cardknowledge::compute_possibilities() {
     if (possibilities_ != -1) {
         return;
     }
@@ -337,7 +337,7 @@ void cardknowledge::compute_possibilities() {
 }
 
 
-void cardknowledge::compute_playable(State s)
+void smart_cardknowledge::compute_playable(State s)
 {
     if (prob_playable_ != -1.0f) {
         return;
@@ -363,7 +363,7 @@ void cardknowledge::compute_playable(State s)
 }
 
 
-void cardknowledge::compute_valuable(State s)
+void smart_cardknowledge::compute_valuable(State s)
 {
     if (prob_valuable_ != -1.0f) {
         return;
@@ -389,7 +389,7 @@ void cardknowledge::compute_valuable(State s)
 }
 
 
-void cardknowledge::compute_worthless(State s)
+void smart_cardknowledge::compute_worthless(State s)
 {
     if (prob_worthless_ != -1.0f) {
         return;
@@ -415,7 +415,7 @@ void cardknowledge::compute_worthless(State s)
 }
 
 
-void cardknowledge::update(bool use_eyesight) {
+void smart_cardknowledge::update(bool use_eyesight) {
     if (!known()) {
         bool recompute = false;
         for (int k = 1; k < 6; k++) {
@@ -443,27 +443,27 @@ void cardknowledge::update(bool use_eyesight) {
 }
 
 
-bool cardknowledge::could_be_playable(int rank, State s) {
+bool smart_cardknowledge::could_be_playable(int rank, State s) {
     if (rank < 1 || rank > 5 || cannot_be(Rank(rank))) {
         return false;
     }
     if (playable(s) != MAYBE) {
         return false;
     }
-    cardknowledge new_knowl = *this;
+    smart_cardknowledge new_knowl = *this;
     new_knowl.set_must_be(Rank(rank));
     return (new_knowl.playable(s) != NO);
 }
 
 
-bool cardknowledge::could_be_valuable(int rank, State s) {
+bool smart_cardknowledge::could_be_valuable(int rank, State s) {
     if (rank < 1 || rank > 5 || cannot_be(Rank(rank))) {
         return false;
     }
     if (valuable(s) != MAYBE) {
         return false;
     }
-    cardknowledge new_knowl = *this;
+    smart_cardknowledge new_knowl = *this;
     new_knowl.set_must_be(Rank(rank));
     return (new_knowl.valuable(s) != NO);
 }
@@ -472,7 +472,7 @@ smartbot::smartbot(int id, int n_players) {
     num_cards_ = (n_players <= 3) ? 5 : 4;
     hand_knowledge_.resize(n_players);
     for (int i = 0; i < n_players; i++) {
-        hand_knowledge_[i].resize(num_cards_, cardknowledge(this));
+        hand_knowledge_[i].resize(num_cards_, smart_cardknowledge(this));
     }
     memset(played_count_, '\0', sizeof played_count_);
 }
@@ -511,7 +511,7 @@ void smartbot::shift_knowledge(int p_index, int c_index, bool draw) {
         hand_knowledge_[p_index][i] = hand_knowledge_[p_index][i + 1];
     }
     if (draw) {
-        hand_knowledge_[p_index].back() = cardknowledge(this);
+        hand_knowledge_[p_index].back() = smart_cardknowledge(this);
     } else {
         hand_knowledge_[p_index].pop_back();
     }
@@ -795,7 +795,7 @@ move smartbot::play_lowest_playable(State s) {
         if (hand_knowledge_[id_][i].playable(s) == NO) {
             continue;
         }
-        cardknowledge eye_knowl = hand_knowledge_[id_][i];
+        smart_cardknowledge eye_knowl = hand_knowledge_[id_][i];
         eye_knowl.update(true);
         if (eye_knowl.playable(s) != YES) {
             continue;
@@ -829,7 +829,7 @@ move smartbot::discard_worthless(State s) {
 
 
         if (hand_knowledge_[id_][i].worthless(s) == MAYBE) {
-            cardknowledge eye_knowl = hand_knowledge_[id_][i];
+            smart_cardknowledge eye_knowl = hand_knowledge_[id_][i];
             eye_knowl.update(true);
             if (eye_knowl.worthless(s) != YES) {
                 continue;
@@ -857,7 +857,7 @@ move smartbot::play_mystery(State s) {
         double best_f = 0;
         int best_i = -1;
         for (int i = hand_knowledge_[id_].size() - 1; i >= 0; i--) {
-            cardknowledge eye_knowl = hand_knowledge_[id_][i];
+            smart_cardknowledge eye_knowl = hand_knowledge_[id_][i];
             eye_knowl.update(true);
             if  (eye_knowl.playable(s) == MAYBE) {
                 double f = eye_knowl.prob_playable(s);
@@ -888,7 +888,7 @@ move smartbot::discard_old(State s) {
 }
 
 
-int reduction_in_entropy(std::vector<cardknowledge> old_knowl, std::vector<cardknowledge> new_knowl) {
+int reduction_in_entropy(std::vector<smart_cardknowledge> old_knowl, std::vector<smart_cardknowledge> new_knowl) {
     int res = 0;
     for (int i = 0; i < old_knowl.size(); i++) {
         res += old_knowl[i].possibilities() - new_knowl[i].possibilities();
@@ -926,7 +926,7 @@ std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, 
         ranks[card.rank()] = true;
     }
     int best_f = 0;
-    std::vector<cardknowledge> old_knowl = hand_knowledge_[partner_index];
+    std::vector<smart_cardknowledge> old_knowl = hand_knowledge_[partner_index];
     move best = move(INVALID_MOVE);
     for (int k = 1; k < 6; k++) {
         if (!cols[k]) {
@@ -934,7 +934,7 @@ std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, 
         }
         std::vector<int> indices = search_indices(partner_hand, Color(k));
         move m = move(COL_HINT, partner_index, id_, indices, Color(k));
-        std::vector<cardknowledge> new_knowl = old_knowl;
+        std::vector<smart_cardknowledge> new_knowl = old_knowl;
         for (int i = 0; i < partner_hand.size(); i++) {
             if (partner_hand[i].color() == Color(k)){
                 new_knowl[i].set_must_be(Color(k));
@@ -958,7 +958,7 @@ std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, 
         }
         std::vector<int> indices = search_indices(partner_hand, Rank(r));
         move m = move(RANK_HINT, partner_index, id_, indices, Rank(r));
-        std::vector<cardknowledge> new_knowl = old_knowl;
+        std::vector<smart_cardknowledge> new_knowl = old_knowl;
         for (int i = 0; i < partner_hand.size(); i++) {
             if (partner_hand[i].rank() == Rank(r)){
                 new_knowl[i].set_must_be(Rank(r));
@@ -998,7 +998,7 @@ std::tuple<move, int> smartbot::best_hint_for_partner(State s, int partner_index
     }
 
 
-    return best_hint_for_partner_given_constraint(s, partner_index, [&](move m, std::vector<cardknowledge> old_knowl, std::vector<cardknowledge> new_knowl) {
+    return best_hint_for_partner_given_constraint(s, partner_index, [&](move m, std::vector<smart_cardknowledge> old_knowl, std::vector<smart_cardknowledge> new_knowl) {
         if (m.get_rank() != invalid_rank && m.get_rank() == avoid_rank) {
             return false;
         }
@@ -1149,6 +1149,9 @@ move smartbot::play(State s) {
     }
 }
 
+move smartbot::play_prechosen(State s, move chosen_m) {
+    return chosen_m;
+}
 
 int smartbot::get_id() {
     return id_;

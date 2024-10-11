@@ -10,7 +10,7 @@
 
 using namespace HolmesBotInternal;
 
-cardknowledge::cardknowledge()
+holmes_cardknowledge::holmes_cardknowledge()
 {
     color_ = invalid_color;
     rank_ = invalid_rank;
@@ -20,10 +20,10 @@ cardknowledge::cardknowledge()
     is_worthless = false;
 }
 
-bool cardknowledge::must_be(Color color) { return (this->color_ == color); }
-bool cardknowledge::must_be(Rank rank) { return (this->rank_ == rank); }
-bool cardknowledge::cannot_be(Card card)  { return cant_be_[card.color()][card.rank()]; }
-bool cardknowledge::cannot_be(Color color)
+bool holmes_cardknowledge::must_be(Color color) { return (this->color_ == color); }
+bool holmes_cardknowledge::must_be(Rank rank) { return (this->rank_ == rank); }
+bool holmes_cardknowledge::cannot_be(Card card)  { return cant_be_[card.color()][card.rank()]; }
+bool holmes_cardknowledge::cannot_be(Color color)
 {
     if (color_ != invalid_color) return (color_ != color);
     for (int v = 1; v < 6; v++) {
@@ -32,7 +32,7 @@ bool cardknowledge::cannot_be(Color color)
     return true;
 }
 
-bool cardknowledge::cannot_be(Rank rank)
+bool holmes_cardknowledge::cannot_be(Rank rank)
 {
     if (this->rank_ != invalid_rank) return (this->rank_ != rank);
     for (int k = 1; k < 6; k++) {
@@ -41,10 +41,10 @@ bool cardknowledge::cannot_be(Rank rank)
     return true;
 }
 
-int cardknowledge::color() { return color_; }
-int cardknowledge::rank() { return rank_; }
+int holmes_cardknowledge::color() { return color_; }
+int holmes_cardknowledge::rank() { return rank_; }
 
-void cardknowledge::set_must_be(Color color)
+void holmes_cardknowledge::set_must_be(Color color)
 {
     for (int k = 1; k < 6; k++) {
         if (k != color) set_cannot_be(Color(k));
@@ -52,7 +52,7 @@ void cardknowledge::set_must_be(Color color)
     color_ = color;
 }
 
-void cardknowledge::set_must_be(Rank rank)
+void holmes_cardknowledge::set_must_be(Rank rank)
 {
     for (int v = 1; v < 6; v++) {
         if (v != rank) set_cannot_be(Rank(v));
@@ -60,21 +60,21 @@ void cardknowledge::set_must_be(Rank rank)
     rank_ = rank;
 }
 
-void cardknowledge::set_cannot_be(Color color)
+void holmes_cardknowledge::set_cannot_be(Color color)
 {
     for (int v = 1; v < 6; v++) {
         cant_be_[color][v] = true;
     }
 }
 
-void cardknowledge::set_cannot_be(Rank rank)
+void holmes_cardknowledge::set_cannot_be(Rank rank)
 {
     for (int k = 0; k < 6; k++) {
         cant_be_[k][rank] = true;
     }
 }
 
-void cardknowledge::update(State s, const holmesbot &bot) {
+void holmes_cardknowledge::update(State s, const holmesbot &bot) {
     int color = color_;
     int rank = rank_;
     repeat_loop:
@@ -173,7 +173,7 @@ bool holmesbot::is_valuable(State s, Card card) const {
     return (played_count_[card.color()][card.rank()] == total - 1); // Valuable if it's the last card of its kind
 }
 
-bool holmesbot::could_be_valuable(State s, cardknowledge ck, int rank) {
+bool holmesbot::could_be_valuable(State s, holmes_cardknowledge ck, int rank) {
     for (int k = 1; k < 6; k++) {
         if (ck.cannot_be(Card(Color(k), Rank(rank)))) continue;
         if (is_valuable(s, Card(Color(k), Rank(rank)))) return true;
@@ -182,11 +182,11 @@ bool holmesbot::could_be_valuable(State s, cardknowledge ck, int rank) {
 }
 
 void holmesbot::shift_knowledge(int p_index, int c_index) {
-    std::vector<cardknowledge> &vec = hand_knowledge_[p_index];
+    std::vector<holmes_cardknowledge> &vec = hand_knowledge_[p_index];
     for (int i = c_index; i + 1 < vec.size(); i++) {
         vec[i] = vec[i + 1];
     }
-    vec.back() = cardknowledge();
+    vec.back() = holmes_cardknowledge();
 }
 
 bool holmesbot::update_located_count() {
@@ -541,55 +541,6 @@ move holmesbot::play(State s) {
 
 move holmesbot::play_prechosen(State s, move chosen_m) {
     return chosen_m;
-}
-
-std::vector<move> holmesbot::get_legal_moves(State s, int id){
-    std::vector<move> moves;
-    moves = {};
-    std::vector<std::vector<Card>> hands = s.get_hands();
-    if (s.get_num_hints() > 0) {
-        for (int i = 0; i < hands.size(); i++) {
-            std::set<Color> colors;
-            std::set<Rank> ranks;
-            std::map<Color, std::vector<int>> col_to_indices{};
-            std::map<Rank, std::vector<int>> rank_to_indices{};
-            if (i == id) {
-                continue;
-            }
-            std::cout << hands[i].size() << std::endl;
-            for (int j = 0; j < hands[i].size(); j++) {
-                Card c = hands[i][j];
-                colors.insert(c.color());
-                if (auto search = col_to_indices.find(c.color()); search == col_to_indices.end()) {
-                    col_to_indices.insert({c.color(), {j}});
-                } else {
-                    col_to_indices.at(c.color()).push_back(j);
-                }
-                ranks.insert(c.rank());
-                if (auto search = rank_to_indices.find(c.rank()); search == rank_to_indices.end()) {
-                    rank_to_indices.insert({c.rank(), {j}});
-                } else {
-                    rank_to_indices.at(c.rank()).push_back(j);
-                }
-            }
-            for (Color col : colors) {
-                moves.push_back(move(COL_HINT, i, id, col_to_indices.at(col), col));
-            }
-            for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, rank_to_indices.at(rank), rank));
-        }
-    }
-    
-    if (s.get_num_hints() < 8) {
-        for (int i = 0; i < hands[id].size(); i++) {
-            moves.push_back(move(DISCARD, id, i));
-        }
-    }
-    
-    for (int i = 0; i < hands[id].size(); i++) {
-        moves.push_back(move(PLAY, id, i));
-    }
-    
-    return moves;
 }
 
 int holmesbot::get_id() {

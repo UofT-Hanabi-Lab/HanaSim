@@ -76,58 +76,8 @@ void humanplayer::print_hands(State s) {
     }
 }
 
-
-std::vector<move> humanplayer::get_legal_moves(State s, int id) {
-    std::vector<move> moves;
-    moves = {};
-    std::vector<std::vector<Card>> hands = s.get_hands();
-    if (s.get_num_hints() > 0) {
-        for (int i = 0; i < hands.size(); i++) {
-            std::set<Color> colors;
-            std::set<Rank> ranks;
-            std::map<Color, std::vector<int>> col_to_indices{};
-            std::map<Rank, std::vector<int>> rank_to_indices{};
-            if (i == id) {
-                continue;
-            }
-            std::cout << hands[i].size() << std::endl;
-            for (int j = 0; j < hands[i].size(); j++) {
-                Card c = hands[i][j];
-                colors.insert(c.color());
-                if (auto search = col_to_indices.find(c.color()); search == col_to_indices.end()) {
-                    col_to_indices.insert({c.color(), {j}});
-                } else {
-                    col_to_indices.at(c.color()).push_back(j);
-                }
-                ranks.insert(c.rank());
-                if (auto search = rank_to_indices.find(c.rank()); search == rank_to_indices.end()) {
-                    rank_to_indices.insert({c.rank(), {j}});
-                } else {
-                    rank_to_indices.at(c.rank()).push_back(j);
-                }
-            }
-            for (Color col : colors) {
-                moves.push_back(move(COL_HINT, i, id, col_to_indices.at(col), col));
-            }
-            for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, rank_to_indices.at(rank), rank));
-        }
-    }
-    
-    if (s.get_num_hints() < 8) {
-        for (int i = 0; i < hands[id].size(); i++) {
-            moves.push_back(move(DISCARD, id, i));
-        }
-    }
-    
-    for (int i = 0; i < hands[id].size(); i++) {
-        moves.push_back(move(PLAY, id, i));
-    }
-    
-    return moves;
-}
-
 move humanplayer::play(State s) {
-    std::vector<move> legal_moves = get_legal_moves(s, id_);
+    std::vector<move> legal_moves = s.get_legal_moves(id_);
     std::vector<move> m;
     int move_index = 0;
     print_hands(s);
@@ -144,8 +94,7 @@ move humanplayer::play(State s) {
 
 
 move humanplayer::play_prechosen(State s, move chosen_m) {
-    std::cout  << "HELLLLO";
-    std::vector<move> legal_moves = get_legal_moves(s, id_);
+    std::vector<move> legal_moves = s.get_legal_moves(id_);
     int move_index = 0;
     print_hands(s);
     bool valid = false;
