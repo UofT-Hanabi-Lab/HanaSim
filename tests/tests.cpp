@@ -89,7 +89,9 @@ int test_create_two_human_player_custom(){
     std::cout << "tested human player" << std::endl;
 
     // custom list of moves
-    std::vector<move> test_moves = {move((move_type)3, 0, 2), move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
+    std::vector<int> indices;
+    std::vector<move> test_moves = {move((move_type)3, 0, 2), move((move_type)3, 0, 2), 
+    move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
     move((move_type)3, 1, 2), move((move_type)3, 0, 2)};
 
     std::reverse(test_moves.begin(), test_moves.end());
@@ -144,11 +146,25 @@ int test_create_two_smartbot_custom(){
     std::cout << "tested smartbot custom" << std::endl;
 
     // custom list of moves
-    std::vector<move> test_moves = {move((move_type)3, 0, 2), move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
+    std::vector<move> test_moves = {move((move_type)3, 1, 2), move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
     move((move_type)3, 1, 2), move((move_type)3, 0, 2)};
 
     std::reverse(test_moves.begin(), test_moves.end());
     int score = newgame.run_test(true, test_moves);
+    return score;
+}
+
+int test_create_two_smartbot(){
+    player* p1 = new smartbot(0, 2);
+    player* p2 = new smartbot(1, 2);
+    std::vector<player*> players = {};
+    players.push_back(p1);
+    players.push_back(p2);
+    std::vector<Card> deck = test_shuffle_using_seed(494);
+    State init_state = State(2, deck);
+    game newgame = game(init_state, players);
+    std::cout << "tested smartbot" << std::endl;
+    int score = newgame.run(true);
     return score;
 }
 
@@ -157,8 +173,9 @@ int main() {
     test_shuffle_using_seed(494);
     //test_create_two_human_player_custom();
     //test_create_two_holmesbot_custom();
-    test_create_two_smartbot_custom();
+    //test_create_two_smartbot_custom();
     //test_create_two_human_player();
+    test_create_two_smartbot();
     return 0;
 }
 
