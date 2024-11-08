@@ -39,7 +39,7 @@ state.o: src/state.cpp include/state.h
 
 
 # Complexity will need to be added to HanaTest as the testing code gets more dependencies like HanaSim
-test.o: tests/tests.cpp tests/test_game.cpp tests/test_game.h# Included header files aren't actually used yet, so not needed.
+test.o: tests/tests.cpp tests/test_game.cpp tests/test_game.h include/*.h bots/include/*.h 
 	$(CXX) $(CXXFLAGS) tests/tests.cpp -c -o $@
 
 .PHONY clean:
