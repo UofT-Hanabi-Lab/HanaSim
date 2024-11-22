@@ -13,6 +13,7 @@ public:
     int write_pile_csv(std::ofstream &file, State s);
     int write_deck_csv(std::ofstream &file, State s);
     int combine_csv(std::ofstream &out, std::string in1, std::string in2, std::string in3, std::string in4, int turn);
+    int tree_csv(std::ofstream &out, std::ofstream &out2, std::string in1, std::string in2, std::string in3, std::string in4, int turn);
     State get_curr_state();
 
     int run_test(bool log_game, std::vector<move> test_moves);

@@ -3,6 +3,8 @@
 #include <numeric>
 #include <string>
 #include <fstream>
+#include <string>
+#include <direct.h> // for _mkdir
 
 #include "../include/game.h"
 #include "../include/humanplayer.h"
@@ -125,17 +127,66 @@ int game::combine_csv(std::ofstream &outFile, std::string dfile, std::string pfi
     return 0;
 }
 
+int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string dfile, std::string pfile, std::string hfile, std::string mfile, int turn){
+    //assume only 2 player
+    std::ifstream handFile(hfile);
+    std::ifstream moveFile(mfile);
+    std::ifstream pileFile(pfile);
+    std::ifstream deckFile(dfile);
+
+    std::string deck;
+    std::string pile;
+    std::string hand;
+    std::string move;
+
+    std::vector<std::string> attributes = {"hand", "deck", "pile", "move"}; 
+
+    for(int i =0; i < attributes.size(); i++){
+        outFile << attributes[i];
+        if(i != attributes.size() - 1) outFile << ", ";
+
+        outFile2 << attributes[i];
+        if(i != attributes.size() - 1) outFile2 << ", ";
+    }
+
+    outFile << std::endl;
+    outFile2 << std::endl;
+
+    for (int x = 1; x < turn; x++) {
+        std::getline(deckFile, deck);
+        std::getline(pileFile, pile);
+        std::getline(handFile, hand);
+        std::getline(moveFile, move);
+        if (x % 2 == 1){
+            outFile << hand << ", " << deck << ", " << pile << ", " << move << std::endl; 
+        }
+        else{
+            outFile2 << hand << ", " << deck << ", " << pile << ", " << move << std::endl; 
+        }
+        // std::cout << hand << std::endl;
+        // std::cout << pile << std::endl;
+    }
+    handFile.close();
+    deckFile.close();
+    pileFile.close();
+    moveFile.close();
+    return 0;
+}
+
 
 int game::run(bool log_game) {
+    
     int curr_score = 0;
     if (log_game) std::cout << "STARTING GAME\n" << std::endl;
     int curr_player = 0;
     int turn = 1;
-    std::ofstream handFile("hands.csv");
-    std::ofstream moveFile("moves.csv");
-    std::ofstream pileFile("piles.csv");
-    std::ofstream deckFile("decks.csv");
-    std::ofstream outFile("output.csv");
+
+    std::ofstream handFile("output/hands.csv");
+    std::ofstream moveFile("output/moves.csv");
+    std::ofstream pileFile("output/piles.csv");
+    std::ofstream deckFile("output/decks.csv");
+    std::ofstream outFile("output/p1.csv");
+    std::ofstream outFile2("output/p2.csv");
 
     
     while ((curr_score < 25) && (curr_state_.get_num_lives() > 0) && !(curr_state_.get_deck().empty())) {
@@ -214,7 +265,11 @@ int game::run(bool log_game) {
         if (log_game) std::cout << "GAME WON!" << std::endl;
         //return curr_score;
     }
-    combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
+    //combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
+    // if (mkdir("output") == -1)
+    //     std::cout << "output already exists" << std::endl;
+
+    tree_csv(outFile, outFile2, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
     handFile.close();
     moveFile.close();
     pileFile.close();
@@ -232,7 +287,8 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
     std::ofstream moveFile("moves.csv");
     std::ofstream pileFile("piles.csv");
     std::ofstream deckFile("decks.csv");
-    std::ofstream outFile("output.csv");
+    std::ofstream outFile("p1.csv");
+    std::ofstream outFile2("p2.csv");
 
     while ((curr_score < 25) && (curr_state_.get_num_lives() > 0) && !(curr_state_.get_deck().empty())) {
         if (log_game) std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
@@ -338,7 +394,8 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
     }
 
     //close csv
-    combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
+    //combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
+    tree_csv(outFile, outFile2, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
     handFile.close();
     moveFile.close();
     pileFile.close();

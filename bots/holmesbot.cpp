@@ -434,7 +434,7 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
     return std::make_tuple(m, highest_info);
 }
 
-move holmesbot::give_valuable_warning(State s) {
+move holmesbot::give_valuable_warning(State s) { 
     std::cout << "here123\n" << std::endl;
     int player_to_warn = (id_ + 1) % hand_knowledge_.size(); // for some reason, this line breaks the code 
         std::cout << "here\n" << std::endl;
@@ -452,7 +452,7 @@ move holmesbot::give_valuable_warning(State s) {
         move m = move(INVALID_MOVE);
         return m;
     }
-    move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn));
+    move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn)); 
     if (best_hint.get_type() != INVALID_MOVE) {
         return best_hint;
     }
