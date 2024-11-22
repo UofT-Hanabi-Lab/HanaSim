@@ -5,6 +5,7 @@
 #include <fstream>
 #include <string>
 #include <direct.h> // for _mkdir
+#include "../include/global_int.h"
 
 #include "../include/game.h"
 #include "../include/humanplayer.h"
@@ -180,13 +181,18 @@ int game::run(bool log_game) {
     if (log_game) std::cout << "STARTING GAME\n" << std::endl;
     int curr_player = 0;
     int turn = 1;
-
+    if (mkdir("output/p1") == -1)
+        std::cout << "failed to create directory or directory already exists" << std::endl;
+    if (mkdir("output/p2") == -1)
+        std::cout << "failed to create directory or directory already exists" << std::endl;
+    std::string fname1 = "output/p1/g" + std::to_string(game_num) + ".csv";
+    std::string fname2 = "output/p2/g" + std::to_string(game_num) + ".csv";
     std::ofstream handFile("output/hands.csv");
     std::ofstream moveFile("output/moves.csv");
     std::ofstream pileFile("output/piles.csv");
     std::ofstream deckFile("output/decks.csv");
-    std::ofstream outFile("output/p1.csv");
-    std::ofstream outFile2("output/p2.csv");
+    std::ofstream outFile(fname1);
+    std::ofstream outFile2(fname2);
 
     
     while ((curr_score < 25) && (curr_state_.get_num_lives() > 0) && !(curr_state_.get_deck().empty())) {
@@ -266,10 +272,8 @@ int game::run(bool log_game) {
         //return curr_score;
     }
     //combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
-    // if (mkdir("output") == -1)
-    //     std::cout << "output already exists" << std::endl;
 
-    tree_csv(outFile, outFile2, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
+    tree_csv(outFile, outFile2, "output/decks.csv", "output/piles.csv", "output/hands.csv", "output/moves.csv", turn);
     handFile.close();
     moveFile.close();
     pileFile.close();
@@ -283,12 +287,18 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
     if (log_game) std::cout << "STARTING TEST GAME\n" << std::endl;
     int curr_player = 0;
     int turn = 1;
-    std::ofstream handFile("hands.csv");
-    std::ofstream moveFile("moves.csv");
-    std::ofstream pileFile("piles.csv");
-    std::ofstream deckFile("decks.csv");
-    std::ofstream outFile("p1.csv");
-    std::ofstream outFile2("p2.csv");
+    if (mkdir("output/p1") == -1)
+        std::cout << "failed to create directory or directory already exists" << std::endl;
+    if (mkdir("output/p2") == -1)
+        std::cout << "failed to create directory or directory already exists" << std::endl;
+    std::string fname1 = "output/p1/g" + std::to_string(game_num) + ".csv";
+    std::string fname2 = "output/p2/g" + std::to_string(game_num) + ".csv";
+    std::ofstream handFile("output/hands.csv");
+    std::ofstream moveFile("output/moves.csv");
+    std::ofstream pileFile("output/piles.csv");
+    std::ofstream deckFile("output/decks.csv");
+    std::ofstream outFile(fname1);
+    std::ofstream outFile2(fname2);
 
     while ((curr_score < 25) && (curr_state_.get_num_lives() > 0) && !(curr_state_.get_deck().empty())) {
         if (log_game) std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
@@ -395,7 +405,7 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
 
     //close csv
     //combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
-    tree_csv(outFile, outFile2, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
+    tree_csv(outFile, outFile2, "output/decks.csv", "output/piles.csv", "output/hands.csv", "output/moves.csv", turn);
     handFile.close();
     moveFile.close();
     pileFile.close();

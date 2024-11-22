@@ -6,6 +6,7 @@
 #include <execution>
 #include <omp.h>
 #include <random>
+#include <filesystem>
 
 //#include "../include/game.h"
 //#include "../bots/include/randombot.h"
@@ -14,6 +15,7 @@
 //#include "../include/humanplayer.h"
 //#include "../bots/include/simplebot.h"
 //#include "../include/matplotlibcpp.h"
+#include "../include/global_int.h"
 
 #include "../bots/holmesbot.cpp"
 #include "../bots/smartbot.cpp"
@@ -28,6 +30,9 @@
 
 
 //namespace plt = matplotlibcpp;
+
+int seed_num;
+int game_num;
 
 void print_card(Card c){
   	if(c.color()== 1){
@@ -154,13 +159,13 @@ int test_create_two_smartbot_custom(){
     return score;
 }
 
-int test_create_two_smartbot(){
+int test_create_two_smartbot(int seed){
     player* p1 = new smartbot(0, 2);
     player* p2 = new smartbot(1, 2);
     std::vector<player*> players = {};
     players.push_back(p1);
     players.push_back(p2);
-    std::vector<Card> deck = test_shuffle_using_seed(494);
+    std::vector<Card> deck = test_shuffle_using_seed(seed);
     State init_state = State(2, deck);
     game newgame = game(init_state, players);
     std::cout << "tested smartbot" << std::endl;
@@ -171,11 +176,19 @@ int test_create_two_smartbot(){
 int main() {
     std::cout << "Tests running :)" << std::endl;
     test_shuffle_using_seed(494);
+    seed_num = 494;
+    game_num = 1;
     //test_create_two_human_player_custom();
     //test_create_two_holmesbot_custom();
     //test_create_two_smartbot_custom();
     //test_create_two_human_player();
-    test_create_two_smartbot();
+    for (int x = 0; x < 10; x++){
+        test_create_two_smartbot(seed_num);
+        game_num +=1;
+        seed_num +=1; 
+    }
+    test_create_two_smartbot(seed_num);
+    // std::filesystem::remove_all("output/p1");
     return 0;
 }
 
