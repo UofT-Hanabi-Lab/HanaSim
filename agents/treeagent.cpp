@@ -7,7 +7,7 @@
 #include "../bots/include/smartbot.h"
 #include "gaenari/gaenari.hpp"
 
-treeagent::treeagent(int id, int num_players, std::string sample_path, player partner) : num_cards_((num_players <= 3) ? 5 : 4), id_(id), num_players_(num_players), partner_(partner) {
+treeagent::treeagent(int id, int num_players, std::string sample_path, player *partner) : num_cards_((num_players <= 3) ? 5 : 4), id_(id), num_players_(num_players), partner_(partner) {
     gaenari::logger::init1("../_log.txt");
     using supul_t = supul::supul::supul_t;
     supul_t::api::project::create("../supul_dir");
@@ -74,22 +74,22 @@ move treeagent::play(State s) {
     std::vector<int> hk_ranks = {};
 
 
-    if (dynamic_cast<smartbot*>(&partner_) != nullptr) {
-        smartbot *smart_partner = (smartbot*)(&partner_);
-        std::vector<std::vector<SmartBotInternal::cardknowledge>> hk = smart_partner->hand_knowledge_;
+    if (dynamic_cast<smartbot*>(partner_) != nullptr) {
+        smartbot *smart_partner = (smartbot*)(partner_);
+        std::vector<std::vector<SmartBotInternal::cardknowledge>> hk = smart_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
-                hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].playable_ == SmartBotInternal::YES) ? 1 : 2));
-                hk_valuable.push_back((hk[i][j].valuable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].valuable_ == SmartBotInternal::YES) ? 1 : 2));
-                hk_worthless.push_back((hk[i][j].worthless(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].worthless_ == SmartBotInternal::YES) ? 1 : 2));
+                hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_playable() == SmartBotInternal::YES) ? 1 : 2));
+                hk_valuable.push_back((hk[i][j].valuable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_valuable() == SmartBotInternal::YES) ? 1 : 2));
+                hk_worthless.push_back((hk[i][j].worthless(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_worthless() == SmartBotInternal::YES) ? 1 : 2));
                 hk_cols.push_back((hk[i][j].color() < 0) ? 6 : hk[i][j].color());
                 hk_cols.push_back((hk[i][j].rank() < 0) ? 6 : hk[i][j].rank());
             }
         }
 
-    } else if (dynamic_cast<holmesbot*>(&partner_) != nullptr) {
-        holmesbot *holmes_partner = (holmesbot*)(&partner_);
-        std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->hand_knowledge_;
+    } else if (dynamic_cast<holmesbot*>(partner_) != nullptr) {
+        holmesbot *holmes_partner = (holmesbot*)(partner_);
+        std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
                 hk_playable.push_back((int)hk[i][j].is_playable);
@@ -101,25 +101,25 @@ move treeagent::play(State s) {
         }
     }
     std::unordered_map<std::string, std::string> feats;
-    feats = {{"deck_count", deck_count},
-             {"hints", hints}};
+    feats = {{"deck_count", std::to_string(deck_count)},
+             {"hints", std::to_string(hints)}};
     for (int i = 0; i < hand_cols.size(); i++) {
-        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), hand_cols[i]});
-        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), hand_ranks[i]});
-        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_playable" + std::to_string((i+1) % (num_cards_+1)), hk_playable[i]});
-        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_valuable" + std::to_string((i+1) % (num_cards_+1)), hk_valuable[i]});
-        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_worthless" + std::to_string((i+1) % (num_cards_+1)), hk_worthless[i]});
-        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), hk_cols[i]});
-        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), hk_ranks[i]});
+        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hand_cols[i])});
+        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hand_ranks[i])});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_playable" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_playable[i])});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_valuable" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_valuable[i])});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_worthless" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_worthless[i])});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_cols[i])});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_ranks[i])});
     }
-    for (int i = 0; i < piles.size(); i++) feats.insert({"pile"+std::to_string(i), piles[i]});
-    for (int i = 0; i < discard_count.size(); i++) feats.insert({"discard"+std::to_string(((i+1) % 6) + ((i+1) / 6)), discard_count[i]});
+    for (int i = 0; i < piles.size(); i++) feats.insert({"pile"+std::to_string(i), std::to_string(piles[i])});
+    for (int i = 0; i < discard_count.size(); i++) feats.insert({"discard"+std::to_string(((i+1) % 6) + ((i+1) / 6)), std::to_string(discard_count[i])});
     using supul_t = supul::supul::supul_t;
     supul_t supul;
 
     supul.api.lifetime.open("../supul_dir");
     auto ret = supul.api.model.predict(feats);
-    if (not ret) {
+    if (ret.error) {
         std::cout << "uh oh" << std::endl;
         return move(INVALID_MOVE);
     }
@@ -140,14 +140,14 @@ move treeagent::play(State s) {
                 if (s.get_hands()[move_to][i].rank() == r) card_indices.push_back(i);
             }
             supul.api.lifetime.close();
-            return move(move_type, move_to, id_, card_indices, r);
+            return move(movetype, move_to, id_, card_indices, r);
         } else {
             Color c = (Color)move_str[move_str.size() - 2];
             for (int i = 0; i < s.get_hands()[move_to].size(); i++) {
                 if (s.get_hands()[move_to][i].color() == c) card_indices.push_back(i);
             }
             supul.api.lifetime.close();
-            return move(move_type, move_to, id_, card_indices, c);
+            return move(movetype, move_to, id_, card_indices, c);
         }
         
     }

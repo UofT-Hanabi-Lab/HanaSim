@@ -138,7 +138,7 @@ int main(int argc, char *argv[])
                 } else if (bot_types[id] == "human") {
                     p = new humanplayer(num_players, id);
                 } else if (bot_types[id] == "tree") {
-                    p = new treeagent(id, num_players);
+                    p = new treeagent(id, num_players, "", players[0]);
                 }
                 players.push_back(p);
             }
