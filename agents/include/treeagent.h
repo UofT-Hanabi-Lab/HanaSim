@@ -6,10 +6,11 @@ class treeagent : public player {
     int num_cards_;
     int id_;
     int num_players_;
+    player partner_;
     //supul_t tree_;
 
 public:
-    treeagent(int id, int num_players);
+    treeagent(int id, int num_players, std::string sample_path, player partner);
     ~treeagent();
     move play(State s);
     void observe(State s, move m);
