@@ -20,50 +20,50 @@ State game::get_curr_state() {
 game::game(State init_state, std::vector<player*> players) : curr_state_(init_state), players_(players){
 }
 
-int game::create_hand_knowledge(std::vector<player*> players, int curr_player){
-    //HANDKNOWLEDGE
-    State s = curr_state_;
-    int num_players = players_.size();
-    int num_cards_ = (num_players <= 3) ? 5 : 4;;
-    std::vector<int> hk_playable = {};
-    hk_playable.resize(num_players * num_cards_);
-    std::vector<int> hk_valuable = {};
-    hk_valuable.resize(num_players * num_cards_);
-    std::vector<int> hk_worthless = {};
-    hk_worthless.resize(num_players * num_cards_);
-    std::vector<int> hk_cols = {};
-    hk_cols.resize(num_players * num_cards_);
-    std::vector<int> hk_ranks = {};
-    hk_ranks.resize(num_players * num_cards_);
+// int game::create_hand_knowledge(std::vector<player*> players, int curr_player){
+//     //HANDKNOWLEDGE
+//     State s = curr_state_;
+//     int num_players = players_.size();
+//     int num_cards_ = (num_players <= 3) ? 5 : 4;;
+//     std::vector<int> hk_playable = {};
+//     hk_playable.resize(num_players * num_cards_);
+//     std::vector<int> hk_valuable = {};
+//     hk_valuable.resize(num_players * num_cards_);
+//     std::vector<int> hk_worthless = {};
+//     hk_worthless.resize(num_players * num_cards_);
+//     std::vector<int> hk_cols = {};
+//     hk_cols.resize(num_players * num_cards_);
+//     std::vector<int> hk_ranks = {};
+//     hk_ranks.resize(num_players * num_cards_);
 
 
-    if (dynamic_cast<smartbot*>(players[curr_player]) != nullptr) {
-        smartbot *smart_partner = (smartbot*)(players[curr_player]);
-        std::vector<std::vector<SmartBotInternal::cardknowledge>> hk = smart_partner->hand_knowledge_;
-        for (int i = 0; i < hk.size(); i++) {
-            for (int j = 0; j < hk[i].size(); j++) {
-                hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].playable_ == SmartBotInternal::YES) ? 1 : 2));
-                hk_valuable.push_back((hk[i][j].valuable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].valuable_ == SmartBotInternal::YES) ? 1 : 2));
-                hk_worthless.push_back((hk[i][j].worthless(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].worthless_ == SmartBotInternal::YES) ? 1 : 2));
-                hk_cols.push_back((hk[i][j].color() < 0) ? 6 : hk[i][j].color());
-                hk_cols.push_back((hk[i][j].rank() < 0) ? 6 : hk[i][j].rank());
-            }
-        }
-    } 
-    else if (dynamic_cast<holmesbot*>(players[curr_player]) != nullptr) {
-        smartbot *holmes_partner = (holmesbot*)(players[curr_player]);
-        std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->hand_knowledge_;
-        for (int i = 0; i < hk.size(); i++) {
-            for (int j = 0; j < hk[i].size(); j++) {
-                hk_playable.push_back((int)hk[i][j].is_playable);
-                hk_valuable.push_back((int)hk[i][j].is_valuable);
-                hk_worthless.push_back((int)hk[i][j].is_worthless);
-                hk_cols.push_back((int)(hk[i][j].color()));
-                hk_cols.push_back((int)(hk[i][j].rank()));
-            }
-        }
-    }
-}
+//     if (dynamic_cast<smartbot*>(players[curr_player]) != nullptr) {
+//         smartbot *smart_partner = (smartbot*)(players[curr_player]);
+//         std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hk = smart_partner->get_hk();
+//         for (int i = 0; i < hk.size(); i++) {
+//             for (int j = 0; j < hk[i].size(); j++) {
+//                 hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_playable() == SmartBotInternal::YES) ? 1 : 2));
+//                 hk_valuable.push_back((hk[i][j].valuable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_valuable() == SmartBotInternal::YES) ? 1 : 2));
+//                 hk_worthless.push_back((hk[i][j].worthless(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_worthless() == SmartBotInternal::YES) ? 1 : 2));
+//                 hk_cols.push_back((hk[i][j].color() < 0) ? 6 : hk[i][j].color());
+//                 hk_cols.push_back((hk[i][j].rank() < 0) ? 6 : hk[i][j].rank());
+//             }
+//         }
+//     } 
+//     else if (dynamic_cast<holmesbot*>(players[curr_player]) != nullptr) {
+//         holmesbot *holmes_partner = (holmesbot*)(players[curr_player]);
+//         std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
+//         for (int i = 0; i < hk.size(); i++) {
+//             for (int j = 0; j < hk[i].size(); j++) {
+//                 hk_playable.push_back((int)hk[i][j].is_playable);
+//                 hk_valuable.push_back((int)hk[i][j].is_valuable);
+//                 hk_worthless.push_back((int)hk[i][j].is_worthless);
+//                 hk_cols.push_back((int)(hk[i][j].color()));
+//                 hk_cols.push_back((int)(hk[i][j].rank()));
+//             }
+//         }
+//     }
+// }
 
 int game::write_move_csv(std::ofstream &moveFile, move next_move){
     //moveFile << "[";
@@ -139,7 +139,7 @@ int game::write_deck_csv(std::ofstream &deckFile, State s){
         int color = d[x].color();
         int rank = d[x].rank();
         int index = ((color-1) * 5) + rank; 
-        std::cout << color << " " << rank << " " << index << std::endl;
+        //std::cout << color << " " << rank << " " << index << std::endl;
         //std::cout << "discards:" << d[x].color() << d[x].rank() << std::endl;
         discards[index-1] += 1;
     }
@@ -190,17 +190,20 @@ int game::combine_csv(std::ofstream &outFile, std::string dfile, std::string pfi
     return 0;
 }
 
-int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string dfile, std::string pfile, std::string hfile, std::string mfile, int turn){
+int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string dfile, std::string pfile, std::string hfile, 
+    std::string mfile, std::string hkfile, int turn){
     //assume only 2 player
     std::ifstream handFile(hfile);
     std::ifstream moveFile(mfile);
     std::ifstream pileFile(pfile);
     std::ifstream deckFile(dfile);
+    std::ifstream hkFile(hkfile);
 
     std::string deck;
     std::string pile;
     std::string hand;
     std::string move;
+    std::string hk;
 
     std::vector<std::string> attributes = 
     {"hand1_col1", "hand1_rank1", "hand1_col2", "hand1_rank2", "hand1_col3", "hand1_rank3", "hand1_col4", "hand1_rank4", "hand1_col5", "hand1_rank5",
@@ -210,7 +213,18 @@ int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string 
      "discard31", "discard32", "discard33", "discard34", "discard35", 
      "discard41", "discard42", "discard43", "discard44", "discard45", 
      "discard51", "discard52", "discard53", "discard54", "discard55", 
-    "deck_count", "hints", "pile1", "pile2", "pile3", "pile4", "pile5",  "move"}; 
+    "deck_count", "hints", "pile1", "pile2", "pile3", "pile4", "pile5",  "move",
+    "hk_h1_p1", "hk_h1_v1", "hk_h1_w1", "hk_h1_c1", "hk_h1_r1",
+    "hk_h1_p2", "hk_h1_v2", "hk_h1_w2", "hk_h1_c2", "hk_h1_r2",
+    "hk_h1_p3", "hk_h1_v3", "hk_h1_w3", "hk_h1_c3", "hk_h1_r3",
+    "hk_h1_p4", "hk_h1_v4", "hk_h1_w4", "hk_h1_c4", "hk_h1_r4",
+    "hk_h1_p5", "hk_h1_v5", "hk_h1_w5", "hk_h1_c5", "hk_h1_r5",
+    "hk_h2_p1", "hk_h2_v1", "hk_h2_w1", "hk_h2_c1", "hk_h2_r1",
+    "hk_h2_p2", "hk_h2_v2", "hk_h2_w2", "hk_h2_c2", "hk_h2_r2",
+    "hk_h2_p3", "hk_h2_v3", "hk_h2_w3", "hk_h2_c3", "hk_h2_r3",
+    "hk_h2_p4", "hk_h2_v4", "hk_h2_w4", "hk_h2_c4", "hk_h2_r4",
+    "hk_h2_p5", "hk_h2_v5", "hk_h2_w5", "hk_h2_c5", "hk_h2_r5"}; 
+
 
     for(int i =0; i < attributes.size(); i++){
         outFile << attributes[i];
@@ -228,11 +242,12 @@ int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string 
         std::getline(pileFile, pile);
         std::getline(handFile, hand);
         std::getline(moveFile, move);
+        std::getline(hkFile, hk);
         if (x % 2 == 1){
-            outFile << hand << ", " << deck << ", " << pile << ", " << move << std::endl; 
+            outFile << hand << ", " << deck << ", " << pile << ", " << move << ", " << hk << std::endl; 
         }
         else{
-            outFile2 << hand << ", " << deck << ", " << pile << ", " << move << std::endl; 
+            outFile2 << hand << ", " << deck << ", " << pile << ", " << move << ", " << hk << std::endl; 
         }
         // std::cout << hand << std::endl;
         // std::cout << pile << std::endl;
@@ -261,6 +276,7 @@ int game::run(bool log_game) {
     std::ofstream moveFile("output/moves.csv");
     std::ofstream pileFile("output/piles.csv");
     std::ofstream deckFile("output/decks.csv");
+    std::ofstream hkFile("output/hk.csv");
     std::ofstream outFile(fname1);
     std::ofstream outFile2(fname2);
 
@@ -273,6 +289,52 @@ int game::run(bool log_game) {
             State s = curr_state_;
             (*(players_[i])).observe_before_move(curr_state_);
         }
+
+    //create handknowledge #####################################################################
+    State s = curr_state_;
+    int num_players = players_.size();
+    int num_cards_ = (num_players <= 3) ? 5 : 4;;
+    std::vector<int> hk_playable = {};
+    std::vector<int> hk_valuable = {};
+    std::vector<int> hk_worthless = {};
+    std::vector<int> hk_cols = {};
+    std::vector<int> hk_ranks = {};
+    if (dynamic_cast<smartbot*>(players_[curr_player]) != nullptr) {
+        std::cout << "casted to smart" << std::endl;
+        smartbot *smart_partner = (smartbot*)(players_[curr_player]);
+        std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hk = smart_partner->get_hk();
+        for (int i = 0; i < hk.size(); i++) {
+            for (int j = 0; j < hk[i].size(); j++) {
+                hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_playable() == SmartBotInternal::YES) ? 1 : 2));
+                hk_valuable.push_back((hk[i][j].valuable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_valuable() == SmartBotInternal::YES) ? 1 : 2));
+                hk_worthless.push_back((hk[i][j].worthless(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_worthless() == SmartBotInternal::YES) ? 1 : 2));
+                hk_cols.push_back((hk[i][j].color() < 0) ? 6 : hk[i][j].color());
+                hk_ranks.push_back((hk[i][j].rank() < 0) ? 6 : hk[i][j].rank());
+            }
+        }
+    } 
+    else if (dynamic_cast<holmesbot*>(players_[curr_player]) != nullptr) {
+        std::cout << "casted to holmes" << std::endl;
+        holmesbot *holmes_partner = (holmesbot*)(players_[curr_player]);
+        std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
+        for (int i = 0; i < hk.size(); i++) {
+            for (int j = 0; j < hk[i].size(); j++) {
+                hk_playable.push_back((int)hk[i][j].is_playable);
+                hk_valuable.push_back((int)hk[i][j].is_valuable);
+                hk_worthless.push_back((int)hk[i][j].is_worthless);
+                hk_cols.push_back((int)(hk[i][j].color()));
+                hk_ranks.push_back((int)(hk[i][j].rank()));
+            }
+        }
+    }
+    // write hk csv #####################################################################
+    for (int i = 0; i < hk_cols.size(); i++){
+        hkFile << hk_playable[i] << ", " << hk_valuable[i] << ", " << hk_worthless[i] << ", " << hk_cols[i] 
+        << ", " << hk_ranks[i];
+        if(i != hk_cols.size() - 1) hkFile << ", ";
+    }
+    hkFile << std::endl;
+    // #########################################################################
         write_hand_csv(handFile, curr_state_, curr_player, players_.size());
         write_pile_csv(pileFile, curr_state_);
         write_deck_csv(deckFile, curr_state_);
@@ -343,12 +405,13 @@ int game::run(bool log_game) {
     }
     //combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
 
-    tree_csv(outFile, outFile2, "output/decks.csv", "output/piles.csv", "output/hands.csv", "output/moves.csv", turn);
+    tree_csv(outFile, outFile2, "output/decks.csv", "output/piles.csv", "output/hands.csv", "output/moves.csv", "output/hk.csv", turn);
     handFile.close();
     moveFile.close();
     pileFile.close();
     deckFile.close();
     outFile.close();
+    hkFile.close();
     return curr_score;
 }
 
@@ -475,7 +538,7 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
 
     //close csv
     //combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
-    tree_csv(outFile, outFile2, "output/decks.csv", "output/piles.csv", "output/hands.csv", "output/moves.csv", turn);
+    tree_csv(outFile, outFile2, "output/decks.csv", "output/piles.csv", "output/hands.csv", "output/moves.csv", "output/hk.csv", turn);
     handFile.close();
     moveFile.close();
     pileFile.close();

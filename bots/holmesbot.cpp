@@ -550,3 +550,7 @@ int holmesbot::get_id() {
 int holmesbot::get_n_cards() {
     return num_cards_;
 }
+
+std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> holmesbot::get_hk(){
+    return hand_knowledge_;
+}

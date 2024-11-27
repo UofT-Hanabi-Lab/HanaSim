@@ -1161,3 +1161,7 @@ int smartbot::get_id() {
 int smartbot::get_n_cards() {
     return num_cards_;
 }
+
+std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> smartbot::get_hk(){
+    return hand_knowledge_;
+}
