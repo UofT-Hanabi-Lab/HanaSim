@@ -6,6 +6,7 @@
 #include <execution>
 #include <omp.h>
 
+
 #include "../include/game.h"
 #include "../bots/include/randombot.h"
 #include "../bots/include/holmesbot.h"
@@ -13,7 +14,9 @@
 #include "../include/humanplayer.h"
 #include "../bots/include/simplebot.h"
 #include "../agents/include/treeagent.h"
+
 //#include "../include/matplotlibcpp.h"
+
 
 //namespace plt = matplotlibcpp;
 

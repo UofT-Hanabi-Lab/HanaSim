@@ -1,3 +1,0 @@
-/Users/danielxu/Desktop/CSC494/HanaSim/cmake-build-debug/CMakeFiles/HanaSim.dir
-/Users/danielxu/Desktop/CSC494/HanaSim/cmake-build-debug/CMakeFiles/edit_cache.dir
-/Users/danielxu/Desktop/CSC494/HanaSim/cmake-build-debug/CMakeFiles/rebuild_cache.dir

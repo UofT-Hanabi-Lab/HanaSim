@@ -1,5 +1,9 @@
 #include <cstring>
 #include <algorithm>
+#include <random>
+#include <set>
+#include <iterator>
+#include <iostream>
 #include <assert.h>
 
 #include "include/holmesbot.h"
@@ -306,8 +310,11 @@ void holmesbot::observe_rank_hint(State s, move m) {
 }
 
 void holmesbot::observe(State s, move m) {
+    std::cout << "testtest "<< std::endl;
     if (m.get_type() == PLAY) {
+        std::cout << "1 "<< std::endl;
         observe_before_play(s, m);
+        std::cout << "2 "<< std::endl;
     } else if (m.get_type() == DISCARD) {
         observe_before_discard(s, m);
     } else if (m.get_type() == COL_HINT) {
@@ -427,9 +434,12 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
     return std::make_tuple(m, highest_info);
 }
 
-move holmesbot::give_valuable_warning(State s) {
-    int player_to_warn = (id_ + 1) % hand_knowledge_.size();
+move holmesbot::give_valuable_warning(State s) { 
+    std::cout << "here123\n" << std::endl;
+    int player_to_warn = (id_ + 1) % hand_knowledge_.size(); // for some reason, this line breaks the code 
+        std::cout << "here\n" << std::endl;
     int discard_index = next_discard_index(s, player_to_warn);
+        std::cout << "hello\n" << std::endl;
     if (discard_index == -1) {
         move m = move(INVALID_MOVE);
         return m;
@@ -442,7 +452,7 @@ move holmesbot::give_valuable_warning(State s) {
         move m = move(INVALID_MOVE);
         return m;
     }
-    move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn));
+    move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn)); 
     if (best_hint.get_type() != INVALID_MOVE) {
         return best_hint;
     }
@@ -481,6 +491,7 @@ move holmesbot::give_helpful_hint(State s) {
 }
 
 move holmesbot::play(State s) {
+        std::cout << "MOVE CHOSEN\n" << std::endl;
     move m = give_valuable_warning(s);
     if (m.get_type() != INVALID_MOVE) {
         return m;
@@ -523,8 +534,13 @@ move holmesbot::play(State s) {
             if (hand_knowledge_[id_][i].rank() > hand_knowledge_[id_][best].rank()) best = i;
         }
         m = move(DISCARD, id_, best);
+        
         return m;
     }
+}
+
+move holmesbot::play_prechosen(State s, move chosen_m) {
+    return chosen_m;
 }
 
 int holmesbot::get_id() {

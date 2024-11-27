@@ -69,6 +69,15 @@ int rank_num(Rank r) {
     return num;
 }
 
+bool move::compare(move m){
+    if((type_ == m.get_type()) && (to_ == m.get_to()) && (from_ == m.get_from()) &&
+        (card_index_ == m.get_card_index()) && (card_indices_ == m.get_card_indices()) &&
+        (color_ = m.get_color()) && (rank_ == m.get_rank())){
+        return true; 
+    }
+    return false; 
+}
+
 void move::str() {
     if (type_ == COL_HINT) {
         std::cout << col_str(color_) << " COLOR HINT to player " << to_ << std::endl;

@@ -1149,6 +1149,9 @@ move smartbot::play(State s) {
     }
 }
 
+move smartbot::play_prechosen(State s, move chosen_m) {
+    return chosen_m;
+}
 
 int smartbot::get_id() {
     return id_;
