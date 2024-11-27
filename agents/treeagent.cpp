@@ -109,13 +109,13 @@ move treeagent::play(State s) {
     feats = {{"deck_count", deck_count},
              {"hints", hints}};
     for (int i = 0; i < hand_cols.size(); i++) {
-        feats.insert({"hand_col"+std::to_string(i), hand_cols[i]});
-        feats.insert({"hand_rank"+std::to_string(i), hand_ranks[i]});
-        feats.insert({"hk_playable"+std::to_string(i), hk_playable[i]});
-        feats.insert({"hk_valuable"+std::to_string(i), hk_valuable[i]});
-        feats.insert({"hk_worthless"+std::to_string(i), hk_worthless[i]});
-        feats.insert({"hk_col"+std::to_string(i), hk_cols[i]});
-        feats.insert({"hk_rank"+std::to_string(i), hk_ranks[i]});
+        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), hand_cols[i]});
+        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), hand_ranks[i]});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_playable" + std::to_string((i+1) % (num_cards_+1)), hk_playable[i]});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_valuable" + std::to_string((i+1) % (num_cards_+1)), hk_valuable[i]});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_worthless" + std::to_string((i+1) % (num_cards_+1)), hk_worthless[i]});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), hk_cols[i]});
+        feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), hk_ranks[i]});
     }
     for (int i = 0; i < piles.size(); i++) feats.insert({"pile"+std::to_string(i), piles[i]});
     for (int i = 0; i < discard_count.size(); i++) feats.insert({"discard"+std::to_string(((i+1) % 6) + ((i+1) / 6)), discard_count[i]});
