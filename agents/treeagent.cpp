@@ -68,15 +68,10 @@ move treeagent::play(State s) {
 
     //HANDKNOWLEDGE
     std::vector<int> hk_playable = {};
-    hk_playable.resize(num_players_ * num_cards_);
     std::vector<int> hk_valuable = {};
-    hk_valuable.resize(num_players_ * num_cards_);
     std::vector<int> hk_worthless = {};
-    hk_worthless.resize(num_players_ * num_cards_);
     std::vector<int> hk_cols = {};
-    hk_cols.resize(num_players_ * num_cards_);
     std::vector<int> hk_ranks = {};
-    hk_ranks.resize(num_players_ * num_cards_);
 
 
     if (dynamic_cast<smartbot*>(&partner_) != nullptr) {
