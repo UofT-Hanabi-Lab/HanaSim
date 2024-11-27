@@ -182,7 +182,7 @@ int main() {
     //test_create_two_holmesbot_custom();
     //test_create_two_smartbot_custom();
     //test_create_two_human_player();
-    for (int x = 0; x < 10; x++){
+    for (int x = 0; x < 1; x++){
         test_create_two_smartbot(seed_num);
         game_num +=1;
         seed_num +=1; 

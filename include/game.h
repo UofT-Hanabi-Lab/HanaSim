@@ -8,6 +8,7 @@ class game {
 public:
     game(State init_state, std::vector<player*>);
     int run(bool log_game);
+    int create_hand_knowledge(std::vector<player*> players, int curr_player);
     int write_move_csv(std::ofstream &file, move move);
     int write_hand_csv(std::ofstream &file, State s, int curr_p, int num_p);
     int write_pile_csv(std::ofstream &file, State s);

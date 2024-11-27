@@ -9,6 +9,8 @@
 
 #include "../include/game.h"
 #include "../include/humanplayer.h"
+#include "../bots/include/holmesbot.h"
+#include "../bots/include/smartbot.h"
 
 
 State game::get_curr_state() {
@@ -18,74 +20,134 @@ State game::get_curr_state() {
 game::game(State init_state, std::vector<player*> players) : curr_state_(init_state), players_(players){
 }
 
+int game::create_hand_knowledge(std::vector<player*> players, int curr_player){
+    //HANDKNOWLEDGE
+    State s = curr_state_;
+    int num_players = players_.size();
+    int num_cards_ = (num_players <= 3) ? 5 : 4;;
+    std::vector<int> hk_playable = {};
+    hk_playable.resize(num_players * num_cards_);
+    std::vector<int> hk_valuable = {};
+    hk_valuable.resize(num_players * num_cards_);
+    std::vector<int> hk_worthless = {};
+    hk_worthless.resize(num_players * num_cards_);
+    std::vector<int> hk_cols = {};
+    hk_cols.resize(num_players * num_cards_);
+    std::vector<int> hk_ranks = {};
+    hk_ranks.resize(num_players * num_cards_);
+
+
+    if (dynamic_cast<smartbot*>(players[curr_player]) != nullptr) {
+        smartbot *smart_partner = (smartbot*)(players[curr_player]);
+        std::vector<std::vector<SmartBotInternal::cardknowledge>> hk = smart_partner->hand_knowledge_;
+        for (int i = 0; i < hk.size(); i++) {
+            for (int j = 0; j < hk[i].size(); j++) {
+                hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].playable_ == SmartBotInternal::YES) ? 1 : 2));
+                hk_valuable.push_back((hk[i][j].valuable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].valuable_ == SmartBotInternal::YES) ? 1 : 2));
+                hk_worthless.push_back((hk[i][j].worthless(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].worthless_ == SmartBotInternal::YES) ? 1 : 2));
+                hk_cols.push_back((hk[i][j].color() < 0) ? 6 : hk[i][j].color());
+                hk_cols.push_back((hk[i][j].rank() < 0) ? 6 : hk[i][j].rank());
+            }
+        }
+    } 
+    else if (dynamic_cast<holmesbot*>(players[curr_player]) != nullptr) {
+        smartbot *holmes_partner = (holmesbot*)(players[curr_player]);
+        std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->hand_knowledge_;
+        for (int i = 0; i < hk.size(); i++) {
+            for (int j = 0; j < hk[i].size(); j++) {
+                hk_playable.push_back((int)hk[i][j].is_playable);
+                hk_valuable.push_back((int)hk[i][j].is_valuable);
+                hk_worthless.push_back((int)hk[i][j].is_worthless);
+                hk_cols.push_back((int)(hk[i][j].color()));
+                hk_cols.push_back((int)(hk[i][j].rank()));
+            }
+        }
+    }
+}
+
 int game::write_move_csv(std::ofstream &moveFile, move next_move){
-    moveFile << "[";
+    //moveFile << "[";
     if(next_move.get_type() == 1){
         moveFile << next_move.get_type() << next_move.get_to() << next_move.get_from();
-        moveFile << "[";
-        std::vector<int> indices = next_move.get_card_indices();
-        for(int x = 0; x < indices.size(); x++){
-            moveFile << indices[x];
-            if(x != indices.size() - 1) moveFile << "; ";
-        }
-        moveFile << "]" << next_move.get_color();  
+        // moveFile << "[";
+        // std::vector<int> indices = next_move.get_card_indices();
+        // for(int x = 0; x < indices.size(); x++){
+        //     moveFile << indices[x];
+        //     if(x != indices.size() - 1) moveFile << "; ";
+        // }
+        moveFile << next_move.get_color();  
     }
     if(next_move.get_type() == 2){
         moveFile << next_move.get_type() << next_move.get_to() << next_move.get_from();
-        moveFile << "[";
-        std::vector<int> indices = next_move.get_card_indices();
-        for(int x = 0; x < indices.size(); x++){
-            moveFile << indices[x];
-            if(x != indices.size() - 1) moveFile << "; ";
-        }
-        moveFile << "]" << next_move.get_rank();    
+        // moveFile << "[";
+        // std::vector<int> indices = next_move.get_card_indices();
+        // for(int x = 0; x < indices.size(); x++){
+        //     moveFile << indices[x];
+        //     if(x != indices.size() - 1) moveFile << "; ";
+        // }
+        moveFile << next_move.get_rank();    
     }
     if(next_move.get_type() == 3 || next_move.get_type() == 4){
         moveFile << next_move.get_type() << next_move.get_from() << next_move.get_card_index();  
     }
-    moveFile << "]" << std::endl;
+    moveFile << std::endl;
     return 0; 
 }
 
 int game::write_hand_csv(std::ofstream &handFile, State s, int curr_p, int num_p){
-    handFile << "[";
+    //handFile << "[";
     for (int x = 0; x < num_p; x++) {
         // for writing to csv
         std::vector<std::vector<Card>> hands = s.get_hands();
-        std::cout << "player " << x << std::endl;
+        //std::cout << "player " << x << std::endl;
         for (int y=0; y < hands[x].size(); y++){
             if(x == curr_p){
                     hands[x][y] = Card(invalid_color, invalid_rank);
             }
-            std::cout << hands[x][y].color() << hands[x][y].rank() << std::endl;
-            handFile << hands[x][y].color() << hands[x][y].rank();
-            if(y != hands[x].size() - 1) handFile << "; ";
+            //std::cout << hands[x][y].color() << hands[x][y].rank() << std::endl;
+            handFile << hands[x][y].color() << ", "<< hands[x][y].rank();
+            if(y != hands[x].size() - 1) handFile << ", ";
         }
-        if(x != hands.size() - 1) handFile << "; ";
+        if(x != hands.size() - 1) handFile << ", ";
     }
-    handFile << "]" << std::endl;
+    handFile << std::endl;
     return 0;
 }
 
 int game::write_pile_csv(std::ofstream &pileFile, State s){
     std::vector<int> piles = curr_state_.get_piles();
-    pileFile << "[";
+    //pileFile << "[";
     // start at index 1, apparently index 0 is for invalid card pile?
     for (int x = 1; x < piles.size(); x++){
         pileFile << piles[x];
+        if(x != piles.size() - 1) pileFile << ", ";
     }
-    pileFile << "]" << std::endl;
+    pileFile << std::endl;
     return 0;
 }
 
 int game::write_deck_csv(std::ofstream &deckFile, State s){
     std::vector<Card> deck = s.get_deck();
-    deckFile << "[";
-    for (int x = 0; x < deck.size(); x++){
-        deckFile << deck[x].color() << deck[x].rank();
-        if(x != deck.size() - 1) deckFile << "; ";
+    int hints = s.get_num_hints();
+    std::vector<Card> d = s.get_discards();
+    //deckFile << "[";
+    std::vector<int> discards;
+    for (int x = 0; x < 25; x++){
+        discards.push_back(0);
     }
-    deckFile << "]" << std::endl;
+    for (int x = 0; x < d.size(); x++){
+        int color = d[x].color();
+        int rank = d[x].rank();
+        int index = ((color-1) * 5) + rank; 
+        std::cout << color << " " << rank << " " << index << std::endl;
+        //std::cout << "discards:" << d[x].color() << d[x].rank() << std::endl;
+        discards[index-1] += 1;
+    }
+    for (int x = 0; x < discards.size(); x++){
+        deckFile << discards[x] << ", ";
+        //if(x != discards.size() - 1) deckFile << ", ";
+    }
+    deckFile << deck.size() << ", " << hints << std::endl;
     return 0;
 }
 
@@ -140,7 +202,15 @@ int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string 
     std::string hand;
     std::string move;
 
-    std::vector<std::string> attributes = {"hand", "deck", "pile", "move"}; 
+    std::vector<std::string> attributes = 
+    {"hand1_col1", "hand1_rank1", "hand1_col2", "hand1_rank2", "hand1_col3", "hand1_rank3", "hand1_col4", "hand1_rank4", "hand1_col5", "hand1_rank5",
+     "hand2_col1", "hand2_rank1", "hand2_col2", "hand2_rank2", "hand2_col3", "hand2_rank3", "hand2_col4", "hand2_rank4", "hand2_col5", "hand2_rank5",
+     "discard11", "discard12", "discard13", "discard14", "discard15", 
+     "discard21", "discard22", "discard23", "discard24", "discard25", 
+     "discard31", "discard32", "discard33", "discard34", "discard35", 
+     "discard41", "discard42", "discard43", "discard44", "discard45", 
+     "discard51", "discard52", "discard53", "discard54", "discard55", 
+    "deck_count", "hints", "pile1", "pile2", "pile3", "pile4", "pile5",  "move"}; 
 
     for(int i =0; i < attributes.size(); i++){
         outFile << attributes[i];
