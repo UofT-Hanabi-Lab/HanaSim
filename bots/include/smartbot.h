@@ -71,6 +71,9 @@ public:
     trivalue playable(State s) { compute_playable(s); return playable_; }
     trivalue valuable(State s) { compute_valuable(s); return valuable_; }
     trivalue worthless(State s) { compute_worthless(s); return worthless_; }
+    trivalue get_playable(){return playable_;}
+    trivalue get_valuable(){return valuable_;}
+    trivalue get_worthless(){return worthless_;}
 
 
     float prob_playable(State s) { compute_playable(s); return prob_playable_; }
@@ -139,4 +142,5 @@ public:
     void observe_before_move(State s);
     int get_id();
     int get_n_cards();
+    std::vector<std::vector<SmartBotInternal::cardknowledge>> get_hk();
 };

@@ -78,4 +78,5 @@ public:
     void observe(State s, move m);
     int get_id();
     int get_n_cards();
+    std::vector<std::vector<HolmesBotInternal::cardknowledge>> get_hk();
 };
