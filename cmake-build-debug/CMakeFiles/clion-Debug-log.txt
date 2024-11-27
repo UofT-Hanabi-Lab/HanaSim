@@ -1,4 +1,0 @@
-Cannot generate into C:\Users\danie\CLionProjects\HanaSim
-It was created with incompatible generator 'Visual Studio 17 2022'
-
-Please either delete it manually or select another generation directory
