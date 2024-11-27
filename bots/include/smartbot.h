@@ -70,7 +70,6 @@ public:
     trivalue get_playable(){return playable_;}
     trivalue get_valuable(){return valuable_;}
     trivalue get_worthless(){return worthless_;}
-    
 
 
     float prob_playable(State s) { compute_playable(s); return prob_playable_; }
