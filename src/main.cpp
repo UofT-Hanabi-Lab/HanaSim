@@ -12,6 +12,7 @@
 #include "../bots/include/smartbot.h"
 #include "../include/humanplayer.h"
 #include "../bots/include/simplebot.h"
+#include "../agents/include/treeagent.h"
 //#include "../include/matplotlibcpp.h"
 
 //namespace plt = matplotlibcpp;
@@ -55,7 +56,7 @@ int main(int argc, char *argv[])
         std::cout << "Usage:" << std::endl;
         std::cout << "./HanaSim num-games num-players bot1-type ... botn-type --log" << std::endl;
         std::cout << "where n is num-players" << std::endl;
-        std::cout << "Options for bot-type: holmes, smart, random, simple, human" << std::endl;
+        std::cout << "Options for bot-type: holmes, smart, random, simple, human, tree" << std::endl;
         std::cout << "You can also add a --log flag that will log the moves and scores of every game" << std::endl;
         return 1;
     } else if (argc >= 3) {
@@ -90,8 +91,8 @@ int main(int argc, char *argv[])
                 for (int j = 0; argv[3 + i][j] != '\0'; j++) {
                     bot_type += argv[3 + i][j];
                 }
-                if (bot_type != "human" && bot_type != "random" && bot_type != "simple" && bot_type != "holmes" && bot_type != "smart") {
-                    std::cout << "bot-type must be a valid choice (random, holmes, human, simple, or smart)" << std::endl;
+                if (bot_type != "human" && bot_type != "random" && bot_type != "simple" && bot_type != "holmes" && bot_type != "smart" && bot_type != "tree") {
+                    std::cout << "bot-type must be a valid choice (random, holmes, human, simple, smart, or tree)" << std::endl;
                     return 1;
                 }
                 bot_types.push_back(bot_type);
@@ -136,6 +137,8 @@ int main(int argc, char *argv[])
                     p = new simplebot(id, num_players);
                 } else if (bot_types[id] == "human") {
                     p = new humanplayer(num_players, id);
+                } else if (bot_types[id] == "tree") {
+                    p = new treeagent(id, num_players);
                 }
                 players.push_back(p);
             }

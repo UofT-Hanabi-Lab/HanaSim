@@ -22,7 +22,14 @@ set (HEADERS ${Headers})
 #include_directories(${Python3_INCLUDE_DIRS} include)
 #include_directories(/usr/local/include)
 #link_directories(/usr/local/lib)
+
+add_subdirectory("../../greenfish-repo/gaenari" build) # <--- for treeagent. Change to where you have the greenfish/gaenari directory.
+check_cpp17_gaenari() # <--- for treeagent
+
+
 add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
+
+add_gaenari(${CMAKE_PROJECT_NAME}) # <--- for treeagent
 
 #if (NOT ANDROID)
 #    find_library(C10_LIBRARY c10 PATHS "${TORCH_INSTALL_PREFIX}/lib")
@@ -32,10 +39,6 @@ add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
 #    find_library(C10_LIBRARY c10 NO_CMAKE_FIND_ROOT_PATH PATHS "${TORCH_INSTALL_PREFIX}/lib")
 #endif()
 
-list(APPEND CMAKE_PREFIX_PATH "${CMAKE_SOURCE_DIR}/include/libtorch")
-find_package(Torch REQUIRED)
-include_directories(SYSTEM ${TORCH_INCLUDE_DIRS})
-target_link_libraries(${CMAKE_PROJECT_NAME} ${TORCH_LIBRARIES})
 
 
 find_package(OpenMP)
