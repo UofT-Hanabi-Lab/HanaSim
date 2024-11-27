@@ -302,7 +302,7 @@ int game::run(bool log_game) {
     if (dynamic_cast<smartbot*>(players_[curr_player]) != nullptr) {
         std::cout << "casted to smart" << std::endl;
         smartbot *smart_partner = (smartbot*)(players_[curr_player]);
-        std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hk = smart_partner->get_hk();
+        std::vector<std::vector<SmartBotInternal::cardknowledge>> hk = smart_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
                 hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_playable() == SmartBotInternal::YES) ? 1 : 2));
@@ -316,7 +316,7 @@ int game::run(bool log_game) {
     else if (dynamic_cast<holmesbot*>(players_[curr_player]) != nullptr) {
         std::cout << "casted to holmes" << std::endl;
         holmesbot *holmes_partner = (holmesbot*)(players_[curr_player]);
-        std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
+        std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
                 hk_playable.push_back((int)hk[i][j].is_playable);

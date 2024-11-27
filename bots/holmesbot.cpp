@@ -10,7 +10,7 @@
 
 using namespace HolmesBotInternal;
 
-holmes_cardknowledge::holmes_cardknowledge()
+cardknowledge::cardknowledge()
 {
     color_ = invalid_color;
     rank_ = invalid_rank;
@@ -20,10 +20,10 @@ holmes_cardknowledge::holmes_cardknowledge()
     is_worthless = false;
 }
 
-bool holmes_cardknowledge::must_be(Color color) { return (this->color_ == color); }
-bool holmes_cardknowledge::must_be(Rank rank) { return (this->rank_ == rank); }
-bool holmes_cardknowledge::cannot_be(Card card)  { return cant_be_[card.color()][card.rank()]; }
-bool holmes_cardknowledge::cannot_be(Color color)
+bool cardknowledge::must_be(Color color) { return (this->color_ == color); }
+bool cardknowledge::must_be(Rank rank) { return (this->rank_ == rank); }
+bool cardknowledge::cannot_be(Card card)  { return cant_be_[card.color()][card.rank()]; }
+bool cardknowledge::cannot_be(Color color)
 {
     if (color_ != invalid_color) return (color_ != color);
     for (int v = 1; v < 6; v++) {
@@ -32,7 +32,7 @@ bool holmes_cardknowledge::cannot_be(Color color)
     return true;
 }
 
-bool holmes_cardknowledge::cannot_be(Rank rank)
+bool cardknowledge::cannot_be(Rank rank)
 {
     if (this->rank_ != invalid_rank) return (this->rank_ != rank);
     for (int k = 1; k < 6; k++) {
@@ -41,10 +41,10 @@ bool holmes_cardknowledge::cannot_be(Rank rank)
     return true;
 }
 
-int holmes_cardknowledge::color() { return color_; }
-int holmes_cardknowledge::rank() { return rank_; }
+int cardknowledge::color() { return color_; }
+int cardknowledge::rank() { return rank_; }
 
-void holmes_cardknowledge::set_must_be(Color color)
+void cardknowledge::set_must_be(Color color)
 {
     for (int k = 1; k < 6; k++) {
         if (k != color) set_cannot_be(Color(k));
@@ -52,7 +52,7 @@ void holmes_cardknowledge::set_must_be(Color color)
     color_ = color;
 }
 
-void holmes_cardknowledge::set_must_be(Rank rank)
+void cardknowledge::set_must_be(Rank rank)
 {
     for (int v = 1; v < 6; v++) {
         if (v != rank) set_cannot_be(Rank(v));
@@ -60,21 +60,21 @@ void holmes_cardknowledge::set_must_be(Rank rank)
     rank_ = rank;
 }
 
-void holmes_cardknowledge::set_cannot_be(Color color)
+void cardknowledge::set_cannot_be(Color color)
 {
     for (int v = 1; v < 6; v++) {
         cant_be_[color][v] = true;
     }
 }
 
-void holmes_cardknowledge::set_cannot_be(Rank rank)
+void cardknowledge::set_cannot_be(Rank rank)
 {
     for (int k = 0; k < 6; k++) {
         cant_be_[k][rank] = true;
     }
 }
 
-void holmes_cardknowledge::update(State s, const holmesbot &bot) {
+void cardknowledge::update(State s, const holmesbot &bot) {
     int color = color_;
     int rank = rank_;
     repeat_loop:
@@ -173,7 +173,7 @@ bool holmesbot::is_valuable(State s, Card card) const {
     return (played_count_[card.color()][card.rank()] == total - 1); // Valuable if it's the last card of its kind
 }
 
-bool holmesbot::could_be_valuable(State s, holmes_cardknowledge ck, int rank) {
+bool holmesbot::could_be_valuable(State s, cardknowledge ck, int rank) {
     for (int k = 1; k < 6; k++) {
         if (ck.cannot_be(Card(Color(k), Rank(rank)))) continue;
         if (is_valuable(s, Card(Color(k), Rank(rank)))) return true;
@@ -182,11 +182,11 @@ bool holmesbot::could_be_valuable(State s, holmes_cardknowledge ck, int rank) {
 }
 
 void holmesbot::shift_knowledge(int p_index, int c_index) {
-    std::vector<holmes_cardknowledge> &vec = hand_knowledge_[p_index];
+    std::vector<cardknowledge> &vec = hand_knowledge_[p_index];
     for (int i = c_index; i + 1 < vec.size(); i++) {
         vec[i] = vec[i + 1];
     }
-    vec.back() = holmes_cardknowledge();
+    vec.back() = cardknowledge();
 }
 
 bool holmesbot::update_located_count() {
@@ -551,6 +551,6 @@ int holmesbot::get_n_cards() {
     return num_cards_;
 }
 
-std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> holmesbot::get_hk(){
+std::vector<std::vector<HolmesBotInternal::cardknowledge>> holmesbot::get_hk(){
     return hand_knowledge_;
 }
