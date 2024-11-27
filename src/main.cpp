@@ -153,9 +153,9 @@ int main(int argc, char *argv[])
             }
 
             game newgame = game(init_state, players);
-            //int score = newgame.run(log_games);
-            //total_score += score;
-            //if (score == 25) perfects++;
+            int score = newgame.run(log_games);
+            total_score += score;
+            if (score == 25) perfects++;
             //init_state.reset();
         }
 
