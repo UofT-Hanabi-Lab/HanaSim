@@ -93,7 +93,7 @@ move treeagent::play(State s) {
         }
 
     } else if (dynamic_cast<holmesbot*>(&partner_) != nullptr) {
-        smartbot *holmes_partner = (holmesbot*)(&partner_);
+        holmesbot *holmes_partner = (holmesbot*)(&partner_);
         std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->hand_knowledge_;
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
