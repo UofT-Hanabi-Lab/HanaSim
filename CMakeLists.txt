@@ -12,12 +12,7 @@ FILE(GLOB Agents agents/*.cpp)
 set (SOURCES ${Sources} ${Bots} ${Agents})
 
 FILE(GLOB Headers include/*.h)
-set (HEADERS ${Headers}
-        tests/tests.cpp
-        tests/test_game.cpp
-        tests/test_game.h
-        src/game.cpp
-        src/game.cpp)
+set (HEADERS ${Headers})
 
 
 #set(HOMEBREW_PREFIX "/usr/local"
@@ -27,8 +22,7 @@ set (HEADERS ${Headers}
 #include_directories(${Python3_INCLUDE_DIRS} include)
 #include_directories(/usr/local/include)
 #link_directories(/usr/local/lib)
-add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS}
-        tests/tests.cpp)
+add_executable(${CMAKE_PROJECT_NAME} ${SOURCES} ${HEADERS})
 
 #if (NOT ANDROID)
 #    find_library(C10_LIBRARY c10 PATHS "${TORCH_INSTALL_PREFIX}/lib")
