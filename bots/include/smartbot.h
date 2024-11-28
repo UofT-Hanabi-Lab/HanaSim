@@ -16,7 +16,7 @@ enum trivalue : int8_t {
 };
 
 
-class cardknowledge {
+class smart_cardknowledge {
     smartbot *bot_;
     bool cant_be_[6][6];
     int color_;
@@ -29,7 +29,7 @@ class cardknowledge {
     float prob_valuable_;
     float prob_worthless_;
 public:
-    cardknowledge(smartbot *bot);
+    smart_cardknowledge(smartbot *bot);
 
 
     bool must_be(Color color);
@@ -89,10 +89,10 @@ public:
 };
 }
 class smartbot final : public player {
-    friend class SmartBotInternal::cardknowledge;
+    friend class SmartBotInternal::smart_cardknowledge;
     int id_;
     int num_cards_;
-    std::vector<std::vector<SmartBotInternal::cardknowledge>> hand_knowledge_;
+    std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hand_knowledge_;
     int located_count_[6][6]; // cards that have been played/discarded
     int played_count_[6][6]; // cards that have been definitely identified
     int eyesight_count_[6][6]; // cards visible to me in particular
@@ -139,5 +139,5 @@ public:
     void observe_before_move(State s);
     int get_id();
     int get_n_cards();
-    std::vector<std::vector<SmartBotInternal::cardknowledge>> get_hk();
+    std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> get_hk();
 };

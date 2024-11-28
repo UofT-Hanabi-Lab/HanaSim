@@ -76,7 +76,7 @@ move treeagent::play(State s) {
 
     if (dynamic_cast<smartbot*>(partner_) != nullptr) {
         smartbot *smart_partner = (smartbot*)(partner_);
-        std::vector<std::vector<SmartBotInternal::cardknowledge>> hk = smart_partner->get_hk();
+        std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hk = smart_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
                 hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_playable() == SmartBotInternal::YES) ? 1 : 2));
@@ -89,7 +89,7 @@ move treeagent::play(State s) {
 
     } else if (dynamic_cast<holmesbot*>(partner_) != nullptr) {
         holmesbot *holmes_partner = (holmesbot*)(partner_);
-        std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->get_hk();
+        std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
                 hk_playable.push_back((int)hk[i][j].is_playable);
@@ -170,6 +170,10 @@ int treeagent::get_id() {
 
 int treeagent::get_n_cards() {
     return num_cards_;
+}
+
+move treeagent::play_prechosen(State s, move chosen_m) {
+    return move(INVALID_MOVE);
 }
 
 void treeagent::insert_and_update(std::string path_to_csv) {

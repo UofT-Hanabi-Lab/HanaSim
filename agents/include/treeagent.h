@@ -13,6 +13,7 @@ public:
     treeagent(int id, int num_players, std::string sample_path, player *partner);
     ~treeagent();
     move play(State s);
+    move play_prechosen(State s, move chosen_m);
     void observe(State s, move m);
     void observe_before_move(State s);
     int get_id();

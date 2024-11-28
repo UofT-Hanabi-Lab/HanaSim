@@ -3,8 +3,8 @@
 #include <numeric>
 #include <string>
 #include <fstream>
+#include <sys/stat.h>
 #include <string>
-#include <direct.h> // for _mkdir
 #include "../include/global_int.h"
 
 #include "../include/game.h"
@@ -12,6 +12,7 @@
 #include "../bots/include/holmesbot.h"
 #include "../bots/include/smartbot.h"
 
+int game_num;
 
 State game::get_curr_state() {
     return curr_state_;
@@ -266,9 +267,9 @@ int game::run(bool log_game) {
     if (log_game) std::cout << "STARTING GAME\n" << std::endl;
     int curr_player = 0;
     int turn = 1;
-    if (mkdir("output/p1") == -1)
+    if (mkdir("output/p1", 0777) == -1)
         std::cout << "failed to create directory or directory already exists" << std::endl;
-    if (mkdir("output/p2") == -1)
+    if (mkdir("output/p2", 0777) == -1)
         std::cout << "failed to create directory or directory already exists" << std::endl;
     std::string fname1 = "output/p1/g" + std::to_string(game_num) + ".csv";
     std::string fname2 = "output/p2/g" + std::to_string(game_num) + ".csv";
@@ -302,7 +303,7 @@ int game::run(bool log_game) {
     if (dynamic_cast<smartbot*>(players_[curr_player]) != nullptr) {
         std::cout << "casted to smart" << std::endl;
         smartbot *smart_partner = (smartbot*)(players_[curr_player]);
-        std::vector<std::vector<SmartBotInternal::cardknowledge>> hk = smart_partner->get_hk();
+        std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hk = smart_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
                 hk_playable.push_back((hk[i][j].playable(s) == SmartBotInternal::NO) ? 0 : ((hk[i][j].get_playable() == SmartBotInternal::YES) ? 1 : 2));
@@ -316,7 +317,7 @@ int game::run(bool log_game) {
     else if (dynamic_cast<holmesbot*>(players_[curr_player]) != nullptr) {
         std::cout << "casted to holmes" << std::endl;
         holmesbot *holmes_partner = (holmesbot*)(players_[curr_player]);
-        std::vector<std::vector<HolmesBotInternal::cardknowledge>> hk = holmes_partner->get_hk();
+        std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
         for (int i = 0; i < hk.size(); i++) {
             for (int j = 0; j < hk[i].size(); j++) {
                 hk_playable.push_back((int)hk[i][j].is_playable);
@@ -420,9 +421,9 @@ int game::run_test(bool log_game, std::vector<move> test_moves) {
     if (log_game) std::cout << "STARTING TEST GAME\n" << std::endl;
     int curr_player = 0;
     int turn = 1;
-    if (mkdir("output/p1") == -1)
+    if (mkdir("output/p1", 0777) == -1)
         std::cout << "failed to create directory or directory already exists" << std::endl;
-    if (mkdir("output/p2") == -1)
+    if (mkdir("output/p2", 0777) == -1)
         std::cout << "failed to create directory or directory already exists" << std::endl;
     std::string fname1 = "output/p1/g" + std::to_string(game_num) + ".csv";
     std::string fname2 = "output/p2/g" + std::to_string(game_num) + ".csv";

@@ -32,7 +32,7 @@
 //namespace plt = matplotlibcpp;
 
 int seed_num;
-int game_num;
+//int game_num;
 
 void print_card(Card c){
   	if(c.color()== 1){

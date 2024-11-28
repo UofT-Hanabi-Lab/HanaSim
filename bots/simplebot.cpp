@@ -439,3 +439,7 @@ move simplebot::play(State s)
        return m;
    }
 }
+
+move simplebot::play_prechosen(State s, move chosen_m){
+    return move(INVALID_MOVE);    
+}

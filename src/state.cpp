@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <algorithm>
 #include <random>
+#include <map>
 
 #include "../include/state.h"
 

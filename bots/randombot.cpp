@@ -79,3 +79,7 @@ move randombot::play(State s) {
     std::sample(legal_moves.begin(), legal_moves.end(), std::back_inserter(m), 1, std::mt19937{std::random_device{}()});
     return m[0];
 }
+
+move randombot::play_prechosen(State s, move chosen_m) {
+    return move(INVALID_MOVE);
+}
