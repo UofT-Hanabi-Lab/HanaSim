@@ -15,13 +15,13 @@ enum trivalue : int8_t {
     NO, MAYBE, YES
 };
 
-
+// check holmes_cardknowledge if confused about some functions/attributes
 class smart_cardknowledge {
     smartbot *bot_;
     bool cant_be_[6][6];
     int color_;
     int rank_;
-    int possibilities_;
+    int possibilities_; // how many color-rank configurations are possible for this card
     trivalue playable_;
     trivalue valuable_;
     trivalue worthless_;
@@ -54,7 +54,7 @@ public:
     void befuddle_by_play(bool success);
 
 
-    void update(bool use_eyesight);
+    void update(bool use_eyesight); // update cant_be_
 
 
    
@@ -67,9 +67,9 @@ public:
     trivalue playable(State s) { compute_playable(s); return playable_; }
     trivalue valuable(State s) { compute_valuable(s); return valuable_; }
     trivalue worthless(State s) { compute_worthless(s); return worthless_; }
-    trivalue get_playable(){return playable_;}
-    trivalue get_valuable(){return valuable_;}
-    trivalue get_worthless(){return worthless_;}
+    trivalue get_playable() { return playable_; }
+    trivalue get_valuable() { return valuable_; }
+    trivalue get_worthless() { return worthless_; }
 
 
     float prob_playable(State s) { compute_playable(s); return prob_playable_; }
@@ -93,8 +93,8 @@ class smartbot final : public player {
     int id_;
     int num_cards_;
     std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hand_knowledge_;
-    int located_count_[6][6]; // cards that have been played/discarded
-    int played_count_[6][6]; // cards that have been definitely identified
+    int located_count_[6][6]; // cards that have been definitely identified
+    int played_count_[6][6]; // cards that have been played/discarded
     int eyesight_count_[6][6]; // cards visible to me in particular
 
 
@@ -105,7 +105,7 @@ class smartbot final : public player {
     bool update_located_count();
     void update_eyesight_count(State s);
     int next_discard_index(State s, int player_index);
-    void no_warning_given(int from, State s);
+    void no_warning_given(int from, State s); // called if this partner hasn't given a warning to his most immediately next partner
 
 
     void observe_before_play(State s, move m);
@@ -123,7 +123,6 @@ class smartbot final : public player {
 
     template<class F>
     std::tuple<move, int> best_hint_for_partner_given_constraint(State s, int partner_index, F&& is_okay);
-
 
     std::tuple<move, int> best_hint_for_partner(State s, int partner_index);
     move give_valuable_warning(State s);

@@ -18,21 +18,14 @@ Rank Card::rank() {
 }
 
 void Card::str() {
-
-    // find out how to properly change colour
     std::string col_str = "";
     int rank_int = 0;
-    // std::cout << "-------" << std::endl;
-    // std::cout << "|" << rank_ << "    |" << std::endl;
-    // std::cout << "|     |" << std::endl;
-    // std::cout << "|     |" << std::endl;
-    // std::cout << "|    " << rank_ << "|" << std::endl;
-    // std::cout << "-------" << std::endl;
-    if (color_ == red) col_str = "red";
-    if (color_ == green) col_str = "green";
-    if (color_ == blue) col_str = "blue";
-    if (color_ == white) col_str = "white";
-    if (color_ == yellow) col_str = "yellow";
+
+    if (color_ == red) col_str = "red ";
+    if (color_ == green) col_str = "green ";
+    if (color_ == blue) col_str = "blue ";
+    if (color_ == white) col_str = "white ";
+    if (color_ == yellow) col_str = "yellow ";
 
     if (rank_ == one) rank_int = 1;
     if (rank_ == two) rank_int = 2;

@@ -4,18 +4,18 @@
 
 #include "../include/move.h"
 
-move::move(move_type type) :
+move::move(move_type type) : // INVALID_MOVE
     type_(type), to_(-1), from_(-1), card_index_(-1), card_indices_({}), color_(invalid_color), rank_(invalid_rank) {
 }
-move::move(move_type type, int from, int card_index) :
+move::move(move_type type, int from, int card_index) : // PLAY/DISCARD
     type_(type), to_(-1), from_(from), card_index_(card_index), card_indices_({}), color_(invalid_color), rank_(invalid_rank) {
 }
 
-move::move(move_type type, int to, int from, std::vector<int> card_indices, Color color) :
+move::move(move_type type, int to, int from, std::vector<int> card_indices, Color color) : // COLOR HINT
     type_(type), to_(to), from_(from), card_index_(-1), card_indices_(card_indices), color_(color), rank_(invalid_rank) {
 }
 
-move::move(move_type type, int to, int from, std::vector<int> card_indices, Rank rank) :
+move::move(move_type type, int to, int from, std::vector<int> card_indices, Rank rank) : // RANK HINT
     type_(type), to_(to), from_(from), card_index_(-1), card_indices_(card_indices), color_(invalid_color), rank_(rank) {
 }
 
@@ -69,7 +69,7 @@ int rank_num(Rank r) {
     return num;
 }
 
-bool move::compare(move m){
+bool move::compare(move m) {
     if((type_ == m.get_type()) && (to_ == m.get_to()) && (from_ == m.get_from()) &&
         (card_index_ == m.get_card_index()) && (card_indices_ == m.get_card_indices()) &&
         (color_ = m.get_color()) && (rank_ == m.get_rank())){

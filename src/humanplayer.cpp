@@ -46,7 +46,7 @@ int rank_convert(Rank r) {
     return num;
 }
 
-void humanplayer::print_move(move m, int index) {
+void humanplayer::print_move(move m, int index) { // a bit different than move::str
     move_type type = m.get_type();
     int card_index = m.get_card_index();
     Color color = m.get_color();
@@ -69,23 +69,22 @@ void humanplayer::print_hands(State s) {
     for (auto & cards : hands){
         std::cout << "Hand of Player: " << curr_player <<std::endl;
         curr_player++;
-        for (auto & element : cards) {
-            std::cout << col_convert(element.color()) << " "
-            << rank_convert(element.rank()) <<std::endl;
+        for (auto & c : cards) {
+            std::cout << col_convert(c.color()) << " "
+            << rank_convert(c.rank()) <<std::endl;
         }
     }
 }
 
 move humanplayer::play(State s) {
     std::vector<move> legal_moves = s.get_legal_moves(id_);
-    std::vector<move> m;
     int move_index = 0;
     print_hands(s);
-    for (auto & element : legal_moves) {
-        print_move(element, move_index);
+    for (auto & m : legal_moves) {
+        print_move(m, move_index);
         move_index++;
     }
-    std::cout  << "select which move to make ";
+    std::cout << "select which move to make ";
     int num;
     std::cin >> num;
     std::cout << "selected move " << num <<std::endl;
@@ -105,11 +104,10 @@ move humanplayer::play_prechosen(State s, move chosen_m) {
         print_move(element, move_index);
         move_index++;
     }
-    if(valid == false){
+    if (valid == false){
         throw std::invalid_argument("received invalid move");
     }
-    std::cout  << "valid move chosen";
-//    std::cout  << "select which move to make ";
-    //std::cout << "selected move " << num <<std::endl;
+    std::cout << "valid move chosen";
+
     return chosen_m;
 }

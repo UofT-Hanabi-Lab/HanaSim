@@ -55,6 +55,7 @@ int main(int argc, char *argv[])
     bool log_games = false;
     std::vector<std::string> bot_types = {};
     
+    // parsing arguments ==========================================================================================================================================
     if (argc == 1) {
         std::cout << "Usage:" << std::endl;
         std::cout << "./HanaSim num-games num-players bot1-type ... botn-type --log" << std::endl;
@@ -110,6 +111,7 @@ int main(int argc, char *argv[])
             if (log_str == "--log") log_games = true;
         }
     }
+    // ============================================================================================================================================================
     std::cout << "Welcome to HanaSim!" << std::endl;
     {
         Timer timer;
@@ -117,15 +119,8 @@ int main(int argc, char *argv[])
         int perfects = 0;
 
         // sequential loop
-//        omp_set_num_threads(1);
+        //omp_set_num_threads(1);
         
-        //#pragma omp parallel for schedule(static) num_threads(1)
-        //State init_state = State(num_players);
-        // std::vector<Card> deck = { Card(yellow, three), Card(blue, five), Card(red, three), Card(white, one), Card(green, one), Card(white, four), Card(yellow, one), Card(yellow, one), Card(white, one), Card(red, five), 
-        // Card(red, two), Card(blue, four), Card(blue, three), Card(white, two), Card(green, three), Card(blue, one), Card(red, four), Card(white, two), Card(blue, one), Card(red, one), Card(yellow, five), Card(blue, three),
-        // Card(green, one), Card(green, four), Card(green, two), Card(red, three), Card(yellow, four), Card(blue, two), Card(green, four), Card(white, four), Card(blue, one), Card(green, two), Card(yellow, two), 
-        // Card(green, one), Card(blue, two), Card(green, three), Card(blue, four), Card(yellow, three), Card(white, five), Card(red, one), Card(white, three), Card(yellow, one), Card(white, one), Card(red, one), Card(yellow, two), 
-        // Card(red, four), Card(white, three), Card(red, two), Card(yellow, four), Card(green, five)};
         for (int i=0; i < num_games; i++) {
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
@@ -141,12 +136,13 @@ int main(int argc, char *argv[])
                 } else if (bot_types[id] == "human") {
                     p = new humanplayer(num_players, id);
                 } else if (bot_types[id] == "tree") {
-                    p = new treeagent(id, num_players, "", players[0]);
+                    p = new treeagent(id, num_players, "output/p1/g1.csv", players[0]); // any treeagent must be the second player
                 }
                 players.push_back(p);
             }
 
             State init_state = State(num_players);
+            // Print out all hands if we're logging
             if (log_games) {
                 for (std::vector<Card> hand : init_state.get_hands()) {
                     for (Card c : hand) {
@@ -159,7 +155,7 @@ int main(int argc, char *argv[])
             int score = newgame.run(log_games);
             total_score += score;
             if (score == 25) perfects++;
-            //init_state.reset();
+            //init_state.reset(); --> for testing with a specific deck (i.e. if you want to see any bots you make are fully deterministic)
         }
 
         float average_score = (float)total_score / (float)num_games;
@@ -167,14 +163,5 @@ int main(int argc, char *argv[])
         std::cout << "Ran " << num_games << " Games with Average Score: " << average_score << std::endl;
         std::cout << perfects << " games with perfect score (" << prop_perf << "%)" << std::endl;
 
-//        omp_set_num_threads(4);
-//        #pragma omp parallel for num_threads(4)
-//        for (int i = 1; i <= 10; i++) {
-//            std::cout << i << std::endl;
-//        }
     }
-//    plt::plot({1,2,3,4}, "*");
-//    plt::show();
-
-
 }

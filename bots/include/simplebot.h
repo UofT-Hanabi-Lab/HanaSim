@@ -6,6 +6,8 @@
 
 #pragma once
 
+// IGNORE SIMPLEBOT. ABANDONED.
+
 class simplebot;
 
 namespace SimpleBotInternal {

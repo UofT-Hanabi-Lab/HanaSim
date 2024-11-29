@@ -3,6 +3,8 @@
 #include <cassert>
 #include "include/simplebot.h"
 
+// IGNORE SIMPLEBOT. ABANDONED.
+
 using namespace SimpleBotInternal;
 
 int col_to_num(Color col) {

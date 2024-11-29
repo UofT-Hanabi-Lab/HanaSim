@@ -25,14 +25,14 @@ bool holmes_cardknowledge::must_be(Rank rank) { return (this->rank_ == rank); }
 bool holmes_cardknowledge::cannot_be(Card card)  { return cant_be_[card.color()][card.rank()]; }
 bool holmes_cardknowledge::cannot_be(Color color)
 {
-    if (color_ != invalid_color) return (color_ != color);
-    for (int v = 1; v < 6; v++) {
+    if (color_ != invalid_color) return (color_ != color); // i.e. if color is known
+    for (int v = 1; v < 6; v++) { // otherwise, iterate over all ranks and infer
         if (!cant_be_[color][v]) return false;
     }
     return true;
 }
 
-bool holmes_cardknowledge::cannot_be(Rank rank)
+bool holmes_cardknowledge::cannot_be(Rank rank) // same as above
 {
     if (this->rank_ != invalid_rank) return (this->rank_ != rank);
     for (int k = 1; k < 6; k++) {
@@ -46,13 +46,13 @@ int holmes_cardknowledge::rank() { return rank_; }
 
 void holmes_cardknowledge::set_must_be(Color color)
 {
-    for (int k = 1; k < 6; k++) {
+    for (int k = 1; k < 6; k++) { // set cant_be to true for every other color
         if (k != color) set_cannot_be(Color(k));
     }
     color_ = color;
 }
 
-void holmes_cardknowledge::set_must_be(Rank rank)
+void holmes_cardknowledge::set_must_be(Rank rank) // same as above
 {
     for (int v = 1; v < 6; v++) {
         if (v != rank) set_cannot_be(Rank(v));
@@ -84,7 +84,7 @@ void holmes_cardknowledge::update(State s, const holmesbot &bot) {
             else if (color == invalid_color) color = k;
             else {color = invalid_color; break;}
         }
-        if (color != invalid_color) set_must_be(Color(color));
+        if (color != invalid_color) set_must_be(Color(color)); // we got here if cannot_be(Color(k)) was true for all but one color
     }
     if (rank == invalid_rank) {
         for (int r = 1; r < 6; r++) {
@@ -92,9 +92,9 @@ void holmes_cardknowledge::update(State s, const holmesbot &bot) {
             else if (rank == invalid_rank) rank = r;
             else {rank = invalid_rank; break;}
         }
-        if (rank != invalid_rank) set_must_be(Rank(rank));
+        if (rank != invalid_rank) set_must_be(Rank(rank)); // we got here if cannot_be(Rank(rank)) was true for all but one rank
     }
-    if (rank == invalid_rank || color == invalid_color) {
+    if (rank == invalid_rank || color == invalid_color) { // if we still can't determine color or rank, then use played and located (and the playable/valuable/worthless) to determine cant_be
         bool restart = false;
         for (int k = 1; k < 6; k++) {
             for (int r = 1; r < 6; r++) {
@@ -108,13 +108,13 @@ void holmes_cardknowledge::update(State s, const holmesbot &bot) {
                     (is_worthless && s.get_piles()[k] < r))
                 {
                     this->cant_be_[k][r] = true;
-                    restart = true;
+                    restart = true; // if cant_be was changed it means we can maybe determine color/rank now
                 }
             }
         }
         if (restart) goto repeat_loop;
     }
-    if (is_worthless) return;
+    if (is_worthless) return; // if it's worthless, its not playable or valuable so do early return
 
     if (!is_playable && !is_valuable) {
         for (int k = 1; k < 6; k++) {
@@ -125,7 +125,7 @@ void holmes_cardknowledge::update(State s, const holmesbot &bot) {
                 }
             }
         }
-        is_worthless = true;
+        is_worthless = true; // reaches here if all possibilities of this card are worthless
         return;
       notWorthless:;
     }
@@ -139,7 +139,7 @@ void holmes_cardknowledge::update(State s, const holmesbot &bot) {
                 }
             }
         }
-        is_valuable = true;
+        is_valuable = true; // reaches here if all possibilities are valuable
       maybeNotValuable:;
     }
 
@@ -152,7 +152,7 @@ void holmes_cardknowledge::update(State s, const holmesbot &bot) {
                 }
             }
         }
-        is_playable = true;
+        is_playable = true; // reaches here if all possibilities are valuable
       maybeUnplayable:;
     }
 }
@@ -168,12 +168,12 @@ holmesbot::holmesbot(int id, int n_players) {
 }
 
 bool holmesbot::is_valuable(State s, Card card) const {
-    if (s.get_piles()[card.color()] >= card.rank()) return false;
+    if (s.get_piles()[card.color()] >= card.rank()) return false; // not valuable if it can't be played in the future
     int total = (card.rank() == 1 ? 3 : (card.rank() == 5 ? 1 : 2));
     return (played_count_[card.color()][card.rank()] == total - 1); // Valuable if it's the last card of its kind
 }
 
-bool holmesbot::could_be_valuable(State s, holmes_cardknowledge ck, int rank) {
+bool holmesbot::could_be_valuable(State s, holmes_cardknowledge ck, int rank) { // could this card be valauble if it had this rank?
     for (int k = 1; k < 6; k++) {
         if (ck.cannot_be(Card(Color(k), Rank(rank)))) continue;
         if (is_valuable(s, Card(Color(k), Rank(rank)))) return true;
@@ -189,11 +189,11 @@ void holmesbot::shift_knowledge(int p_index, int c_index) {
     vec.back() = holmes_cardknowledge();
 }
 
-bool holmesbot::update_located_count() {
+bool holmesbot::update_located_count() { // true if it was updated
     int new_count[6][6] = {};
     for (int p = 0; p < hand_knowledge_.size(); p++) {
         for (int i = 0; i < hand_knowledge_[p].size(); i++) {
-            if (hand_knowledge_[p][i].color() != invalid_color && hand_knowledge_[p][i].rank() != invalid_rank) {
+            if (hand_knowledge_[p][i].color() != invalid_color && hand_knowledge_[p][i].rank() != invalid_rank) { // located only counts fully known cards
                 new_count[hand_knowledge_[p][i].color()][hand_knowledge_[p][i].rank()] += 1;
             }
         }
@@ -207,18 +207,22 @@ bool holmesbot::update_located_count() {
 
 void holmesbot::observe_before_move(State s) {
     my_hand_size_ = s.get_hands()[id_].size();
-    for (int p = 0; p < hand_knowledge_.size(); p++) {
+
+    for (int p = 0; p < hand_knowledge_.size(); p++) { // hand_size might've changed (if empty deck)
         hand_knowledge_[p].resize(s.get_hands()[p].size());
     }
     std::memset(located_count_, '\0', sizeof located_count_);
     update_located_count();
-    do {
+
+    do { // if located was updated, we need to call update for each cardknowledge (update depends of located_count and changes ck.color and ck.rank, while update_located_count depends on ck.color and ck.rank)
         for (int p = 0; p < hand_knowledge_.size(); p++) {
             for (int i = 0; i < hand_knowledge_[p].size(); i++) {
                 hand_knowledge_[p][i].update(s, *this);
             }
         }
     } while (update_located_count());
+
+    // Compute
     lowest_playable_rank_ = 6;
     for (int k = 1; k < 6; k++) {
         lowest_playable_rank_ = std::min(lowest_playable_rank_, s.get_piles()[k] + 1);
@@ -246,7 +250,7 @@ void holmesbot::observe_before_play(State s, move m) {
     Card c = s.get_hands()[m.get_from()][m.get_card_index()]; // can observe since we're playing anyway, so the card is now public
     if (s.get_piles()[c.color()] + 1 == c.rank()) {
 //         This card is getting played, not discarded.
-        if (!is_valuable(s, c)) {
+        if (!is_valuable(s, c)) { // i.e. it's not the last of its kind
             wipe_out_playables(c);
         }
     }
@@ -264,39 +268,41 @@ bool search_for_ind(std::vector<int> indices, int index) {
 void holmesbot::observe_color_hint(State s, move m) {
     int next_rank = s.get_piles()[m.get_color()] + 1;
     next_rank = std::min(next_rank, 5);
+    // update knowledge from this hint
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
         if (search_for_ind(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_color());
             if (hand_knowledge_[m.get_to()][i].rank() == invalid_rank && !(hand_knowledge_[m.get_to()][i].is_worthless)) {
-                hand_knowledge_[m.get_to()][i].set_must_be(Rank(next_rank));
+                hand_knowledge_[m.get_to()][i].set_must_be(Rank(next_rank)); // assume if your partner hinted the color of this non-worthless card, then the card is playable
                 hand_knowledge_[m.get_to()][i].is_playable = true;
             }
         } else {
-            hand_knowledge_[m.get_to()][i].set_cannot_be(m.get_color());
+            hand_knowledge_[m.get_to()][i].set_cannot_be(m.get_color()); // everything else can't be this color
         }
     }
 }
 
 int holmesbot::next_discard_index(State s, int player_index) {
     for (int i = 0; i < s.get_hands()[player_index].size(); i++) {
-        if (hand_knowledge_[player_index][i].is_worthless || hand_knowledge_[player_index][i].is_playable) return -1;
+        if (hand_knowledge_[player_index][i].is_worthless || hand_knowledge_[player_index][i].is_playable) return -1; // will play a playable or discard a worthless (so no risk)
     }
     for (int i = 0; i < s.get_hands()[player_index].size(); i++) {
-        if (!(hand_knowledge_[player_index][i].is_valuable)) return i;
+        if (!(hand_knowledge_[player_index][i].is_valuable)) return i; // discarding my oldest non-valuable card (if there is any)
     }
-    return -1;
+    return -1; // not discarding, so -1
 }
 
 void holmesbot::observe_rank_hint(State s, move m) {
     int discard_ind = next_discard_index(s, m.get_to());
-    bool is_warning = search_for_ind(m.get_card_indices(), discard_ind) && could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank());
-    if (s.get_num_hints() == 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && search_for_ind(m.get_card_indices(), 0)) return;
+    bool is_warning = search_for_ind(m.get_card_indices(), discard_ind) && could_be_valuable(s, hand_knowledge_[m.get_to()][discard_ind], m.get_rank()); // warning that their discard_ind card is valuable
+    if (s.get_num_hints() == 8 && m.get_from() == (m.get_to() + 1) % s.get_hands().size() && search_for_ind(m.get_card_indices(), 0)) return; // they just wanted to hint because they had to
     if (is_warning) {
         hand_knowledge_[m.get_to()][discard_ind].is_valuable = true;
         if (m.get_rank() == lowest_playable_rank_) {
             hand_knowledge_[m.get_to()][discard_ind].is_playable = true;
         }
     }
+    // similar to what was done in observe_col_hint
     for (int i = 0; i < s.get_hands()[m.get_to()].size(); i++) {
         if (search_for_ind(m.get_card_indices(), i)) {
             hand_knowledge_[m.get_to()][i].set_must_be(m.get_rank());
@@ -310,11 +316,8 @@ void holmesbot::observe_rank_hint(State s, move m) {
 }
 
 void holmesbot::observe(State s, move m) {
-    std::cout << "testtest "<< std::endl;
     if (m.get_type() == PLAY) {
-        std::cout << "1 "<< std::endl;
         observe_before_play(s, m);
-        std::cout << "2 "<< std::endl;
     } else if (m.get_type() == DISCARD) {
         observe_before_discard(s, m);
     } else if (m.get_type() == COL_HINT) {
@@ -324,7 +327,7 @@ void holmesbot::observe(State s, move m) {
     }
 }
 
-move holmesbot::play_lowest_playable(State s) {
+move holmesbot::play_lowest_playable(State s) { // straightforward
     int best_i = -1;
     int lowest_r = 6;
     for (int i = 0; i < s.get_hands()[id_].size(); i++) {
@@ -341,7 +344,7 @@ move holmesbot::play_lowest_playable(State s) {
     return m;
 }
 
-move holmesbot::discard_worthless(State s) {
+move holmesbot::discard_worthless(State s) { // discard oldest worthless (if any are worthless)
     for (int i = 0; i < s.get_hands()[id_].size(); i++) {
         if (hand_knowledge_[id_][i].is_worthless) {
             move m = move(DISCARD, id_, i);
@@ -352,7 +355,7 @@ move holmesbot::discard_worthless(State s) {
     return m;
 }
 
-move holmesbot::play_mystery(State s) {
+move holmesbot::play_mystery(State s) { // only plays mystery if there's one or less card in the deck (and it can't do play_lowest, give_warning, or give_helpful_hint)
     int table[4] = { -99, 1, 1, 1 };
     if (s.get_deck().size() <= table[s.get_num_lives()]) {
         for (int i = my_hand_size_ - 1; i >= 0; i--) {
@@ -365,7 +368,7 @@ move holmesbot::play_mystery(State s) {
     return m;
 }
 
-move holmesbot::discard_old(State s) {
+move holmesbot::discard_old(State s) { // discard oldest non-valuable
     for (int i = 0; i < my_hand_size_; i++) {
         if (hand_knowledge_[id_][i].is_valuable) continue;
         move m = move(DISCARD, id_, i);
@@ -377,15 +380,17 @@ move holmesbot::discard_old(State s) {
 
 std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_index) {
     std::vector<Card> partner_hand = s.get_hands()[partner_index];
-    bool is_actually_playable[partner_hand.size()];
+    bool is_actually_playable[partner_hand.size()]; // computing which of their cards are actually playable
     for (int i = 0; i < partner_hand.size(); i++) {
         is_actually_playable[i] = s.get_piles()[partner_hand[i].color()] + 1 == partner_hand[i].rank();
     }
+
     move m = move(INVALID_MOVE);
     int highest_info = 0;
+
     for (int k = 1; k < 6; k++) {
-        int info = 0;
-        bool misinformative = false;
+        int info = 0; // how many cards will they learn are playable because of this hint
+        bool misinformative = false; // will be true if hinting this color will make you hint an un-playable card that your partner already knows the rank of and knows that it isn't worthless (so they might mistakenly play it)
         std::vector<int> card_indices = {};
         for (int i = 0; i < partner_hand.size(); i++) {
             if (partner_hand[i].color() != k) continue;
@@ -405,13 +410,14 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
     }
 
     int discard_index = next_discard_index(s, partner_index);
-    Rank avoid_rank = invalid_rank;
+    Rank avoid_rank = invalid_rank; // avoid hinting this rank if it makes them believe their next discard is valuable
     if (discard_index != -1) {
         avoid_rank = partner_hand[discard_index].rank();
         if(!could_be_valuable(s, hand_knowledge_[partner_index][discard_index], avoid_rank)) avoid_rank = invalid_rank;
     }
+    // same as the color loop
     for (int r = 1; r < 6; r++) {
-        if (r == avoid_rank) continue;
+        if (r == avoid_rank) continue; // avoid this rank
         int info = 0;
         bool misinformative = false;
         std::vector<int> card_indices = {};
@@ -431,31 +437,30 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
             m = move(RANK_HINT, partner_index, id_, card_indices, Rank(r));
         }
     }
+
     return std::make_tuple(m, highest_info);
 }
 
 move holmesbot::give_valuable_warning(State s) { 
-    std::cout << "here123\n" << std::endl;
-    int player_to_warn = (id_ + 1) % hand_knowledge_.size(); // for some reason, this line breaks the code 
-        std::cout << "here\n" << std::endl;
+    int player_to_warn = (id_ + 1) % hand_knowledge_.size(); // warn the immediately next partner
     int discard_index = next_discard_index(s, player_to_warn);
-        std::cout << "hello\n" << std::endl;
-    if (discard_index == -1) {
+    if (discard_index == -1) { // they aren't discarding (or they're discarding a known worthless)
         move m = move(INVALID_MOVE);
         return m;
     }
-    if (!(is_valuable(s, s.get_hands()[player_to_warn][discard_index]))) {
+    if (!(is_valuable(s, s.get_hands()[player_to_warn][discard_index]))) { // if it isn't valuable, no need to warn
         move m = move(INVALID_MOVE);
         return m;
     }
-    if (s.get_num_hints() == 0) {
+    if (s.get_num_hints() == 0) { // can't warn anyway
         move m = move(INVALID_MOVE);
         return m;
     }
     move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn)); 
-    if (best_hint.get_type() != INVALID_MOVE) {
+    if (best_hint.get_type() != INVALID_MOVE) { // we can give a hint that will make them play instead
         return best_hint;
     }
+    // otherwise, warn
     std::vector<int> card_indices = {};
     for (int i = 0; i < s.get_hands()[player_to_warn].size(); i++) {
         if (s.get_hands()[player_to_warn][i].rank() == s.get_hands()[player_to_warn][discard_index].rank()) {
@@ -468,12 +473,13 @@ move holmesbot::give_valuable_warning(State s) {
 }
 
 move holmesbot::give_helpful_hint(State s) {
-    if (s.get_num_hints() == 0) {
+    if (s.get_num_hints() == 0) { // can't hint anyway
         move m = move(INVALID_MOVE);
         return m;
     }
     move best_hint = move(INVALID_MOVE);
     int highest_info = 0;
+    // Find which partner will get the most info from their "best_hint"
     for (int i = 1; i < hand_knowledge_.size(); i++) {
         int partner = (id_ + i) % hand_knowledge_.size();
         std::tuple<move, int> best_hint_tuple = best_hint_for_partner(s, partner);
@@ -491,7 +497,6 @@ move holmesbot::give_helpful_hint(State s) {
 }
 
 move holmesbot::play(State s) {
-        std::cout << "MOVE CHOSEN\n" << std::endl;
     move m = give_valuable_warning(s);
     if (m.get_type() != INVALID_MOVE) {
         return m;
@@ -509,7 +514,7 @@ move holmesbot::play(State s) {
         return m;
     }
 
-    if (s.get_num_hints() == 8) {
+    if (s.get_num_hints() == 8) { // Just hint at the next partner's first card
         int right_partner = (id_ + hand_knowledge_.size() - 1) % hand_knowledge_.size();
         Rank r = s.get_hands()[right_partner][0].rank();
         std::vector<int> card_indices = {};
@@ -520,7 +525,7 @@ move holmesbot::play(State s) {
         }
         m = move(RANK_HINT, right_partner, id_, card_indices, r);
         return m;
-    } else {
+    } else { // should discard
         m = discard_worthless(s);
         if (m.get_type() != INVALID_MOVE) {
             return m;
@@ -529,6 +534,7 @@ move holmesbot::play(State s) {
         if (m.get_type() != INVALID_MOVE) {
             return m;
         }
+        // if we got here, then just discard our highest-rank card (invalid_rank > 5 > ...)
         int best = 0;
         for (int i = 0; i < my_hand_size_; i++) {
             if (hand_knowledge_[id_][i].rank() > hand_knowledge_[id_][best].rank()) best = i;

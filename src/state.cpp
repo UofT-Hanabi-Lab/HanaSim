@@ -13,34 +13,19 @@ State::State(int num_players) {
               Card(yellow, one), Card(yellow, one), Card(yellow, one), Card(yellow, two), Card(yellow, two), Card(yellow, three), Card(yellow, three), Card(yellow, four), Card(yellow, four), Card(yellow, five),
               Card(green, one), Card(green, one), Card(green, one), Card(green, two), Card(green, two), Card(green, three), Card(green, three), Card(green, four), Card(green, four), Card(green, five),
               Card(white, one), Card(white, one), Card(white, one), Card(white, two), Card(white, two), Card(white, three), Card(white, three), Card(white, four), Card(white, four), Card(white, five)};
-    // for (int col = red; col != white; col++) {
-    //     for (int rank = one; rank <= five; rank++) {
-    //         int num_rank;
-    //         switch(rank) {
-    //             case one:
-    //                 num_rank = 3;
-    //                 break;
-    //             case five:
-    //                 num_rank = 1;
-    //                 break;
-    //             default:
-    //                 num_rank = 2;
-    //         }
-    //         for (int i = 0; i < num_rank; i++) {
-    //             deck_.push_back(Card(static_cast<Color>(col), static_cast<Rank>(rank)));
-                
-    //         }
-    //     }
-    // }
+
     // Shuffling the deck
     std::random_device rd;
     std::default_random_engine gen(rd());
     std::shuffle(deck_.begin(), deck_.end(), gen);
+
     num_players_ = num_players;
     hint_tokens_ = 8;
     lives_ = 3;
-    init_deck_ = {};
+
+    init_deck_ = {}; // to reset the state
     for (int i = 0; i < deck_.size(); i++) init_deck_.push_back(deck_[i]);
+
     cards_per_hand_ = (num_players <= 3) ? 5 : 4;
     // Distributing cards to players
     hands_ = {};
@@ -59,19 +44,19 @@ State::State(int num_players) {
 std::vector<move> State::get_legal_moves(int id){
     std::vector<move> moves;
     moves = {};
-    std::vector<std::vector<Card>> hands = get_hands();
-    if (get_num_hints() > 0) {
-        for (int i = 0; i < hands.size(); i++) {
-            std::set<Color> colors;
-            std::set<Rank> ranks;
-            std::map<Color, std::vector<int>> col_to_indices{};
-            std::map<Rank, std::vector<int>> rank_to_indices{};
-            if (i == id) {
-                continue;
-            }
-            std::cout << hands[i].size() << std::endl;
-            for (int j = 0; j < hands[i].size(); j++) {
-                Card c = hands[i][j];
+
+    if (get_num_hints() > 0) { // Can perform hints
+        for (int i = 0; i < hands_.size(); i++) {
+            if (i == id) continue; // Can't self-hint
+
+            std::set<Color> colors; // Colors I can hint for this partner
+            std::set<Rank> ranks; // ^
+            std::map<Color, std::vector<int>> col_to_indices{}; // Color to the indices of cards of that color in partner i's hand
+            std::map<Rank, std::vector<int>> rank_to_indices{}; // ^
+            
+            // Popylating the sets and maps
+            for (int j = 0; j < hands_[i].size(); j++) {
+                Card c = hands_[i][j];
                 colors.insert(c.color());
                 if (auto search = col_to_indices.find(c.color()); search == col_to_indices.end()) {
                     col_to_indices.insert({c.color(), {j}});
@@ -85,22 +70,17 @@ std::vector<move> State::get_legal_moves(int id){
                     rank_to_indices.at(c.rank()).push_back(j);
                 }
             }
-            for (Color col : colors) {
-                moves.push_back(move(COL_HINT, i, id, col_to_indices.at(col), col));
-            }
+
+            for (Color col : colors) moves.push_back(move(COL_HINT, i, id, col_to_indices.at(col), col));
             for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, rank_to_indices.at(rank), rank));
         }
     }
     
-    if (get_num_hints() < 8) {
-        for (int i = 0; i < hands[id].size(); i++) {
-            moves.push_back(move(DISCARD, id, i));
-        }
+    if (get_num_hints() < 8) { // Can perform discards
+        for (int i = 0; i < hands_[id].size(); i++) moves.push_back(move(DISCARD, id, i));
     }
     
-    for (int i = 0; i < hands[id].size(); i++) {
-        moves.push_back(move(PLAY, id, i));
-    }
+    for (int i = 0; i < hands_[id].size(); i++) moves.push_back(move(PLAY, id, i));
     
     return moves;
 }
@@ -109,7 +89,7 @@ State::State(int num_players, std::vector<Card> deck) {
     num_players_ = num_players;
     hint_tokens_ = 8;
     lives_ = 3;
-    deck_ = deck;
+    deck_ = deck; // pre-set deck
     init_deck_ = {};
     for (int i = 0; i < deck_.size(); i++) init_deck_.push_back(deck_[i]);
     cards_per_hand_ = (num_players <= 3) ? 5 : 4;
@@ -131,10 +111,12 @@ void State::transition(move m, bool log) {
     if (m.get_type() == DISCARD) {
         Card discard = hands_[m.get_from()][m.get_card_index()];
         discards_.push_back(discard);
+
         auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), 
                             discard);
-        hands_[m.get_from()].erase(it);
-        if (!(deck_.empty())) {
+        hands_[m.get_from()].erase(it); // remove the discarded card form the player's hand
+        
+        if (!(deck_.empty())) { // draw if deck isn't empty
             if (log) deck_.back().str();
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
@@ -142,33 +124,25 @@ void State::transition(move m, bool log) {
         hint_tokens_++; // if there were 8 hint tokens, a discard shoudn't have even been made
     } else if (m.get_type() == PLAY) {
         Card playing_card = hands_[m.get_from()][m.get_card_index()];
+        auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), playing_card);
+        hands_[m.get_from()].erase(it); // remove the played card form the player's hand
+
         int top_rank = piles_[playing_card.color()];
         if (playing_card.rank() == top_rank + 1) { // SUCCESSFUL PLAY
             piles_[playing_card.color()] += 1;
-            auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), 
-                                playing_card);
-            hands_[m.get_from()].erase(it);
-            if (!(deck_.empty())) {
-                if (log) deck_.back().str();
-                hands_[m.get_from()].push_back(deck_.back());
-                deck_.pop_back();
-            }
 
             if ((playing_card.rank() == five) && (hint_tokens_ < 8)) {
                 hint_tokens_++; // get a hint back if a pile is completed
             }
         } else { // FAILED PLAY
             discards_.push_back(playing_card);
-            auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), 
-                                playing_card);
-            hands_[m.get_from()].erase(it);
-            if (!(deck_.empty())) {
-                if (log) deck_.back().str();
-                hands_[m.get_from()].push_back(deck_.back());
-                deck_.pop_back();
-            }
-
             lives_--;
+        }
+
+        if (!(deck_.empty())) { // draw if deck isn't empty
+            if (log) deck_.back().str();
+            hands_[m.get_from()].push_back(deck_.back());
+            deck_.pop_back();
         }
     } else { // A hint was given
         hint_tokens_--;
@@ -200,7 +174,7 @@ void State::reset() {
     lives_ = 3;
     hint_tokens_ = 8;
     hands_ = {};
-    for (int p = 0; p < num_players_; p++) {
+    for (int p = 0; p < num_players_; p++) { // disttibute cards again
         std::vector<Card> hand = {};
         for (int n = 0; n < cards_per_hand_; n++) {
             hand.push_back(deck_.back());

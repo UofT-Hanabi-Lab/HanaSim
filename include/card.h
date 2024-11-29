@@ -17,14 +17,12 @@ class Card
     Rank rank_;
 
 public:
-
     Card(Color, Rank);
 
+    // Getters
     Color color();
-
     Rank rank();
 
     void str();
-
     bool operator == (const Card c);
 };

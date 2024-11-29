@@ -90,7 +90,7 @@ void smart_cardknowledge::set_must_be(Color color) {
     }
     possibilities_ = -1;
     color_ = color;
-    if (rank_ = -1) rank_ = -2;
+    if (rank_ == -1) rank_ = -2;
     if (playable_ == MAYBE) {
         prob_playable_ = -1.0;
     }
