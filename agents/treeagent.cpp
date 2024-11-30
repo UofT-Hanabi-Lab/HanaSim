@@ -8,6 +8,7 @@
 #include "gaenari/gaenari.hpp"
 
 treeagent::treeagent(int id, int num_players, std::string sample_path, player *partner) : num_cards_((num_players <= 3) ? 5 : 4), id_(id), num_players_(num_players), partner_(partner) {
+    // Check gaenari README for setup
     gaenari::logger::init1("../_log.txt");
     using supul_t = supul::supul::supul_t;
     supul_t::api::project::create("../supul_dir");
@@ -100,11 +101,14 @@ move treeagent::play(State s) {
             }
         }
     }
+
+    // making feats vector
     std::unordered_map<std::string, std::string> feats;
     feats = {{"deck_count", std::to_string(deck_count)},
              {"hints", std::to_string(hints)}};
+    
     for (int i = 0; i < hand_cols.size(); i++) {
-        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hand_cols[i])});
+        feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hand_cols[i])}); // hand1_col1, hand1_col2,..., hand2_col1, hand2_col2,...
         feats.insert({"hand" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hand_ranks[i])});
         feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_playable" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_playable[i])});
         feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_valuable" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_valuable[i])});
@@ -112,41 +116,46 @@ move treeagent::play(State s) {
         feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_col" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_cols[i])});
         feats.insert({"hk" + std::to_string((i+1) / (num_cards_+1)) + "_rank" + std::to_string((i+1) % (num_cards_+1)), std::to_string(hk_ranks[i])});
     }
+
     for (int i = 0; i < piles.size(); i++) feats.insert({"pile"+std::to_string(i), std::to_string(piles[i])});
     for (int i = 0; i < discard_count.size(); i++) feats.insert({"discard"+std::to_string(((i+1) % 6) + ((i+1) / 6)), std::to_string(discard_count[i])});
+
     using supul_t = supul::supul::supul_t;
     supul_t supul;
 
     supul.api.lifetime.open("../supul_dir");
-    auto ret = supul.api.model.predict(feats);
+    auto ret = supul.api.model.predict(feats); // PREDICT
     if (ret.error) {
-        std::cout << "uh oh" << std::endl;
+        std::cout << "uh oh" << std::endl; // means we couldn't find any leaf to correspond to these feats
         return move(INVALID_MOVE);
     }
+
     std::string move_str = ret.label;
+    supul.api.lifetime.close();
     
-    move_type movetype = (move_type)move_str[0];
+    move_type movetype = (move_type)(move_str[0]-'0'); // converting move_str[0] to int and then caasting to move_type
 
     if (movetype == PLAY || movetype == DISCARD) {
-        int move_index = (int)move_str[2];
-        supul.api.lifetime.close();
+        int move_index = move_str[2] - '0';
         return move(movetype, id_, move_index);
     } else {
-        int move_to = (int)move_str[2];
+        int move_to = move_str[1] - '0';
         std::vector<int> card_indices = {};
         if (movetype == RANK_HINT) {
-            Rank r = (Rank)move_str[move_str.size() - 2];
+            Rank r = (Rank)(move_str[move_str.size() - 1] - '0');
+
             for (int i = 0; i < s.get_hands()[move_to].size(); i++) {
                 if (s.get_hands()[move_to][i].rank() == r) card_indices.push_back(i);
             }
-            supul.api.lifetime.close();
+
             return move(movetype, move_to, id_, card_indices, r);
         } else {
-            Color c = (Color)move_str[move_str.size() - 2];
+            Color c = (Color)(move_str[move_str.size() - 1] - '0');
+
             for (int i = 0; i < s.get_hands()[move_to].size(); i++) {
                 if (s.get_hands()[move_to][i].color() == c) card_indices.push_back(i);
             }
-            supul.api.lifetime.close();
+
             return move(movetype, move_to, id_, card_indices, c);
         }
         
