@@ -238,7 +238,6 @@ int game::run(bool log_game) {
         std::vector<int> hk_ranks = {};
 
         if (dynamic_cast<smartbot*>(players_[curr_player]) != nullptr) {
-            std::cout << "casted to smart" << std::endl;
             smartbot *smart_partner = (smartbot*)(players_[curr_player]);
             std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hk = smart_partner->get_hk();
             for (int i = 0; i < hk.size(); i++) {
@@ -251,7 +250,6 @@ int game::run(bool log_game) {
                 }
             }
         } else if (dynamic_cast<holmesbot*>(players_[curr_player]) != nullptr) {
-            std::cout << "casted to holmes" << std::endl;
             holmesbot *holmes_partner = (holmesbot*)(players_[curr_player]);
             std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
             for (int i = 0; i < hk.size(); i++) {
