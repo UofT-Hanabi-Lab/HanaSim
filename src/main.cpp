@@ -161,7 +161,7 @@ int main(int argc, char *argv[])
         float average_score = (float)total_score / (float)num_games;
         float prop_perf = (float) perfects / (float)num_games;
         std::cout << "Ran " << num_games << " Games with Average Score: " << average_score << std::endl;
-        std::cout << perfects << " games with perfect score (" << prop_perf << "%)" << std::endl;
+        std::cout << perfects << " games with perfect score (" << prop_perf*100 << "%)" << std::endl;
 
     }
 }
