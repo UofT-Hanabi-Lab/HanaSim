@@ -44,7 +44,7 @@ class holmesbot final : public player {
 
     int num_cards_;
     int id_;
-    int located_count_[6][6]; // how many of this type of card can I locate
+    int located_count_[6][6]; // how many of this type of card can I locate on people's hands
     int played_count_[6][6]; // hoe many of this card has been played/discarded
     std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hand_knowledge_; // what each player knows about their hand
     int lowest_playable_rank_;
@@ -80,7 +80,7 @@ public:
     move play_prechosen(State s, move chosen_m);
     void observe_before_move(State s);
     void observe(State s, move m);
-    
+
     int get_id();
     int get_n_cards();
     std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> get_hk();
