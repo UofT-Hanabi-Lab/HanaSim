@@ -9,7 +9,20 @@ UofT Hanabi Simulator for ML development and testing.
 
 ## Set-up instructions
 
-See below how to build, depending on your OS.
+Before building, you must download the [greenfish repo](https://github.com/greenfish77/gaenari), and change these lines in in `gaenari/include/gaenari/gaenari/common/json.hpp`:
+
+* Line 1495: `path.push_back(0)` to `path.push_back((size_t)0)`
+* Line 1553: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
+* Line 1610: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
+* Line 1983: `sax.path.emplace_back(0)` to `sax.path.emplace_back((size_t)0)`
+
+After downloaidng the greenfish repo and changing the above lines, you must change this line in `HanaSim`'s `CMakeLists.txt` to point to the location of where you saved the greenfish repo:
+
+```
+add_subdirectory("../../greenfish-repo/gaenari" build) # <--- for treeagent. Change to where you have the greenfish/gaenari directory.
+```
+
+Now, see below how to build, depending on your OS.
 
 ### Linux
 
@@ -76,7 +89,7 @@ After the `./HanaSim` executable is created, you can run it with the following a
 * `num-games`: how many games you want to run (needs to be bigger than 0)
 * `num-players`: how many players you want there to be (needs to be between 2 and 5)
 * `bot1 bot2 ... botn`: bot types (see below) you want the players to be (there has to be exactly `num-players` number of bot types)
-  * Valid bot types: `holmes`, `simple`, `random`, `smart`, and `human`
+  * Valid bot types: `holmes`, `simple`, `random`, `smart`, `human`, and `tree` (for `tree`, you can only run it in a two-player setting where it is the second player, and the first player is either `holmes` or `smart`)
 * `--log`: an optional flag you can add at the end if you want to log each game (i.e. every move, every draw, and score).
 
 
@@ -84,5 +97,5 @@ After the `./HanaSim` executable is created, you can run it with the following a
 ### Sample usage:
 
 ```
-./HanaSim 100 3 holmes smart simple --log
+./HanaSim 100 3 holmes smart random --log
 ```
