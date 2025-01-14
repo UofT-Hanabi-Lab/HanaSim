@@ -11,6 +11,7 @@ A class for a Hanabi move.
 #pragma once
 
 enum move_type { COL_HINT=1, RANK_HINT, PLAY, DISCARD, INVALID_MOVE };
+class State;
 
 class move 
 {
@@ -39,5 +40,6 @@ public:
     std::vector<int> get_card_indices();
     
     bool compare(move m);
-    void str();
+    std::string str();
+    std::string str(State s);
 };

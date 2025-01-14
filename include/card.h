@@ -23,6 +23,6 @@ public:
     Color color();
     Rank rank();
 
-    void str();
+    std::string str();
     bool operator == (const Card c);
 };

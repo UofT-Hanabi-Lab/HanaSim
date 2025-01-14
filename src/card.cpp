@@ -17,7 +17,7 @@ Rank Card::rank() {
     return rank_;
 }
 
-void Card::str() {
+std::string Card::str() {
     std::string col_str = "";
     int rank_int = 0;
 
@@ -32,7 +32,8 @@ void Card::str() {
     if (rank_ == three) rank_int = 3;
     if (rank_ == four) rank_int = 4;
     if (rank_ == five) rank_int = 5;
-    std::cout << col_str << rank_int << std::endl;
+//    std::cout << col_str << rank_int << std::endl;
+    return col_str + std::to_string(rank_int);
 }
 
 bool Card::operator == (const Card c) {

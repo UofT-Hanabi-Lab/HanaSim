@@ -12,17 +12,21 @@
 #include "../bots/include/holmesbot.h"
 #include "../bots/include/smartbot.h"
 
+// Variable to keep track of the game number
 int game_num;
 
+// Function to get the current state of the game
 State game::get_curr_state() {
     return curr_state_;
 }
 
+// Constructor to initialize the game with a starting state and players
 game::game(State init_state, std::vector<player*> players) : curr_state_(init_state), players_(players) {
 }
 
+// Function to write the details of a move to a CSV file
 int game::write_move_csv(std::ofstream &moveFile, move next_move) {
-
+    // Write move details based on the type of move
     if (next_move.get_type() == COL_HINT){
         moveFile << next_move.get_type() << next_move.get_to() << next_move.get_from() << next_move.get_color();  
     }
@@ -39,12 +43,14 @@ int game::write_move_csv(std::ofstream &moveFile, move next_move) {
     return 0; 
 }
 
+// Function to write the current hands of all players to a CSV file
 int game::write_hand_csv(std::ofstream &handFile, State s, int curr_p, int num_p) {
     for (int x = 0; x < num_p; x++) {
-        // for writing to csv
+        // Retrieve hands for all players
         std::vector<std::vector<Card>> hands = s.get_hands();
         for (int y = 0; y < hands[x].size(); y++){
             if (x == curr_p) {
+                // Mask the current player's cards
                 hands[x][y] = Card(invalid_color, invalid_rank);
             }
             handFile << hands[x][y].color() << ", "<< hands[x][y].rank();
@@ -56,10 +62,12 @@ int game::write_hand_csv(std::ofstream &handFile, State s, int curr_p, int num_p
     return 0;
 }
 
+// Function to write the state of the piles to a CSV file
 int game::write_pile_csv(std::ofstream &pileFile, State s) {
     std::vector<int> piles = curr_state_.get_piles();
 
-    // start at index 1, since the first COLOR is red=1
+    // Iterate through the piles and write their state
+    // Start at index 1, since the first COLOR is red=1
     for (int x = 1; x < piles.size(); x++){
         pileFile << piles[x];
         if (x != piles.size() - 1) pileFile << ", ";
@@ -68,6 +76,7 @@ int game::write_pile_csv(std::ofstream &pileFile, State s) {
     return 0;
 }
 
+// Function to write the state of the deck and discards to a CSV file
 int game::write_deck_and_discards_csv(std::ofstream &deck_and_discards_file, State s) {
     // Writes how many of each card has been discarded (i.e. how many red 1s, how many red 2s,...) and the deck count
     std::vector<Card> deck = s.get_deck();
@@ -90,6 +99,7 @@ int game::write_deck_and_discards_csv(std::ofstream &deck_and_discards_file, Sta
     return 0;
 }
 
+// Function to combine multiple CSV files into a single output file
 int game::combine_csv(std::ofstream &outFile, std::string dfile, std::string pfile, std::string hfile, std::string mfile, int turn) {
     std::ifstream handFile(hfile);
     std::ifstream moveFile(mfile);
@@ -127,9 +137,10 @@ int game::combine_csv(std::ofstream &outFile, std::string dfile, std::string pfi
     return 0;
 }
 
+// Function to generate a tree CSV file with game data
 int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string dfile, std::string pfile, std::string hfile, 
                    std::string mfile, std::string hkfile, int turn) {
-    //assume only 2 player
+    // Input files for different data, assuming only 2 player
     std::ifstream handFile(hfile);
     std::ifstream moveFile(mfile);
     std::ifstream pileFile(pfile);
@@ -142,6 +153,7 @@ int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string 
     std::string move;
     std::string hk;
 
+    // Define attributes for the CSV files
     std::vector<std::string> attributes = 
     {"hand1_col1", "hand1_rank1", "hand1_col2", "hand1_rank2", "hand1_col3", "hand1_rank3", "hand1_col4", "hand1_rank4", "hand1_col5", "hand1_rank5",
      "hand2_col1", "hand2_rank1", "hand2_col2", "hand2_rank2", "hand2_col3", "hand2_rank3", "hand2_col4", "hand2_rank4", "hand2_col5", "hand2_rank5",
@@ -160,9 +172,9 @@ int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string 
     "hk_h2_p2", "hk_h2_v2", "hk_h2_w2", "hk_h2_c2", "hk_h2_r2",
     "hk_h2_p3", "hk_h2_v3", "hk_h2_w3", "hk_h2_c3", "hk_h2_r3",
     "hk_h2_p4", "hk_h2_v4", "hk_h2_w4", "hk_h2_c4", "hk_h2_r4",
-    "hk_h2_p5", "hk_h2_v5", "hk_h2_w5", "hk_h2_c5", "hk_h2_r5"}; 
+    "hk_h2_p5", "hk_h2_v5", "hk_h2_w5", "hk_h2_c5", "hk_h2_r5"};
 
-
+    // Write the attributes as headers in both output files
     for (int i =0; i < attributes.size(); i++) {
         outFile << attributes[i];
         if (i != attributes.size() - 1) outFile << ", ";
@@ -174,6 +186,7 @@ int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string 
     outFile << std::endl;
     outFile2 << std::endl;
 
+    // Write the data for each turn
     for (int x = 1; x < turn; x++) {
         std::getline(deckAndDiscardsFile, deck);
         std::getline(pileFile, pile);
@@ -194,7 +207,7 @@ int game::tree_csv(std::ofstream &outFile, std::ofstream &outFile2, std::string 
     return 0;
 }
 
-
+// Main function to run the game
 int game::run(bool log_game) {
     
     int curr_score = 0;
@@ -207,8 +220,12 @@ int game::run(bool log_game) {
         std::cout << "failed to create directory or directory already exists" << std::endl;
     if (mkdir("output/p2", 0777) == -1)
         std::cout << "failed to create directory or directory already exists" << std::endl;
+
+    // File names for storing game data
     std::string fname1 = "output/p1/g" + std::to_string(game_num) + ".csv";
     std::string fname2 = "output/p2/g" + std::to_string(game_num) + ".csv";
+
+    // Create output file streams for logging game data
     std::ofstream handFile("output/hands.csv");
     std::ofstream moveFile("output/moves.csv");
     std::ofstream pileFile("output/piles.csv");
@@ -217,17 +234,18 @@ int game::run(bool log_game) {
     std::ofstream outFile(fname1);
     std::ofstream outFile2(fname2);
 
-    
+    // Main game loop: run until game is won, lost, or deck is exhausted
     while ((curr_score < 25) && (curr_state_.get_num_lives() > 0) && !(curr_state_.get_deck().empty())) {
         if (log_game) std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
-        
-        // write csv
+
+        // Let players observe the state before making their moves
+        // Write csv
         for (int i = 0; i < players_.size(); i++) {
             State s = curr_state_;
             (*(players_[i])).observe_before_move(curr_state_); // From quuxplusone repo
         }
 
-        //create handknowledge (only for smartbot and holmesbot) #####################################################################
+        // Create handknowledge (only for smartbot and holmesbot) #####################################################################
         State s = curr_state_;
         int num_players = players_.size();
         int num_cards_ = (num_players <= 3) ? 5 : 4;;
@@ -238,6 +256,7 @@ int game::run(bool log_game) {
         std::vector<int> hk_ranks = {};
 
         if (dynamic_cast<smartbot*>(players_[curr_player]) != nullptr) {
+            // Generate knowledge for smartbot
             smartbot *smart_partner = (smartbot*)(players_[curr_player]);
             std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hk = smart_partner->get_hk();
             for (int i = 0; i < hk.size(); i++) {
@@ -250,6 +269,7 @@ int game::run(bool log_game) {
                 }
             }
         } else if (dynamic_cast<holmesbot*>(players_[curr_player]) != nullptr) {
+            // Generate knowledge for holmesbot
             holmesbot *holmes_partner = (holmesbot*)(players_[curr_player]);
             std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
             for (int i = 0; i < hk.size(); i++) {
@@ -264,6 +284,7 @@ int game::run(bool log_game) {
         }
 
         // write to hk csv #####################################################################
+        // Write hand knowledge to the CSV file
         for (int i = 0; i < hk_cols.size(); i++){
             hkFile << hk_playable[i] << ", " << hk_valuable[i] << ", " << hk_worthless[i] << ", " << hk_cols[i] 
             << ", " << hk_ranks[i];
@@ -272,23 +293,44 @@ int game::run(bool log_game) {
         hkFile << std::endl;
         // #########################################################################
 
+        // Write game state data to CSV files
         write_hand_csv(handFile, curr_state_, curr_player, players_.size());
         write_pile_csv(pileFile, curr_state_);
         write_deck_and_discards_csv(deckFile, curr_state_);
 
-
+        // Get the next move from the current player
         move next_move = (*(players_[curr_player])).play(curr_state_);
-        //write move csv
+        // Write move to csv
         write_move_csv(moveFile, next_move);
-        
-        if (log_game) next_move.str(); 
 
+        // Log game details if enabled
+        if (log_game){
+            int i = 0;
+            std::cout << "    Hands:" << std::endl;
+            for (const std::vector<Card>& hand : curr_state_.get_hands()) {
+                std::cout << "        Player " << i << ": ";
+                for (Card c : hand) {
+                    std::cout << c.str() << ", ";
+                }
+                std::cout << std::endl;
+                i++;
+            }
+            std::cout << "    Moves:" << std::endl;
+            std::cout << "        " << next_move.str(curr_state_);
+
+        }
+
+        // Notify all players of the move
         for (int i = 0; i < players_.size(); i++) {
             State s = curr_state_;
             (*(players_[i])).observe(curr_state_, next_move); // akin to observe_play, observe_discard,... in quuxplusone
         }
-        
+
+        // Update the game state based on the move
         curr_state_.transition(next_move, log_game);
+        if (log_game) std::cout << std::endl;
+
+        // Update the score
         int score = 0;
         for (int top : curr_state_.get_piles()) { // Tabulate scores
             score += top;
@@ -298,16 +340,20 @@ int game::run(bool log_game) {
         curr_player = (curr_player + 1) % players_.size();
     }
 
+    // End of game scenarios
+    // No more lives, end game immediately
     if (curr_state_.get_num_lives() == 0) {
         if (log_game) std::cout << "GAME OVER. SCORE:" << curr_score << std::endl;
-    } else if (curr_state_.get_deck().empty()) { // Deck is empty, so do one more round
+    }
+    // Deck is empty, so do one more round
+    else if (curr_state_.get_deck().empty()) {
         for (int i = 0; i < players_.size(); i++) {
             write_hand_csv(handFile, curr_state_, curr_player, players_.size());
             write_pile_csv(pileFile, curr_state_);
             write_deck_and_discards_csv(deckFile, curr_state_);
 
             if (log_game) std::cout << "TURN " << turn << " PLAYER " << curr_player << std::endl;
-            
+
             for (int i = 0; i < players_.size(); i++) {
                 State s = curr_state_;
                 (*(players_[i])).observe_before_move(curr_state_);
@@ -316,12 +362,32 @@ int game::run(bool log_game) {
             move next_move = (*(players_[curr_player])).play(curr_state_);
             write_move_csv(moveFile, next_move);
 
-            if (log_game) next_move.str();
+            // Log game details if enabled
+            if (log_game){
+                int i = 0;
+                std::cout << "    Hands:" << std::endl;
+                for (const std::vector<Card>& hand : curr_state_.get_hands()) {
+                    std::cout << "        Player " << i << ": ";
+                    for (Card c : hand) {
+                        std::cout << c.str()  << ", ";
+                    }
+                    std::cout << std::endl;
+                    i++;
+                }
+                std::cout << "    Moves:" << std::endl;
+                std::cout << "        " << next_move.str(curr_state_);
+
+            }
+
+            // Let players observe the state before making their moves
             for (int i = 0; i < players_.size(); i++) {
                 (*(players_[i])).observe(curr_state_, next_move);
             }
 
+            // Get the next move from the current player
             curr_state_.transition(next_move, log_game);
+            if (log_game) std::cout << std::endl;
+
             int score = 0;
             for (int top : curr_state_.get_piles()) {
                 score += top;
@@ -345,7 +411,9 @@ int game::run(bool log_game) {
     }
     //combine_csv(outFile, "decks.csv", "piles.csv", "hands.csv", "moves.csv", turn);
 
+    // Generate a combined CSV tree of game data
     tree_csv(outFile, outFile2, "output/decks.csv", "output/piles.csv", "output/hands.csv", "output/moves.csv", "output/hk.csv", turn);
+    // Close all files
     handFile.close();
     moveFile.close();
     pileFile.close();

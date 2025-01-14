@@ -3,6 +3,7 @@
 
 
 #include "../include/move.h"
+#include "../include/state.h"
 
 move::move(move_type type) : // INVALID_MOVE
     type_(type), to_(-1), from_(-1), card_index_(-1), card_indices_({}), color_(invalid_color), rank_(invalid_rank) {
@@ -78,14 +79,35 @@ bool move::compare(move m) {
     return false; 
 }
 
-void move::str() {
+std::string move::str() {
+//    if (type_ == COL_HINT) {
+//        std::cout << col_str(color_) << " COLOR HINT to player " << to_ << std::endl;
+//    } else if (type_ == RANK_HINT) {
+//        std::cout << rank_num(rank_) << " RANK HINT to player " << to_ << std::endl;
+//    } else if (type_ == PLAY) {
+//        std::cout << "PLAY CARD NO. " << card_index_ + 1 << std::endl;
+//    } else {
+//        std::cout << "DISCARD CARD NO. " << card_index_ + 1 << std::endl;
+//    }
+        if (type_ == COL_HINT) {
+            return col_str(color_) + " COLOR HINT to player " + std::to_string(to_);
+        } else if (type_ == RANK_HINT) {
+            return std::to_string(rank_num(rank_)) + " RANK HINT to player " + std::to_string(to_);
+        } else if (type_ == PLAY) {
+            return "PLAY CARD NO. " + std::to_string(card_index_ + 1);
+        } else {
+            return "DISCARD CARD NO. " + std::to_string(card_index_ + 1);
+        }
+}
+
+std::string move::str(State s) {
     if (type_ == COL_HINT) {
-        std::cout << col_str(color_) << " COLOR HINT to player " << to_ << std::endl;
+        return "COLOR HINT " + col_str(color_) + ": player " + std::to_string(to_);
     } else if (type_ == RANK_HINT) {
-        std::cout << rank_num(rank_) << " RANK HINT to player " << to_ << std::endl;
+        return "RANK HINT " + std::to_string(rank_num(rank_)) + ": player " + std::to_string(to_);
     } else if (type_ == PLAY) {
-        std::cout << "PLAY CARD NO. " << card_index_ + 1 << std::endl;
+        return "PLAY: " + s.get_hands()[from_][card_index_].str();
     } else {
-        std::cout << "DISCARD CARD NO. " << card_index_ + 1 << std::endl;
+        return "DISCARD: " + s.get_hands()[from_][card_index_].str();
     }
 }

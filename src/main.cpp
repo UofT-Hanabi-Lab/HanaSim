@@ -144,10 +144,14 @@ int main(int argc, char *argv[])
             State init_state = State(num_players);
             // Print out all hands if we're logging
             if (log_games) {
+                int i = 0;
                 for (std::vector<Card> hand : init_state.get_hands()) {
+                    std::cout << "Player " << i << "'s Initial Hand: ";
                     for (Card c : hand) {
-                        c.str();
+                        std::cout << c.str() << ", ";
                     }
+                    std::cout << std::endl;
+                    i++;
                 }
             }
 

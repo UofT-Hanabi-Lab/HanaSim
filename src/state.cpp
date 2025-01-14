@@ -117,7 +117,7 @@ void State::transition(move m, bool log) {
         hands_[m.get_from()].erase(it); // remove the discarded card form the player's hand
         
         if (!(deck_.empty())) { // draw if deck isn't empty
-            if (log) deck_.back().str();
+            if (log) std::cout << std::endl << "        Draw: " << deck_.back().str() << std::endl;
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
         }
@@ -130,6 +130,7 @@ void State::transition(move m, bool log) {
         int top_rank = piles_[playing_card.color()];
         if (playing_card.rank() == top_rank + 1) { // SUCCESSFUL PLAY
             piles_[playing_card.color()] += 1;
+            if (log) std::cout << ", SUCCESS" << std::endl;
 
             if ((playing_card.rank() == five) && (hint_tokens_ < 8)) {
                 hint_tokens_++; // get a hint back if a pile is completed
@@ -137,15 +138,35 @@ void State::transition(move m, bool log) {
         } else { // FAILED PLAY
             discards_.push_back(playing_card);
             lives_--;
+            if (log) std::cout << ", FAILED" << std::endl;
         }
 
         if (!(deck_.empty())) { // draw if deck isn't empty
-            if (log) deck_.back().str();
+            if (log) std::cout << "        DRAW: " << deck_.back().str() << std::endl;
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
         }
     } else { // A hint was given
         hint_tokens_--;
+        if (log) std::cout << std::endl;
+    }
+    if (log) {
+        std::cout << "    States after Moves: " << std::endl;
+        std::cout << "        Number of Hints: " << std::to_string(hint_tokens_) << std::endl;
+        std::cout << "        Number of Lives: " << std::to_string(lives_) << std::endl;
+        std::cout << "        Deck Size: " << deck_.size() << std::endl;
+        static const std::array<std::string, 5> color_names = {
+                "red", "white", "yellow", "green", "blue"
+        };
+
+        std::cout << "        Piles: ";
+        for (size_t i = 1; i < piles_.size(); ++i) {
+            std::cout << color_names[i - 1] << " " << std::to_string(piles_[i]);
+            if (i < piles_.size() - 1) {
+                std::cout << ", ";
+            }
+        }
+        std::cout << std::endl;
     }
 }
 
