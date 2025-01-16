@@ -12,7 +12,8 @@ UofT Hanabi Simulator for ML development and testing.
     * Line 1553: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
     * Line 1610: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
     * Line 1983: `sax.path.emplace_back(0)` to `sax.path.emplace_back((size_t)0)`
-  * Change the `add_subdirectory` line in `HanaSim`'s `CMakeLists.txt` to point to the location of your local `gaenari` repo
+  * Change the `add_subdirectory` line in `HanaSim`'s `CMakeLists.txt` to point to the
+    location of your local `gaenari` repo
 
 ## Set-up instructions
 
@@ -30,8 +31,10 @@ cmake .. & make
 
 1. Change all uses of the `mkdir` function to only pass the first argument.
     * For example, `mkdir("output/p1", 0777)` becomes `mkdir("output/p1")`.
-2. Disable building the web console for `gaenari` by setting the `BUILD_WEB` CMake cache entry to `false`.
-    * You may need to include `FORCE` at the end of the `set` command to overwrite the existing cache value.
+2. Disable building the web console for `gaenari` by setting the `BUILD_WEB` CMake cache
+   entry to `false`.
+    * You may need to include `FORCE` at the end of the `set` command to overwrite the
+      existing cache value.
 3. Try:
 
    ```sh
@@ -42,13 +45,20 @@ cmake .. & make
 
 #### Troubleshooting Windows
 
-If you encounter an error mentioning `too many sections`, add the `-Wa,-mbig-obj` to the CMake flags.
-For example, add `set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")` to `CMakeLists.txt`.
-You may need to make this change to `gaenari` as well, depending on the location of the error.
+If you encounter an error mentioning `too many sections`, add the `-Wa,-mbig-obj` to the
+CMake flags.
+For example, add `set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")` to
+`CMakeLists.txt`.
+You may need to make this change to `gaenari` as well, depending on the location of the
+error.
 
-If you encounter an error that `'SH_DENYNO' was not declared in this scope` (likely in `gaenari`'s `logger.hpp`), you need to include the `share.h` header in the relevant file.
+If you encounter an error that `'SH_DENYNO' was not declared in this scope` (likely in
+`gaenari`'s `logger.hpp`), you need to include the `share.h` header in the relevant
+file.
 
-If you encounter an error that `'_CRTDBG_ALLOC_MEM_DF' was not declared in this scope` (likely in `gaenari`'s `tests.cpp`), you need to include the `crtdbg.h` header in the relevant file.
+If you encounter an error that `'_CRTDBG_ALLOC_MEM_DF' was not declared in this scope`
+(likely in `gaenari`'s `tests.cpp`), you need to include the `crtdbg.h` header in the
+relevant file.
 
 ### Mac
 
