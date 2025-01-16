@@ -3,6 +3,7 @@
 #include <algorithm>
 #include <random>
 #include <map>
+#include <array>
 
 #include "../include/state.h"
 
