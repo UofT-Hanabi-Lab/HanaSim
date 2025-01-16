@@ -28,6 +28,28 @@ cmake .. & make
 
 ### Windows
 
+1. Change all uses of the `mkdir` function to only pass the first argument.
+    * For example, `mkdir("output/p1", 0777)` becomes `mkdir("output/p1")`.
+2. Disable building the web console for `gaenari` by setting the `BUILD_WEB` CMake cache entry to `false`.
+    * You may need to include `FORCE` at the end of the `set` command to overwrite the existing cache value.
+3. Try:
+
+   ```sh
+   mkdir build
+   cd build
+   cmake .. & make
+   ```
+
+#### Troubleshooting Windows
+
+If you encounter an error mentioning `too many sections`, add the `-Wa,-mbig-obj` to the CMake flags.
+For example, `set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")`.
+You may need to make this change to `gaenari` as well, depending on the location of the error.
+
+If you encounter an error that `'SH_DENYNO' was not declared in this scope` (likely in `gaenari`'s `logger.hpp`), you need to include the `share.h` header in the relevant file.
+
+If you encounter an error that `'_CRTDBG_ALLOC_MEM_DF' was not declared in this scope` (likely in `gaenari`'s `tests.cpp`), you need to include the `crtdbg.h` header in the relevant file.
+
 ### Mac
 
 From the `HanaSim` directory:
