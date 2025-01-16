@@ -45,7 +45,7 @@ mkdir build
 cd build
 cmake .. & make
 ```
-Note: running `cmake .. & make` may raise a compilation error. If this happens, run the two commands separately:
+*(Note: If `make` does not run after `cmake`, try running it separately by using the commands `cmake ..` and `make` individually.)*
 ```
 cmake ..
 make
