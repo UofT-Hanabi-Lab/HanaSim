@@ -43,7 +43,7 @@ cmake .. & make
 #### Troubleshooting Windows
 
 If you encounter an error mentioning `too many sections`, add the `-Wa,-mbig-obj` to the CMake flags.
-For example, `set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")`.
+For example, add `set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wa,-mbig-obj")` to `CMakeLists.txt`.
 You may need to make this change to `gaenari` as well, depending on the location of the error.
 
 If you encounter an error that `'SH_DENYNO' was not declared in this scope` (likely in `gaenari`'s `logger.hpp`), you need to include the `share.h` header in the relevant file.
