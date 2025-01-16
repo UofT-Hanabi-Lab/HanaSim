@@ -45,6 +45,11 @@ mkdir build
 cd build
 cmake .. & make
 ```
+Note: running `cmake .. & make` may raise a compilation error. If this happens, run the two commands separately:
+```
+cmake ..
+make
+```
 
 To install OpenMP:
 
