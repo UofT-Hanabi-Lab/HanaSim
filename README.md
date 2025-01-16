@@ -5,24 +5,16 @@ UofT Hanabi Simulator for ML development and testing.
 
 * `cmake`: 3.22.1+
 * `make`: 4.3
-* `gcc`: 11.4.0 
+* `gcc`: 11.4.0
+* [`greenfish77/gaenari`](https://github.com/greenfish77/gaenari)
+  * Download the repo and change the following lines in `include/gaenari/gaenari/common/json.hpp`:
+    * Line 1495: `path.push_back(0)` to `path.push_back((size_t)0)`
+    * Line 1553: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
+    * Line 1610: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
+    * Line 1983: `sax.path.emplace_back(0)` to `sax.path.emplace_back((size_t)0)`
+  * Change the `add_subdirectory` line in `HanaSim`'s `CMakeLists.txt` to point to the location of your local `gaenari` repo
 
 ## Set-up instructions
-
-Before building, you must download the [greenfish repo](https://github.com/greenfish77/gaenari), and change these lines in `gaenari/include/gaenari/gaenari/common/json.hpp`:
-
-* Line 1495: `path.push_back(0)` to `path.push_back((size_t)0)`
-* Line 1553: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
-* Line 1610: `path.emplace_back(0)` to `path.emplace_back((size_t)0)`
-* Line 1983: `sax.path.emplace_back(0)` to `sax.path.emplace_back((size_t)0)`
-
-After downloading the greenfish repo and changing the above lines, you must change this line in `HanaSim`'s `CMakeLists.txt` to point to the location of where you saved the greenfish repo:
-
-```
-add_subdirectory("../../greenfish-repo/gaenari" build) # <--- for treeagent. Change to where you have the greenfish/gaenari directory.
-```
-
-Now, see below how to build, depending on your OS.
 
 ### Linux
 
