@@ -9,11 +9,11 @@
 Card::Card(Color color, Rank rank) : color_(color), rank_(rank) {
 }
 
-Color Card::color() {
+Color Card::color() const{
     return color_;
 }
 
-Rank Card::rank() {
+Rank Card::rank() const{
     return rank_;
 }
 

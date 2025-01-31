@@ -20,31 +20,31 @@ move::move(move_type type, int to, int from, std::vector<int> card_indices, Rank
     type_(type), to_(to), from_(from), card_index_(-1), card_indices_(card_indices), color_(invalid_color), rank_(rank) {
 }
 
-move_type move::get_type() {
+move_type move::get_type() const{
     return type_;
 }
 
-int move::get_to() {
+int move::get_to() const{
     return to_;
 }
 
-int move::get_from() {
+int move::get_from() const{
     return from_;
 }
 
-int move::get_card_index() {
+int move::get_card_index() const{
     return card_index_;
 }
 
-Color move::get_color() {
+Color move::get_color() const{
     return color_;
 }
 
-Rank move::get_rank() {
+Rank move::get_rank() const{
     return rank_;
 }
 
-std::vector<int> move::get_card_indices() {
+std::vector<int> move::get_card_indices() const{
     return card_indices_;
 }
 

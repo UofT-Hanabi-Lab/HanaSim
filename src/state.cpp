@@ -7,7 +7,7 @@
 #include "../include/state.h"
 
 State::State(int num_players) {
-
+    // Initialize the deck, 50 cards
     deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five), 
               Card(blue, one), Card(blue, one), Card(blue, one), Card(blue, two), Card(blue, two), Card(blue, three), Card(blue, three), Card(blue, four), Card(blue, four), Card(blue, five),
               Card(yellow, one), Card(yellow, one), Card(yellow, one), Card(yellow, two), Card(yellow, two), Card(yellow, three), Card(yellow, three), Card(yellow, four), Card(yellow, four), Card(yellow, five),
@@ -20,6 +20,7 @@ State::State(int num_players) {
     std::shuffle(deck_.begin(), deck_.end(), gen);
 
     num_players_ = num_players;
+    // set Blue tokens and lives
     hint_tokens_ = 8;
     lives_ = 3;
 
@@ -38,13 +39,13 @@ State::State(int num_players) {
         hands_.push_back(hand);
     }
     discards_ = {};
-    piles_ = {0, 0, 0, 0, 0, 0}; // all piles are empty
+    piles_ = {0, 0, 0, 0, 0, 0}; // all piles are empty （why there are 6 piles? contain multi color?）
 }
 
-std::vector<move> State::get_legal_moves(int id){
+std::vector<move> State::get_legal_moves(int id) const{
     std::vector<move> moves;
     moves = {};
-
+    // Enumerate all legal moves using brute-force search.
     if (get_num_hints() > 0) { // Can perform hints
         for (int i = 0; i < hands_.size(); i++) {
             if (i == id) continue; // Can't self-hint
@@ -58,12 +59,12 @@ std::vector<move> State::get_legal_moves(int id){
             for (int j = 0; j < hands_[i].size(); j++) {
                 Card c = hands_[i][j];
                 colors.insert(c.color());
-                if (auto search = col_to_indices.find(c.color()); search == col_to_indices.end()) {
+                if (auto search = col_to_indices.find(c.color()); search == col_to_indices.end()) { // Not exist then create
                     col_to_indices.insert({c.color(), {j}});
                 } else {
                     col_to_indices.at(c.color()).push_back(j);
                 }
-                ranks.insert(c.rank());
+                ranks.insert(c.rank());  // Similar for rank
                 if (auto search = rank_to_indices.find(c.rank()); search == rank_to_indices.end()) {
                     rank_to_indices.insert({c.rank(), {j}});
                 } else {
@@ -146,9 +147,11 @@ void State::transition(move m, bool log) {
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
         }
-    } else { // A hint was given
+    } else if (m.get_type() == COL_HINT || m.get_type() == RANK_HINT){ // A hint was given
         hint_tokens_--;
         if (log) std::cout << std::endl;
+    } else{
+        if (log) std::cout << "Invalid move type:"<<m.get_type()<<std::endl;
     }
     if (log) {
         std::cout << "    States after Moves: " << std::endl;
@@ -205,4 +208,63 @@ void State::reset() {
     }
     discards_ = {};
     piles_ = {0, 0, 0, 0, 0, 0};
+}
+
+static const std::vector<std::string> color_names = {"empty", "red", "white", "yellow", "green", "blue"};
+std::string color_to_string(Color color) {
+    return color_names[static_cast<int>(color)];
+}
+
+
+// Encode the move object to python tuple
+py::tuple encode_move(const move &m) {
+    py::list py_card_indices;
+    for (int idx : m.get_card_indices()) {
+        py_card_indices.append(idx);
+    }
+
+    return py::make_tuple(
+        static_cast<int>(m.get_type()),
+        m.get_to(),
+        m.get_from(),
+        m.get_card_index(),
+        py_card_indices,
+        static_cast<int>(m.get_color()),
+        static_cast<int>(m.get_rank())
+    );
+}
+
+
+Observation State::get_observation(int player_id) const {
+    Observation obs;
+
+    obs.hands.clear();
+    obs.hands.resize(hands_.size());
+    for (size_t i = 0; i < hands_.size(); i++){
+        for (const Card& card : hands_[i]) {
+            obs.hands[i].push_back({color_to_string(card.color()), card.rank()});
+        }
+    }
+    for (size_t i = 1; i < piles_.size(); ++i) {
+        obs.fireworks[color_names[i]] = piles_[i];
+    }
+
+    obs.hint_tokens = hint_tokens_;
+    obs.lives_remaining = lives_;
+    obs.deck_size = deck_.size();
+
+    obs.discards.clear();
+    for (const Card& card : discards_) {
+        obs.discards.push_back({color_to_string(card.color()), card.rank()});
+    }
+
+    std::vector<move> legal_moves = get_legal_moves(player_id);
+    obs.legal_actions.clear();
+    for (const move& m : legal_moves) {
+        obs.legal_actions.push_back(encode_move(m));
+    }
+
+    obs.current_player_id = player_id;
+
+    return obs;
 }

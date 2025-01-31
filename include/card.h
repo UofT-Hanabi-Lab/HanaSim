@@ -20,8 +20,8 @@ public:
     Card(Color, Rank);
 
     // Getters
-    Color color();
-    Rank rank();
+    Color color() const;
+    Rank rank() const;
 
     std::string str();
     bool operator == (const Card c);

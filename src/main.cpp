@@ -13,7 +13,7 @@
 #include "../bots/include/smartbot.h"
 #include "../include/humanplayer.h"
 #include "../bots/include/simplebot.h"
-#include "../agents/include/treeagent.h"
+
 
 //#include "../include/matplotlibcpp.h"
 
@@ -68,12 +68,14 @@ int main(int argc, char *argv[])
         for (int i = 0; argv[1][i] != '\0'; i++) {
             num_games_str += argv[1][i];
         }
+        // Number of games will be simulated
         num_games = std::stoi(num_games_str);
 
         std::string num_players_str;
         for (int i = 0; argv[2][i] != '\0'; i++) {
             num_players_str += argv[2][i];
         }
+        // Player num, from 2 to 5
         num_players = std::stoi(num_players_str);
         if (num_players < 2 || num_players > 5 || num_games <= 0) {
             std::cout << "num-games must be positive and num-players must be between 2 and 5" << std::endl;
@@ -122,6 +124,7 @@ int main(int argc, char *argv[])
         //omp_set_num_threads(1);
         
         for (int i=0; i < num_games; i++) {
+            // Create bots instance according to bot_types
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
                 player* p;
@@ -135,12 +138,11 @@ int main(int argc, char *argv[])
                     p = new simplebot(id, num_players);
                 } else if (bot_types[id] == "human") {
                     p = new humanplayer(num_players, id);
-                } else if (bot_types[id] == "tree") {
-                    p = new treeagent(id, num_players, "output/p1/g1.csv", players[0]); // any treeagent must be the second player
                 }
                 players.push_back(p);
             }
 
+            // Initialize the game state
             State init_state = State(num_players);
             // Print out all hands if we're logging
             if (log_games) {
@@ -154,7 +156,7 @@ int main(int argc, char *argv[])
                     i++;
                 }
             }
-
+            
             game newgame = game(init_state, players);
             int score = newgame.run(log_games);
             total_score += score;
