@@ -6,7 +6,6 @@
 #include <execution>
 #include <omp.h>
 
-
 #include "../include/game.h"
 #include "../bots/include/randombot.h"
 #include "../bots/include/holmesbot.h"
@@ -16,10 +15,14 @@
 #include "../agents/include/treeagent.h"
 
 //#include "../include/matplotlibcpp.h"
-
-
 //namespace plt = matplotlibcpp;
 
+
+/**
+ * The Timer class is used to measure and print the execution time of code blocks.
+ * It achieves this by measuring the time elapsed between the creation
+ * and the destruction of a Timer object.
+*/
 class Timer
 {
 public:
@@ -55,7 +58,7 @@ int main(int argc, char *argv[])
     bool log_games = false;
     std::vector<std::string> bot_types = {};
     
-    // parsing arguments ==========================================================================================================================================
+    // Parsing arguments ==========================================================================================================================================
     if (argc == 1) {
         std::cout << "Usage:" << std::endl;
         std::cout << "./HanaSim num-games num-players bot1-type ... botn-type --log" << std::endl;
@@ -111,7 +114,7 @@ int main(int argc, char *argv[])
             if (log_str == "--log") log_games = true;
         }
     }
-    // ============================================================================================================================================================
+    // Simulate game ==============================================================================================================================================
     std::cout << "Welcome to HanaSim!" << std::endl;
     {
         Timer timer;
@@ -120,8 +123,10 @@ int main(int argc, char *argv[])
 
         // sequential loop
         //omp_set_num_threads(1);
-        
+         
         for (int i=0; i < num_games; i++) {
+
+            // For each game, set up the initial list of players
             std::vector<player*> players = {};
             for (int id = 0; id < num_players; id++) {
                 player* p;
@@ -141,8 +146,8 @@ int main(int argc, char *argv[])
                 players.push_back(p);
             }
 
-            State init_state = State(num_players);
             // Print out all hands if we're logging
+            State init_state = State(num_players);
             if (log_games) {
                 int i = 0;
                 for (std::vector<Card> hand : init_state.get_hands()) {
@@ -155,6 +160,7 @@ int main(int argc, char *argv[])
                 }
             }
 
+            // Simulate the game
             game newgame = game(init_state, players);
             int score = newgame.run(log_games);
             total_score += score;
@@ -166,6 +172,5 @@ int main(int argc, char *argv[])
         float prop_perf = (float) perfects / (float)num_games;
         std::cout << "Ran " << num_games << " Games with Average Score: " << average_score << std::endl;
         std::cout << perfects << " games with perfect score (" << prop_perf*100 << "%)" << std::endl;
-
     }
 }
