@@ -3,9 +3,10 @@ cmake_minimum_required(VERSION 3.22.1)
 project(HanaSim CXX)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter Development)
-include_directories(/opt/homebrew/opt/pybind11/lib/python3.13/site-packages/pybind11/include)
-include_directories(/opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/include/python3.13)
+#include_directories(/opt/homebrew/opt/pybind11/lib/python3.13/site-packages/pybind11/include)
+#include_directories(/opt/homebrew/opt/python@3.13/Frameworks/Python.framework/Versions/3.13/include/python3.13)
 find_package(pybind11 REQUIRED)
+
 
 FILE(GLOB Sources src/*.cpp)
 FILE(GLOB Bots bots/*.cpp)
