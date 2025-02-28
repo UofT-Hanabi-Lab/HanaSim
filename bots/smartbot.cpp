@@ -6,12 +6,15 @@
 using namespace SmartBotInternal;
 
 
+/*************************** CARD KNOWLEDGE IMPLEMENTATION ***************************/
+
 smart_cardknowledge::smart_cardknowledge(smartbot *bot) {
+    // At the beginning, we know nothing, so initialize values accordingly.
     bot_ = bot;
     possibilities_ = -1;
     color_ = -2; // -2 means we dont't know the color because we haven't even attempted to compute/infer it. -1 means we have attempted to infer it, but don't have enough knowledge.
     rank_ = -2; // ^
-    memset(cant_be_, '\0', sizeof cant_be_);
+    memset(cant_be_, '\0', sizeof cant_be_);  // Initialize all values to false. All cards could be anything
     playable_ = valuable_ = worthless_ = MAYBE;
     prob_playable_ = prob_valuable_ = prob_worthless_ = -1.0;
 }
@@ -33,11 +36,12 @@ bool smart_cardknowledge::cannot_be(Card card)  {
 
 
 bool smart_cardknowledge::cannot_be(Color color) {
-    if (color_ != -1) {
+    if (color_ != -1) {  // Case 1: the color is already known
         return (color_ != color);
     }
-    for (int v = 1; v < 6; v++) {
+    for (int v = 1; v < 6; v++) {  // Case 2: the color is still unknown
         if (!cant_be_[color][v]) {
+            // At least one valid rank exists for this color
             return false;
         }
     }
@@ -46,11 +50,12 @@ bool smart_cardknowledge::cannot_be(Color color) {
 
 
 bool smart_cardknowledge::cannot_be(Rank rank) {
-    if (this->rank_ != -1) {
+    if (this->rank_ != -1) {  // Case 1: the rank is already known
         return (this->rank_ != rank);
     }
-    for (int k = 1; k < 6; k++) {
+    for (int k = 1; k < 6; k++) {  // Case 2: the rank is still unknown
         if (!cant_be_[k][rank]) {
+            // At least one valid color exists for this rank
             return false;
         }
     }
@@ -75,7 +80,7 @@ void smart_cardknowledge::befuddle_by_play(bool success) {
         valuable_ = MAYBE;
         prob_valuable_ = -1.0f;
     }
-    if (worthless_ != YES) { // same logic as above func
+    if (worthless_ != YES) { // same logic as befuddle_by_discard
         worthless_ = MAYBE;
         prob_worthless_ = -1.0f;
     }
@@ -159,6 +164,10 @@ void smart_cardknowledge::set_cannot_be(Rank rank) {
 }
 
 
+/*
+Set whether a card is playable
+Inference made: a playable card cannot be worthless
+*/
 void smart_cardknowledge::set_is_playable(bool playable, State s) {
     for (int k = 1; k < 6; k++) {
         for (int r = 1; r < 6; r++) {
@@ -183,11 +192,13 @@ void smart_cardknowledge::set_is_playable(bool playable, State s) {
         worthless_ = NO;
         prob_worthless_ = 0.0;
     }
-
-
 }
 
 
+/*
+Set whether a card is valuable
+Inference made: a valuable card cannot be worthless
+*/
 void smart_cardknowledge::set_is_valuable(bool valuable, State s) {
     for (int k = 1; k < 6; k++) {
         for (int r = 1; r < 6; r++) {
@@ -216,6 +227,10 @@ void smart_cardknowledge::set_is_valuable(bool valuable, State s) {
 }
 
 
+/*
+Set whether a card is worthless
+Inference made: a worthless card cannot be playable nor valuable
+*/
 void smart_cardknowledge::set_is_worthless(bool worthless, State s) {
     for (int k = 1; k < 6; k++) {
         for (int r = 1; r < 6; r++) {
@@ -244,6 +259,11 @@ void smart_cardknowledge::set_is_worthless(bool worthless, State s) {
 }
 
 
+/*
+Attempts to compute a cards identity (color and rank)
+given the current information available.
+If a color and/or rank are successfully identified, set them to the computed values,
+otherwise set them to -1. */
 void smart_cardknowledge::compute_identity() {
     if (color_ != -2 && rank_ != -2) return; // we've already computed so no need to re-compute
 
@@ -269,6 +289,9 @@ void smart_cardknowledge::compute_identity() {
 }
 
 
+/*
+Count the number of possible valid (color, rank) configurations for the card.
+*/
 void smart_cardknowledge::compute_possibilities() {
     if (possibilities_ != -1) { // no need to re-compute
         return;
@@ -283,6 +306,10 @@ void smart_cardknowledge::compute_possibilities() {
 }
 
 
+/*
+Given the current state, compute the probability that a card is playable,
+and set the playable_ attribute accordingly.
+*/
 void smart_cardknowledge::compute_playable(State s)
 {
     if (prob_playable_ != -1.0f) {
@@ -309,6 +336,10 @@ void smart_cardknowledge::compute_playable(State s)
 }
 
 
+/*
+Given the current state, compute the probability that a card is valuable,
+and set the valuable_ attribute accordingly.
+*/
 void smart_cardknowledge::compute_valuable(State s)
 {
     if (prob_valuable_ != -1.0f) { // no need to re-compute
@@ -335,6 +366,10 @@ void smart_cardknowledge::compute_valuable(State s)
 }
 
 
+/*
+Given the current state, compute the probability that a card is worthless,
+and set the worthless_ attribute accordingly.
+*/
 void smart_cardknowledge::compute_worthless(State s)
 {
     if (prob_worthless_ != -1.0f) { // no need to re-compute
@@ -361,6 +396,10 @@ void smart_cardknowledge::compute_worthless(State s)
 }
 
 
+/*
+Eliminate impossible card possibilities based on the played/discarded cards
+and possibly other player's hands (based on the value of use_eyesight)
+*/
 void smart_cardknowledge::update(bool use_eyesight) {
     if (!known()) {
         bool recompute = false;
@@ -389,6 +428,9 @@ void smart_cardknowledge::update(bool use_eyesight) {
 }
 
 
+/*
+Checks whether a card would be playable if it was of the provided input rank
+*/
 bool smart_cardknowledge::could_be_playable(int rank, State s) {
     if (rank < 1 || rank > 5 || cannot_be(Rank(rank))) {
         return false;
@@ -402,7 +444,10 @@ bool smart_cardknowledge::could_be_playable(int rank, State s) {
 }
 
 
-bool smart_cardknowledge::could_be_valuable(int rank, State s) { // same logic^
+/*
+Checks whether a card would be valuable if it was of the provided input rank
+*/
+bool smart_cardknowledge::could_be_valuable(int rank, State s) {
     if (rank < 1 || rank > 5 || cannot_be(Rank(rank))) {
         return false;
     }
@@ -413,6 +458,9 @@ bool smart_cardknowledge::could_be_valuable(int rank, State s) { // same logic^
     new_knowl.set_must_be(Rank(rank));
     return (new_knowl.valuable(s) != NO);
 }
+
+
+/*************************** SMARTBOT IMPLEMENTATION ***************************/
 
 smartbot::smartbot(int id, int n_players) {
     id_ = id;
@@ -425,9 +473,15 @@ smartbot::smartbot(int id, int n_players) {
 }
 
 
+/*
+A card is playable if it can be played on the current pile of its color.
+*/
 bool smartbot::is_playable(State s, Card card) { return (card.rank() == s.get_piles()[card.color()] + 1); }
 
 
+/*
+A card is valuable if it is not worthless and is the last copy of its kind.
+*/
 bool smartbot::is_valuable(State s, Card card) {
     int total = ((card.rank() == 1) ? 3 : ((card.rank() == 5) ? 1 : 2));
     if (played_count_[card.color()][card.rank()] != total - 1) {
@@ -437,6 +491,9 @@ bool smartbot::is_valuable(State s, Card card) {
 }
 
 
+/*
+A card is worthless if can no longer affect the score of the game.
+*/
 bool smartbot::is_worthless(State s, Card card) {
     int v = card.rank();
     if (v < s.get_piles()[card.color()] + 1) {
@@ -453,6 +510,10 @@ bool smartbot::is_worthless(State s, Card card) {
 }
 
 
+/*
+Shift hand knowledge whenever a card is played or discarded.
+Adjust the shift based on whether a new card was also drawn.
+*/
 void smartbot::shift_knowledge(int p_index, int c_index, bool draw) {
     for (int i = c_index; i + 1 < hand_knowledge_[p_index].size(); i++) {
         hand_knowledge_[p_index][i] = hand_knowledge_[p_index][i + 1];
@@ -465,16 +526,21 @@ void smartbot::shift_knowledge(int p_index, int c_index, bool draw) {
 }
 
 
+/*
+Update the number of cards fully known to each bot.
+Implement a different counting strategy for the bot's own cards
+and the other players' cards.
+*/
 void smartbot::update_eyesight_count(State s) {
     memset(eyesight_count_, '\0', sizeof eyesight_count_);
     for (int p = 0; p < hand_knowledge_.size(); p++) {
-        if (p == id_) { // only increment array for fully known cards
+        if (p == id_) { // own cards: only increment array for fully known cards
             for (int i = 0; i < s.get_hands()[id_].size(); i++) {
                 if (hand_knowledge_[p][i].known()) {
                     eyesight_count_[hand_knowledge_[p][i].color()][hand_knowledge_[p][i].rank()]++;
                 }
             }
-        } else { // we can use eyesight for other people's cards
+        } else { // other players' cards: we can use eyesight for other people's cards
             std::vector<Card> hand = s.get_hands()[p];
             for (int i = 0; i < hand.size(); i++) {
                 eyesight_count_[hand[i].color()][hand[i].rank()]++;
@@ -501,6 +567,10 @@ bool smartbot::update_located_count() { // cards that everyone knows the locatio
 }
 
 
+/*
+Determines the next best card to be discarded based on the
+current game state and their hand.
+*/
 int smartbot::next_discard_index(State s, int player_index) {
     double best_f = 0;
     int best_i = -1;
@@ -514,7 +584,6 @@ int smartbot::next_discard_index(State s, int player_index) {
         if (hand_knowledge_[player_index][i].valuable(s) == YES) {
             continue;
         }
-
         
         double f = 100 + hand_knowledge_[player_index][i].prob_worthless(s); // want to discard the card with highest prob_worthless
         if (f > best_f) {
@@ -537,10 +606,13 @@ void smartbot::no_warning_given(int from, State s) {
 }
 
 
+/*
+Update the knowledge for every player before any more is made.
+*/
 void smartbot::observe_before_move(State s) {
     memset(located_count_, '\0', sizeof located_count_);
     update_located_count();
-    // similar t smartbot's observe_before_move
+    // similar to smartbot's observe_before_move
     do {
         for (int p = 0; p < hand_knowledge_.size(); p++) {
             for (int i = 0; i < hand_knowledge_[p].size(); i++) {
@@ -549,11 +621,13 @@ void smartbot::observe_before_move(State s) {
         }
     } while (update_located_count());
     update_eyesight_count(s);
-
-
 }
 
 
+/*
+Update the knowledge for every player before a card is played,
+taking into account the play's outcome.
+*/
 void smartbot::observe_before_play(State s, move m) {
     Card c = s.get_hands()[m.get_from()][m.get_card_index()];
     bool success = is_playable(s, c);
@@ -570,6 +644,9 @@ void smartbot::observe_before_play(State s, move m) {
 }
 
 
+/*
+Update the knowledge for every player before a card is discarded.
+*/
 void smartbot::observe_before_discard(State s, move m) {
     Card c = s.get_hands()[m.get_from()][m.get_card_index()];
     no_warning_given(m.get_from(), s);
@@ -590,15 +667,18 @@ void smartbot::observe_before_discard(State s, move m) {
         }
     }
 
+    // Update knowledge for all players
     for (int i = 0; i < hand_knowledge_.size(); i++) {
         for (int j = 0; j < hand_knowledge_[i].size(); j++) {
             hand_knowledge_[i][j].befuddle_by_discard();
         }
     }
 
+    // Track the discarded card and shift knowledge
     played_count_[c.color()][c.rank()]++;
     shift_knowledge(m.get_from(), m.get_card_index(), s.get_deck().size() != 0);
 }
+
 
 bool search(std::vector<int> indices, int index) {
     for (int i : indices) {
@@ -607,9 +687,14 @@ bool search(std::vector<int> indices, int index) {
     return false;
 }
 
+
+/*
+Process a color hint given to a player and updates the bot's
+hand knowledge accordingly.
+*/
 void smartbot::observe_color_hint(State s, move m) {
-    bool identified = false;
-    int inferred = -1;
+    bool identified = false;  // tracks if the hint identifies an unambiguously playable card
+    int inferred = -1;  // tracks an ambiguous card that might be played
 
     for (int i = s.get_hands()[m.get_to()].size() - 1; i >= 0; i--) {
         bool was_maybe_playable = (hand_knowledge_[m.get_to()][i].playable(s) == MAYBE);
@@ -633,7 +718,6 @@ void smartbot::observe_color_hint(State s, move m) {
         }
     }
 
-
     if (!identified && inferred != -1) { // so this inferred card must be playable (since no other card was made playable by this hint)
         hand_knowledge_[m.get_to()][inferred].set_is_playable(true, s);
     }
@@ -643,6 +727,10 @@ void smartbot::observe_color_hint(State s, move m) {
 }
 
 
+/*
+Process a rank hint given to a player and updates the bot's hand knowledge accordingly.
+Also implements additional strategic logic to detect the possible reason why the hint was given.
+*/
 void smartbot::observe_rank_hint(State s, move m) {
     int discard_ind = next_discard_index(s, (m.get_from() + 1) % hand_knowledge_.size());
     bool hint_stone_reclaim =
@@ -684,7 +772,6 @@ void smartbot::observe_rank_hint(State s, move m) {
         }
     }
 
-
     if (!is_warning && !hint_stone_reclaim && !identified && inferred != -1) {
         hand_knowledge_[m.get_to()][inferred].set_is_playable(true, s);
     }
@@ -715,13 +802,13 @@ move smartbot::discard_finesse(State s) {
         return m;
     }
 
-
     std::vector<Card> partner_newest; // the newest cards of each of my partners
     for (int i = 1; i < hand_knowledge_.size(); i++) {
         partner_newest.push_back(s.get_hands()[(id_ + i) % hand_knowledge_.size()].back());
     }
 
-
+    // Check for a finesse opportunity:
+    // For each playable card in my hand, count how many partners have the same card as their newest
     for (int i = 0; i < playable_cards.size(); i++) {
         int count = 0;
         for (int j = 0; j < partner_newest.size(); j++) {
@@ -740,6 +827,9 @@ move smartbot::discard_finesse(State s) {
 }
 
 
+/*
+Play the lowest ranked card of any color in the current player hand.
+*/
 move smartbot::play_lowest_playable(State s) {
     int best_i = -1;
     double best_f = 0.0;
@@ -778,8 +868,6 @@ move smartbot::discard_worthless(State s) {
         if (hand_knowledge_[id_][i].worthless(s) == NO) {
             continue;
         }
-
-
         if (hand_knowledge_[id_][i].worthless(s) == MAYBE) {
             smart_cardknowledge eye_knowl = hand_knowledge_[id_][i];
             eye_knowl.update(true);
@@ -803,6 +891,11 @@ move smartbot::discard_worthless(State s) {
 }
 
 
+/*
+If the size of the deck is small compared to the remaining number of lives,
+we can afford to take a risk.
+This function plays the card with the highest probability of being playable.
+*/
 move smartbot::play_mystery(State s) {
     int table[4] = { -99, 1, 1, 3 }; // similar logic to holmes::play_mystery
     if (s.get_deck().size() <= table[s.get_num_lives()]) {
@@ -829,6 +922,10 @@ move smartbot::play_mystery(State s) {
 }
 
 
+/*
+Just discard the oldest card in the hand.
+The oldest card is found at the leftmost position.
+*/
 move smartbot::discard_old(State s) { // straightforward
     int best_i = next_discard_index(s, id_);
     if (best_i != -1) {
@@ -840,6 +937,11 @@ move smartbot::discard_old(State s) { // straightforward
 }
 
 
+/*************************** START OF HELPER FUNCTIONS FOR SMARTBOT ***************************/
+
+/*
+Calculates how much information we gain by going from a hand to another.
+*/
 int reduction_in_entropy(std::vector<smart_cardknowledge> old_knowl, std::vector<smart_cardknowledge> new_knowl) {
     int res = 0;
     for (int i = 0; i < old_knowl.size(); i++) {
@@ -847,6 +949,7 @@ int reduction_in_entropy(std::vector<smart_cardknowledge> old_knowl, std::vector
     }
     return res;
 }
+
 
 std::vector<int> search_indices(std::vector<Card> hand, Color col) {
     std::vector<int> indices = {};
@@ -858,6 +961,7 @@ std::vector<int> search_indices(std::vector<Card> hand, Color col) {
     return indices;
 }
 
+
 std::vector<int> search_indices(std::vector<Card> hand, Rank rank) {
     std::vector<int> indices = {};
     for (int i = 0; i < hand.size(); i++) {
@@ -868,6 +972,14 @@ std::vector<int> search_indices(std::vector<Card> hand, Rank rank) {
     return indices;
 }
 
+
+/*************************** END OF HELPER FUNCTIONS FOR SMARTBOT ***************************/
+
+/*
+Determines the best hint to provide to a partner,
+where the best hint is defined as the hint that maximises the information gained
+from the hint (as calculated by reduction_in_entropy).
+*/
 template<class F>
 std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, int partner_index, F&& is_okay) {
     std::vector<Card> partner_hand = s.get_hands()[partner_index];
@@ -882,6 +994,8 @@ std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, 
     int best_f = 0;
     std::vector<smart_cardknowledge> old_knowl = hand_knowledge_[partner_index];
     move best = move(INVALID_MOVE);
+
+    // Try to give a color hint
     for (int k = 1; k < 6; k++) {
         if (!cols[k]) {
             continue;
@@ -907,7 +1021,7 @@ std::tuple<move, int> smartbot::best_hint_for_partner_given_constraint(State s, 
         }
     }
 
-
+    // Try to give a rank hint
     for (int r = 1; r < 6; r++) { // Same as ^
         if (!ranks[r]) {
             continue;
@@ -982,6 +1096,9 @@ std::tuple<move, int> smartbot::best_hint_for_partner(State s, int partner_index
 }
 
 
+/*
+Warn another player before they discard a valuable card
+*/
 move smartbot::give_valuable_warning(State s) { // check holmes for explanation
     if (s.get_num_hints() == 0) {
         move m = move(INVALID_MOVE);
@@ -999,7 +1116,6 @@ move smartbot::give_valuable_warning(State s) { // check holmes for explanation
         return m;        
     }
 
-
     std::tuple<move, int> best_hint_tuple = best_hint_for_partner(s, player_to_warn);
     if (std::get<1>(best_hint_tuple) > 0) {
         return std::get<0>(best_hint_tuple);
@@ -1010,6 +1126,9 @@ move smartbot::give_valuable_warning(State s) { // check holmes for explanation
 }
 
 
+/*
+Find the best hint to give for any partner.
+*/
 move smartbot::give_helpful_hint(State s) {
     if (s.get_num_hints() == 0) {
         move m = move(INVALID_MOVE);
@@ -1048,6 +1167,10 @@ void smartbot::observe(State s, move m) {
 }
 
 
+/*
+Determine the best possible move given the current game state.
+This function implements the decision making logic using all the previously defined methods.
+*/
 move smartbot::play(State s) {
     if (s.get_deck().size() == 0) {
         move m = play_lowest_playable(s);
@@ -1079,7 +1202,6 @@ move smartbot::play(State s) {
     if (m.get_type() != INVALID_MOVE) {
         return m;
     }
-
 
     if (s.get_num_hints() == 8) { // just hint oldest card to most immediate partner
         int right_partner = (id_ + hand_knowledge_.size() - 1) % hand_knowledge_.size();

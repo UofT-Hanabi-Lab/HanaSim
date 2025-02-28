@@ -18,9 +18,9 @@ enum trivalue : int8_t {
 // check holmes_cardknowledge if confused about some functions/attributes
 class smart_cardknowledge {
     smartbot *bot_;
-    bool cant_be_[6][6];
-    int color_;
-    int rank_;
+    bool cant_be_[6][6];  // A 6x6 matrix of booleans tracking which (color,rank) combinations are impossible
+    int color_;  // if known, the deduced color, otherwise it's set to -1 or -2
+    int rank_;  // if known, the deduced rank, otherwise it's set to -1 or -2
     int possibilities_; // how many color-rank configurations are possible for this card
     trivalue playable_;
     trivalue valuable_;
@@ -88,11 +88,13 @@ public:
     void compute_worthless(State s);
 };
 }
+
+
 class smartbot final : public player {
     friend class SmartBotInternal::smart_cardknowledge;
     int id_;
     int num_cards_;
-    std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hand_knowledge_;
+    std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> hand_knowledge_;  // what each player knows about their hand
     int located_count_[6][6]; // cards that have been definitely identified
     int played_count_[6][6]; // cards that have been played/discarded
     int eyesight_count_[6][6]; // cards visible to me in particular
