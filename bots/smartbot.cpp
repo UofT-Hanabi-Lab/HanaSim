@@ -926,7 +926,7 @@ move smartbot::play_mystery(State s) {
 Just discard the oldest card in the hand.
 The oldest card is found at the leftmost position.
 */
-move smartbot::discard_old(State s) { // straightforward
+move smartbot::discard_old(State s) {
     int best_i = next_discard_index(s, id_);
     if (best_i != -1) {
         move m = move(DISCARD, id_, best_i);
@@ -1128,6 +1128,8 @@ move smartbot::give_valuable_warning(State s) { // check holmes for explanation
 
 /*
 Find the best hint to give for any partner.
+Here the best hint is defined as color or rank hint to any partner
+that provides the largest amount of information.
 */
 move smartbot::give_helpful_hint(State s) {
     if (s.get_num_hints() == 0) {
@@ -1209,11 +1211,11 @@ move smartbot::play(State s) {
         m = move(RANK_HINT, right_partner, id_, indices, s.get_hands()[right_partner][0].rank());
         return m;
     } else { // will need to discard
-        m = discard_old(s);
+        m = discard_worthless(s);
         if (m.get_type() != INVALID_MOVE) {
             return m;
         }
-        m = discard_worthless(s);
+        m = discard_old(s);
         if (m.get_type() != INVALID_MOVE) {
             return m;
         }
