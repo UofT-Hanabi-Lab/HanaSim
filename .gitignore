@@ -2,7 +2,8 @@
 
 HanaSim
 HanaTest
-
+build
+venv
 # Compiled source #
 ###################
 *.com

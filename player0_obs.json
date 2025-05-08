@@ -1,0 +1,263 @@
+{
+    "info": {
+        "life_tokens": 3,
+        "info_tokens": 8,
+        "fireworks": {
+            "R": 0,
+            "Y": 0,
+            "G": 0,
+            "W": 0,
+            "B": 0
+        },
+        "hands": {
+            "cur_player": [
+                {
+                    "index": 0,
+                    "card": "XX",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "card": "XX",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "card": "XX",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "card": "XX",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 4,
+                    "card": "XX",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                }
+            ],
+            "others": [
+                {
+                    "index": 0,
+                    "card": "R1",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 1,
+                    "card": "G3",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 2,
+                    "card": "G1",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 3,
+                    "card": "R1",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                },
+                {
+                    "index": 4,
+                    "card": "B3",
+                    "info": "XX",
+                    "col": [
+                        "R",
+                        "W",
+                        "Y",
+                        "G",
+                        "B"
+                    ],
+                    "rank": [
+                        "1",
+                        "2",
+                        "3",
+                        "4",
+                        "5"
+                    ]
+                }
+            ]
+        },
+        "deck_size": 40,
+        "discards": []
+    },
+    "actions": {
+        "0": {
+            "action_type": "REVEAL_COLOR",
+            "target_offset": 1,
+            "color": "R"
+        },
+        "1": {
+            "action_type": "REVEAL_COLOR",
+            "target_offset": 1,
+            "color": "G"
+        },
+        "2": {
+            "action_type": "REVEAL_COLOR",
+            "target_offset": 1,
+            "color": "B"
+        },
+        "3": {
+            "action_type": "REVEAL_RANK",
+            "target_offset": 1,
+            "rank": 1
+        },
+        "4": {
+            "action_type": "REVEAL_RANK",
+            "target_offset": 1,
+            "rank": 3
+        },
+        "5": {
+            "action_type": "PLAY",
+            "card_index": 0
+        },
+        "6": {
+            "action_type": "PLAY",
+            "card_index": 1
+        },
+        "7": {
+            "action_type": "PLAY",
+            "card_index": 2
+        },
+        "8": {
+            "action_type": "PLAY",
+            "card_index": 3
+        },
+        "9": {
+            "action_type": "PLAY",
+            "card_index": 4
+        }
+    },
+    "last_action": {
+        "player_id": -1
+    },
+    "player_id": 0,
+    "waiting": "Your turn to play"
+}
