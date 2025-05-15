@@ -11,5 +11,7 @@ programs (like computer agents) that interface with HanaSimPy.
    :maxdepth: 2
    :caption: Contents:
 
+   build
    create_an_agent
+   game_conventions
    api_reference
