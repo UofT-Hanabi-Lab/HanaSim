@@ -18,7 +18,7 @@ pip install gymnasium
 ```sh
 mkdir build
 cd build
-cmake -DPython3_EXECUTABLE=$(which python) .. & make
+cmake -DPython3_EXECUTABLE=$(which python) .. && make
 ```
 ## Step 4: Run the program:
 ```sh
