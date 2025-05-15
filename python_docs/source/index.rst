@@ -1,17 +1,15 @@
-.. HanaSimPy documentation master file, created by
-   sphinx-quickstart on Wed May 14 12:24:33 2025.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 HanaSimPy documentation
 =======================
 
-Add your content using ``reStructuredText`` syntax. See the
-`reStructuredText <https://www.sphinx-doc.org/en/master/usage/restructuredtext/index.html>`_
-documentation for details.
+**HanaSimPy** is the official Python binding for the HanaSim simulator, created using
+pybind11.
 
+This documentation serves to help developers modify the API of HanaSimPy and write
+programs (like computer agents) that interface with HanaSimPy.
 
 .. toctree::
    :maxdepth: 2
    :caption: Contents:
 
+   create_an_agent
+   api_reference
