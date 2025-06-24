@@ -1,6 +1,6 @@
 // bindings.cpp
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h> 
+#include <pybind11/stl.h>
 #include <pybind11/complex.h>
 #include <pybind11/functional.h>
 #include <pybind11/chrono.h>
@@ -11,11 +11,25 @@
 
 namespace py = pybind11;
 
+// Central macro list to define and bind enum values
+#define FOR_EACH_PLAYER_NAME(MACRO) \
+    MACRO(RandomBot)                \
+    MACRO(HolmesBot)                \
+    MACRO(SmartBot)
+
+// Convert enum entry to pybind11 binding
+#define BIND_ENUM_ENTRY(x) .value(#x, PlayerName::x)
+
 using Vector3DBool = std::vector<std::vector<std::vector<bool>>>;
 PYBIND11_MAKE_OPAQUE(Vector3DBool);
 
-PYBIND11_MODULE(hana_sim, m) {
+PYBIND11_MODULE(hana_sim, m)
+{
     m.doc() = "A PyBind11 module that wraps the HanabiEnv for Gym-like usage.";
+
+    py::enum_<PlayerName>(m, "PlayerName")
+        FOR_EACH_PLAYER_NAME(BIND_ENUM_ENTRY)
+            .export_values();
 
     py::bind_vector<Vector3DBool>(m, "Vector3DBool");
 
@@ -38,11 +52,10 @@ PYBIND11_MODULE(hana_sim, m) {
         .def_readwrite("reward", &HanabiEnv::StepResult::reward)
         .def_readwrite("done", &HanabiEnv::StepResult::done)
         .def_readwrite("info", &HanabiEnv::StepResult::info);
-    
+
     py::class_<HanabiEnv>(m, "HanabiEnv")
-        .def(py::init<int>(), py::arg("num_players")=2)  
+        .def(py::init<int>(), py::arg("num_players") = 2)
         .def("reset", &HanabiEnv::reset, "Reset the environment.")
         .def("step", &HanabiEnv::step, "Take a step in the environment using action_id.")
         .def("render", &HanabiEnv::render, "Render the current state.");
-    
 }
