@@ -57,7 +57,7 @@ public:
     void update(bool use_eyesight); // update cant_be_
 
 
-   
+
     Card known_card() { return Card(Color(color_), Rank(rank_)); }
 
 
@@ -138,5 +138,5 @@ public:
     void observe_before_move(State s);
     int get_id();
     int get_n_cards();
-    std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> get_hk();
+    std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> get_hk() const;
 };

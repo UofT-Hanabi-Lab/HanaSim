@@ -41,8 +41,8 @@ bool holmes_cardknowledge::cannot_be(Rank rank) // same as above
     return true;
 }
 
-int holmes_cardknowledge::color() { return color_; }
-int holmes_cardknowledge::rank() { return rank_; }
+int holmes_cardknowledge::color() const { return color_; }
+int holmes_cardknowledge::rank() const { return rank_; }
 
 void holmes_cardknowledge::set_must_be(Color color)
 {
@@ -441,7 +441,7 @@ std::tuple<move, int> holmesbot::best_hint_for_partner(State s, int partner_inde
     return std::make_tuple(m, highest_info);
 }
 
-move holmesbot::give_valuable_warning(State s) { 
+move holmesbot::give_valuable_warning(State s) {
     int player_to_warn = (id_ + 1) % hand_knowledge_.size(); // warn the immediately next partner
     int discard_index = next_discard_index(s, player_to_warn);
     if (discard_index == -1) { // they aren't discarding (or they're discarding a known worthless)
@@ -456,7 +456,7 @@ move holmesbot::give_valuable_warning(State s) {
         move m = move(INVALID_MOVE);
         return m;
     }
-    move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn)); 
+    move best_hint = std::get<0>(best_hint_for_partner(s, player_to_warn));
     if (best_hint.get_type() != INVALID_MOVE) { // we can give a hint that will make them play instead
         return best_hint;
     }
@@ -540,7 +540,7 @@ move holmesbot::play(State s) {
             if (hand_knowledge_[id_][i].rank() > hand_knowledge_[id_][best].rank()) best = i;
         }
         m = move(DISCARD, id_, best);
-        
+
         return m;
     }
 }

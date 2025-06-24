@@ -24,14 +24,14 @@ public:
     bool cannot_be(Color color);
     bool cannot_be(Rank rank);
 
-    int color();
-    int rank();
+    int color() const;
+    int rank() const;
 
     void set_must_be(Color color);
     void set_must_be(Rank rank);
     void set_cannot_be(Color color);
     void set_cannot_be(Rank rank);
-    
+
     void update(State s, const holmesbot &bot);
 
     bool is_playable;

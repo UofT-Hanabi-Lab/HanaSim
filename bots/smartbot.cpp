@@ -175,7 +175,7 @@ void smart_cardknowledge::set_is_playable(bool playable, State s) {
     possibilities_ = -1;
     if (color_ == -1) color_ = -2;
     if (rank_ == -1) rank_ = -2;
-    
+
     if (valuable_ == MAYBE) prob_valuable_ = -1.0;
     if (worthless_ == MAYBE) prob_worthless_ = -1.0;
 
@@ -236,7 +236,7 @@ void smart_cardknowledge::set_is_worthless(bool worthless, State s) {
     if (rank_ == -1) rank_ = -2;
     if (playable_ == MAYBE) prob_playable_ = -1.0;
     if (valuable_ == MAYBE) prob_valuable_ = -1.0;
-    
+
     if (worthless) {
         playable_ = valuable_ = NO;
         prob_playable_ = prob_valuable_ = 0.0;
@@ -515,7 +515,7 @@ int smartbot::next_discard_index(State s, int player_index) {
             continue;
         }
 
-        
+
         double f = 100 + hand_knowledge_[player_index][i].prob_worthless(s); // want to discard the card with highest prob_worthless
         if (f > best_f) {
             best_f = f;
@@ -649,7 +649,7 @@ void smartbot::observe_rank_hint(State s, move m) {
         (s.get_num_hints() == 8) &&
         (m.get_from() == (m.get_to() + 1) % hand_knowledge_.size()) &&
         search(m.get_card_indices(), 0); // were they trying to just re-claim a hint stone? (check the play function)
-    
+
     bool is_warning =
         !hint_stone_reclaim &&
         (m.get_to() == (m.get_from() + 1) % hand_knowledge_.size()) &&
@@ -798,7 +798,7 @@ move smartbot::discard_worthless(State s) {
         return m;
     } else {
         move m = move(INVALID_MOVE);
-        return m;        
+        return m;
     }
 }
 
@@ -996,7 +996,7 @@ move smartbot::give_valuable_warning(State s) { // check holmes for explanation
     Card c = s.get_hands()[player_to_warn][disc_ind];
     if (!is_valuable(s, c)) {
         move m = move(INVALID_MOVE);
-        return m;        
+        return m;
     }
 
 
@@ -1121,6 +1121,6 @@ int smartbot::get_n_cards() {
     return num_cards_;
 }
 
-std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> smartbot::get_hk(){
+std::vector<std::vector<SmartBotInternal::smart_cardknowledge>> smartbot::get_hk() const {
     return hand_knowledge_;
 }
