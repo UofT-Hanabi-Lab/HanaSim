@@ -10,6 +10,7 @@
 #include <omp.h>
 
 #include "../include/game.h"
+#include "../include/player.h"
 
 class HanabiEnv
 {
@@ -30,10 +31,17 @@ public:
 
     void render() const;
 
+    void add_player(const PlayerName name, const int player_id);
+
+    std::vector<PlayerName> get_supported_player_names() const;
+
 private:
     int num_players_;
     bool done_; // mark if the game end
     State *curr_state_ = NULL;
     int last_score_; // To calculate score
     int curr_player_;
+
+    // map between player IDs and player objects
+    std::unordered_map<int, std::shared_ptr<player>> players_;
 };

@@ -1,8 +1,12 @@
-#include "../include/hanabi_env.h"
 #include <iostream>
 
+#include "../include/hanabi_env.h"
+#include "../bots/include/randombot.h"
+#include "../bots/include/holmesbot.h"
+#include "../bots/include/smartbot.h"
+
 HanabiEnv::HanabiEnv(int num_players)
-    : num_players_(num_players), done_(false), last_score_(0)
+    : num_players_(num_players), done_(false), last_score_(0), players_({})
 {
     curr_state_ = new State(num_players);
     last_score_ = 0;
@@ -98,4 +102,30 @@ void HanabiEnv::render() const
         std::cout << std::endl;
         i++;
     }
+}
+
+void HanabiEnv::add_player(const PlayerName name, const int player_id)
+{
+    switch (name)
+    {
+    case PlayerName::RandomBot:
+        players_[player_id] = std::make_shared<randombot>(player_id, num_players_);
+        break;
+
+    case PlayerName::HolmesBot:
+        players_[player_id] = std::make_shared<holmesbot>(player_id, num_players_);
+        break;
+
+    case PlayerName::SmartBot:
+        players_[player_id] = std::make_shared<smartbot>(player_id, num_players_);
+        break;
+
+    default:
+        throw std::invalid_argument("Unsupported player name");
+    }
+}
+
+std::vector<PlayerName> HanabiEnv::get_supported_player_names() const
+{
+    return {PlayerName::RandomBot, PlayerName::HolmesBot, PlayerName::SmartBot};
 }

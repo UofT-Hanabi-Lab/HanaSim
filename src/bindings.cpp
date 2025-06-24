@@ -57,5 +57,8 @@ PYBIND11_MODULE(hana_sim, m)
         .def(py::init<int>(), py::arg("num_players") = 2)
         .def("reset", &HanabiEnv::reset, "Reset the environment.")
         .def("step", &HanabiEnv::step, "Take a step in the environment using action_id.")
-        .def("render", &HanabiEnv::render, "Render the current state.");
+        .def("render", &HanabiEnv::render, "Render the current state.")
+        .def("add_player", &HanabiEnv::add_player, "Register a HanaSim player to the environment")
+        .def("get_supported_player_names", &HanabiEnv::get_supported_player_names,
+            "Get a list of PlayerName enums for players that can be added to the environment");
 }
