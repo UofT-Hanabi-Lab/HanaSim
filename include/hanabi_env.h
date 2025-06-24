@@ -27,7 +27,7 @@ public:
         std::string info; // additional info
     };
 
-    StepResult step(const py::tuple &action);
+    StepResult step(const std::optional<py::tuple> action);
 
     void render() const;
 
@@ -40,7 +40,7 @@ private:
     bool done_; // mark if the game end
     State *curr_state_ = NULL;
     int last_score_; // To calculate score
-    int curr_player_;
+    int curr_player_id_;
 
     // map between player IDs and player objects
     std::unordered_map<int, std::shared_ptr<player>> players_;
