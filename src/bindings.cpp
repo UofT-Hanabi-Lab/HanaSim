@@ -28,8 +28,7 @@ PYBIND11_MODULE(hana_sim, m)
     m.doc() = "A PyBind11 module that wraps the HanabiEnv for Gym-like usage.";
 
     py::enum_<PlayerName>(m, "PlayerName")
-        FOR_EACH_PLAYER_NAME(BIND_ENUM_ENTRY)
-            .export_values();
+        FOR_EACH_PLAYER_NAME(BIND_ENUM_ENTRY);
 
     py::bind_vector<Vector3DBool>(m, "Vector3DBool");
 
