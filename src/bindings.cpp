@@ -47,10 +47,10 @@ PYBIND11_MODULE(hana_sim, m)
         .def_readwrite("vector_encoding", &Observation::vector_encoding);
 
     py::class_<HanabiEnv::StepResult>(m, "StepResult")
-        .def_readwrite("observation", &HanabiEnv::StepResult::observation)
-        .def_readwrite("reward", &HanabiEnv::StepResult::reward)
-        .def_readwrite("done", &HanabiEnv::StepResult::done)
-        .def_readwrite("info", &HanabiEnv::StepResult::info);
+        .def_readonly("observation", &HanabiEnv::StepResult::observation)
+        .def_readonly("reward", &HanabiEnv::StepResult::reward)
+        .def_readonly("done", &HanabiEnv::StepResult::done)
+        .def_readonly("info", &HanabiEnv::StepResult::info);
 
     py::class_<HanabiEnv>(m, "HanabiEnv")
         .def(py::init<int>(), py::arg("num_players") = 2)

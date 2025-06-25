@@ -21,10 +21,10 @@ public:
 
     struct StepResult
     {
-        Observation observation;
-        float reward;
-        bool done;
-        std::string info; // additional info
+        const Observation observation;
+        const float reward;
+        const bool done;
+        const std::string info; // additional info
     };
 
     StepResult step(const std::optional<py::tuple> action);
