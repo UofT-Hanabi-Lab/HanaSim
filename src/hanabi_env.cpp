@@ -173,7 +173,8 @@ HanabiEnv::StepResult HanabiEnv::step(const std::optional<py::tuple> maybe_actio
         /* observation = */ curr_state_->get_observation(curr_player_id_), // In observation will return valid move for next player
         /* reward = */ 1.0f,                                               // need calculate rewards here
         /* done = */ done_,
-        /* info = */ std::to_string(last_score_)};
+        /* info = */ std::to_string(last_score_),
+        /* last_move = */ next_move.as_tuple()};
 }
 
 void HanabiEnv::render() const

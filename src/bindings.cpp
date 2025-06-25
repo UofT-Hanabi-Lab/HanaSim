@@ -50,7 +50,9 @@ PYBIND11_MODULE(hana_sim, m)
         .def_readonly("observation", &HanabiEnv::StepResult::observation)
         .def_readonly("reward", &HanabiEnv::StepResult::reward)
         .def_readonly("done", &HanabiEnv::StepResult::done)
-        .def_readonly("info", &HanabiEnv::StepResult::info);
+        .def_readonly("info", &HanabiEnv::StepResult::info)
+        .def_readonly("last_move", &HanabiEnv::StepResult::last_move,
+                      "The most recently completed move in the game");
 
     py::class_<HanabiEnv>(m, "HanabiEnv")
         .def(py::init<int>(), py::arg("num_players") = 2)

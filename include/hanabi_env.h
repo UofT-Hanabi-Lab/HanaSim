@@ -25,6 +25,7 @@ public:
         const float reward;
         const bool done;
         const std::string info; // additional info
+        const std::tuple<int, int, int, int, std::vector<int>, int, int> last_move;
     };
 
     StepResult step(const std::optional<py::tuple> action);
