@@ -13,7 +13,7 @@ A class for a Hanabi move.
 enum move_type { COL_HINT=1, RANK_HINT, PLAY, DISCARD, INVALID_MOVE };
 class State;
 
-class move 
+class move
 {
     move_type type_;
     int to_; // id of player that you're hinting to. -1 if move isn't a hint
@@ -38,7 +38,9 @@ public:
     Color get_color() const;
     Rank get_rank() const;
     std::vector<int> get_card_indices() const;
-    
+
+    std::tuple<int, int, int, int, std::vector<int>, int, int> as_tuple() const;
+
     bool compare(move m);
     std::string str();
     std::string str(State s);

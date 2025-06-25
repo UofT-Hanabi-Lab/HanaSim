@@ -17,7 +17,7 @@ void EncodeDiscards(const State& state, std::vector<int>& encoding, int& offset)
 
 State::State(int num_players) {
     // Initialize the deck, 50 cards
-    deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five), 
+    deck_ = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five),
               Card(blue, one), Card(blue, one), Card(blue, one), Card(blue, two), Card(blue, two), Card(blue, three), Card(blue, three), Card(blue, four), Card(blue, four), Card(blue, five),
               Card(yellow, one), Card(yellow, one), Card(yellow, one), Card(yellow, two), Card(yellow, two), Card(yellow, three), Card(yellow, three), Card(yellow, four), Card(yellow, four), Card(yellow, five),
               Card(green, one), Card(green, one), Card(green, one), Card(green, two), Card(green, two), Card(green, three), Card(green, three), Card(green, four), Card(green, four), Card(green, five),
@@ -87,7 +87,7 @@ std::vector<move> State::get_legal_moves(int id) const{
             std::set<Rank> ranks; // ^
             std::map<Color, std::vector<int>> col_to_indices{}; // Color to the indices of cards of that color in partner i's hand
             std::map<Rank, std::vector<int>> rank_to_indices{}; // ^
-            
+
             // Popylating the sets and maps
             for (int j = 0; j < hands_[i].size(); j++) {
                 Card c = hands_[i][j];
@@ -109,13 +109,13 @@ std::vector<move> State::get_legal_moves(int id) const{
             for (Rank rank : ranks) moves.push_back(move(RANK_HINT, i, id, rank_to_indices.at(rank), rank));
         }
     }
-    
+
     if (get_num_hints() < 8) { // Can perform discards
         for (int i = 0; i < hands_[id].size(); i++) moves.push_back(move(DISCARD, id, i));
     }
-    
+
     for (int i = 0; i < hands_[id].size(); i++) moves.push_back(move(PLAY, id, i));
-    
+
     return moves;
 }
 
@@ -146,7 +146,7 @@ void State::update_card_knowledge(const move& m) {
         Color hinted_color = m.get_color();
         int target_player = m.get_to();
         std::vector<int> hinted_indices = m.get_card_indices();
-        
+
         // For each card in the target player's hand
         for (int i = 0; i < hands_[target_player].size(); i++) {
             // If this card was hinted
@@ -165,7 +165,7 @@ void State::update_card_knowledge(const move& m) {
         Rank hinted_rank = m.get_rank();
         int target_player = m.get_to();
         std::vector<int> hinted_indices = m.get_card_indices();
-        
+
         // For each card in the target player's hand
         for (int i = 0; i < hands_[target_player].size(); i++) {
             // If this card was hinted
@@ -187,15 +187,15 @@ void State::transition(move m, bool log) {
         Card discard = hands_[m.get_from()][m.get_card_index()];
         discards_.push_back(discard);
 
-        auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), 
+        auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(),
                             discard);
         hands_[m.get_from()].erase(it); // remove the discarded card form the player's hand
-        
+
         if (!(deck_.empty())) { // draw if deck isn't empty
             if (log) std::cout << std::endl << "        Draw: " << deck_.back().str() << std::endl;
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
-            
+
             // Initialize knowledge for the new card
             int new_card_index = hands_[m.get_from()].size() - 1;
             possible_colors_[m.get_from()][new_card_index] = std::vector<bool>(6, true);
@@ -228,7 +228,7 @@ void State::transition(move m, bool log) {
             if (log) std::cout << "        DRAW: " << deck_.back().str() << std::endl;
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
-            
+
             // Initialize knowledge for the new card
             int new_card_index = hands_[m.get_from()].size() - 1;
             possible_colors_[m.get_from()][new_card_index] = std::vector<bool>(6, true);
@@ -299,7 +299,7 @@ void State::reset() {
     }
     discards_ = {};
     piles_ = {0, 0, 0, 0, 0, 0};
-    
+
     // Reset card knowledge
     possible_colors_ = std::vector<std::vector<std::vector<bool>>>(
         num_players_,
@@ -330,21 +330,6 @@ std::string color_to_string(Color color) {
     return color_names[static_cast<int>(color)];
 }
 
-
-// Encode the move object to std::tuple
-std::tuple<int, int, int, int, std::vector<int>, int, int> encode_move(const move &m) {
-    return std::make_tuple(
-        static_cast<int>(m.get_type()),
-        m.get_to(),
-        m.get_from(),
-        m.get_card_index(),
-        m.get_card_indices(),
-        static_cast<int>(m.get_color()),
-        static_cast<int>(m.get_rank())
-    );
-}
-
-
 Observation State::get_observation(int player_id) const {
     Observation obs;
 
@@ -355,11 +340,11 @@ Observation State::get_observation(int player_id) const {
             obs.hands[i].push_back({color_to_string(card.color()), card.rank()});
         }
     }
-    
+
     // Add card knowledge to observation
     obs.possible_colors = possible_colors_;
     obs.possible_ranks = possible_ranks_;
-    
+
     for (size_t i = 1; i < piles_.size(); ++i) {
         obs.fireworks[color_names[i]] = piles_[i];
     }
@@ -374,7 +359,7 @@ Observation State::get_observation(int player_id) const {
 
     std::vector<move> legal_moves = get_legal_moves(player_id);
     for (const move& m : legal_moves) {
-        obs.legal_actions.push_back(encode_move(m));
+        obs.legal_actions.push_back(m.as_tuple());
     }
 
     obs.current_player_id = player_id;
@@ -384,7 +369,7 @@ Observation State::get_observation(int player_id) const {
                       BoardSectionLength() +
                       DiscardSectionLength();
     obs.vector_encoding = std::vector<int>(total_length, 0);
-    
+
     int offset = 0;
     EncodeHands(*this, player_id, obs.vector_encoding, offset);
     EncodeBoard(*this, obs.vector_encoding, offset);

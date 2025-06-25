@@ -5,26 +5,26 @@
 #include <map>
 #include <string>
 #include <pybind11/pybind11.h>
-#include <pybind11/stl.h> 
+#include <pybind11/stl.h>
 #include <pybind11/stl_bind.h>
 
 namespace py = pybind11;
 
 struct Observation {
     std::vector<std::vector<std::pair<std::string, int>>> hands;
-    
+
     // New fields for card knowledge
     std::vector<std::vector<std::vector<bool>>> possible_colors;  // [player][card_index][color] -> whether this color is possible
     std::vector<std::vector<std::vector<bool>>> possible_ranks;   // [player][card_index][rank] -> whether this rank is possible
 
     std::map<std::string, int> fireworks;
 
-    int hint_tokens;    
-    int lives_remaining;  
-    int deck_size;       
+    int hint_tokens;
+    int lives_remaining;
+    int deck_size;
 
     std::vector<std::pair<std::string, int>> discards;
-    std::vector<std::tuple<int, int, int, int, std::vector<int>, int, int>> legal_actions;  // Changed from py::tuple to std::tuple
+    std::vector<std::tuple<int, int, int, int, std::vector<int>, int, int>> legal_actions;
 
     int current_player_id;
 

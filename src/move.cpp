@@ -74,9 +74,9 @@ bool move::compare(move m) {
     if((type_ == m.get_type()) && (to_ == m.get_to()) && (from_ == m.get_from()) &&
         (card_index_ == m.get_card_index()) && (card_indices_ == m.get_card_indices()) &&
         (color_ = m.get_color()) && (rank_ == m.get_rank())){
-        return true; 
+        return true;
     }
-    return false; 
+    return false;
 }
 
 std::string move::str() {
@@ -110,4 +110,17 @@ std::string move::str(State s) {
     } else {
         return "DISCARD: " + s.get_hands()[from_][card_index_].str();
     }
+}
+
+/* Encode the move object as a std::tuple */
+std::tuple<int, int, int, int, std::vector<int>, int, int> move::as_tuple() const
+{
+    return std::make_tuple(
+        static_cast<int>(type_),
+        to_,
+        from_,
+        card_index_,
+        card_indices_,
+        static_cast<int>(color_),
+        static_cast<int>(rank_));
 }
