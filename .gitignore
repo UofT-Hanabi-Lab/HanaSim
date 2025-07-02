@@ -41,3 +41,6 @@ HanaTest
 .Trashes
 ehthumbs.db
 Thumbs.db
+
+# some local stuff
+include/libtorch/

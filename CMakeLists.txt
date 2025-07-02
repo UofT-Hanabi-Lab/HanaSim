@@ -23,7 +23,7 @@ set (HEADERS ${Headers})
 #include_directories(/usr/local/include)
 #link_directories(/usr/local/lib)
 
-add_subdirectory("../../greenfish-repo/gaenari" build) # <--- for treeagent. Change to where you have the greenfish/gaenari directory.
+add_subdirectory("../greenfish-repo/gaenari" build) # <--- for treeagent. Change to where you have the greenfish/gaenari directory.
 check_cpp17_gaenari() # <--- for treeagent
 
 
@@ -58,3 +58,9 @@ set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=c++17")
 #FLAGS=-g -Wall -std=c++17 -arch arm64 -lomp
 #LDFLAGS=-L/opt/homebrew/lib
 #CPPFLAGS=-I/opt/homebrew/include
+
+# Uncomment if using LibTorch
+# set(Torch_DIR "/mnt/c/25_summer/csc494/HanaSim/include/libtorch/share/cmake/Torch")
+# find_package(Torch REQUIRED)
+# target_link_libraries(${CMAKE_PROJECT_NAME} "${TORCH_LIBRARIES}")
+# target_include_directories(${CMAKE_PROJECT_NAME} PRIVATE "${TORCH_INCLUDE_DIRS}")
