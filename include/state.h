@@ -7,9 +7,12 @@
 #pragma once
 class State {
 
+protected:
     int num_players_;
     int cards_per_hand_;
     std::vector<std::vector<Card>> hands_;
+
+private:
     int hint_tokens_;
     int lives_;
     std::vector<Card> deck_;

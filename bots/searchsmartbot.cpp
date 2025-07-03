@@ -9,25 +9,7 @@
 //      if (sizeof(player1.search_space) > threshold) 
 //          {act according to blueprint policy (eg. smartbot)}
 
-class SearchSmartBot : public player {
-public:
-    SearchSmartBot(int id, int n_players, int search_n, float search_thresh);
 
-    move play(State s) override;
-    void observe(State s, move m) override;
-    move play_prechosen(State s, move m) override;
-    int get_id() override;
-    int get_n_cards() override;
-
-private:
-    int id_;                    
-    int n_players_;                 //total players
-    int search_n_;                  //number of simulations
-    float search_thresh_;           //search space upperbound
-    std::shared_ptr<smartbot> bp_;  // the blueprint policy?TODO
-
-    float simulate_game(State s);   //the MCS
-};
 
 SearchSmartBot::SearchSmartBot(int id, int n_players, int search_n, float search_thresh)
     : id_(id), n_players_(n_players), search_n_(search_n), search_thresh_(search_thresh) {

@@ -6,6 +6,8 @@ A class for a card in Hanabi.
 
 #pragma once
 
+#include <string>
+
 // possible colors
 enum Color { red = 1, white, yellow, green, blue, invalid_color };
 // possible ranks
@@ -20,9 +22,9 @@ public:
     Card(Color, Rank);
 
     // Getters
-    Color color();
-    Rank rank();
+    Color color() const;
+    Rank rank() const;
 
-    std::string str();
-    bool operator == (const Card c);
+    std::string str() const;
+    bool operator == (const Card c) const;
 };

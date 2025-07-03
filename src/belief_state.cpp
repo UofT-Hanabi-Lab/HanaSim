@@ -9,8 +9,14 @@ BeliefState::BeliefState(int num_players, int bot_id) :
 // on remaining cards
 void BeliefState::initialize_uniform_belief() {
 
+    std::vector<Card> all_cards = { Card(red, one), Card(red, one), Card(red, one), Card(red, two), Card(red, two), Card(red, three), Card(red, three), Card(red, four), Card(red, four), Card(red, five), 
+              Card(blue, one), Card(blue, one), Card(blue, one), Card(blue, two), Card(blue, two), Card(blue, three), Card(blue, three), Card(blue, four), Card(blue, four), Card(blue, five),
+              Card(yellow, one), Card(yellow, one), Card(yellow, one), Card(yellow, two), Card(yellow, two), Card(yellow, three), Card(yellow, three), Card(yellow, four), Card(yellow, four), Card(yellow, five),
+              Card(green, one), Card(green, one), Card(green, one), Card(green, two), Card(green, two), Card(green, three), Card(green, three), Card(green, four), Card(green, four), Card(green, five),
+              Card(white, one), Card(white, one), Card(white, one), Card(white, two), Card(white, two), Card(white, three), Card(white, three), Card(white, four), Card(white, four), Card(white, five)};
+
     // possible_cards are cards that could be on this player's private hand
-    std::multiset<Card> possible_cards(deck_.begin(), deck_.end());
+    std::multiset<Card> possible_cards(all_cards.begin(), all_cards.end());
 
     for (int p = 0; p < num_players_; ++p) {
         if (p == bot_id_) continue; // bot itself 
@@ -50,13 +56,7 @@ std::vector<Card> BeliefState::sample_hand() {
     
     // To make sure the sampling is dependent in each round(number of cards in a hand), 
     // avoiding picking repeatatively on one card.
-    std::multiset<Card> available(deck_.begin(), deck_.end()); // all possible cards in private hand. 
-
-    for (int p = 0; p < num_players_; ++p) {
-        if (p == bot_id_) continue;// also TODO: check if hands_[0] is the acting agent
-        for (const Card& c : hands_[p])
-            available.erase(available.find(c));
-    }
+    std::multiset<Card> available = get_possible_remaining_deck(*this, bot_id_);
 
     for (const auto& slot : belief_hand_) {
         double r = (double)rand() / RAND_MAX;
@@ -95,7 +95,7 @@ void BeliefState::update_belief(State s, move m){
         case RANK_HINT:{
             if (m.get_to() != bot_id_) break;// only update when private hand is hinted
 
-            std::vector<int> hinted_indices = m.get_card_index();
+            std::vector<int> hinted_indices = m.get_card_indices();
             Rank hinted_rank = m.get_rank();
 
             for (int i = 0; i < cards_per_hand_; ++i) {
@@ -107,8 +107,8 @@ void BeliefState::update_belief(State s, move m){
                 
                 for (const auto& [card, prob] : dist) {
                     bool matches = (m.get_type() == COL_HINT)
-                        ? (card.first == m.hint_color)
-                        : (card.second == m.hint_rank);
+                        ? (card.first == m.get_color())
+                        : (card.second == m.get_rank());
 
                     // Keep the card only if:
                     // - slot is hinted and card matches the hint
@@ -131,14 +131,14 @@ void BeliefState::update_belief(State s, move m){
         }
         case PLAY:
         case DISCARD:{
-            if (m.get_from() != bot_id_) break;
+            if (m.get_from() != bot_id_) break;//only the searching bot discards
 
             int removed_idx = m.get_card_index();
 
             // Remove the card slot at index
             belief_hand_.erase(belief_hand_.begin() + removed_idx);
 
-            std::multiset<Card> get_possible_remaining_deck(s, int bot_id_);
+            std::multiset<Card> possible_cards = get_possible_remaining_deck(*this, bot_id_);
 
             // Create a new belief distribution for the newly drawn card
             std::map<std::pair<Color, Rank>, double> new_dist;
@@ -190,6 +190,5 @@ std::multiset<Card> get_possible_remaining_deck(const State& s, int bot_id) {
         }
     }
 
-    // NOTE: We do not remove own-hand cards (unknown to player)
     return full_deck;
 }

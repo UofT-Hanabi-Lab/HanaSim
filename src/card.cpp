@@ -9,15 +9,15 @@
 Card::Card(Color color, Rank rank) : color_(color), rank_(rank) {
 }
 
-Color Card::color() {
+Color Card::color() const{
     return color_;
 }
 
-Rank Card::rank() {
+Rank Card::rank() const{
     return rank_;
 }
 
-std::string Card::str() {
+std::string Card::str() const{
     std::string col_str = "";
     int rank_int = 0;
 
@@ -36,6 +36,6 @@ std::string Card::str() {
     return col_str + std::to_string(rank_int);
 }
 
-bool Card::operator == (const Card c) {
+bool Card::operator == (const Card c) const{
     return ((color_ == c.color_) && (rank_ == c.rank_));
 }
