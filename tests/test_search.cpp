@@ -1,6 +1,3 @@
-#include "../bots/include/searchsmartbot.h"
-#include "../bots/searchsmartbot.cpp"
-
 #include <iostream>
 #include <chrono>
 #include <string>
@@ -11,21 +8,25 @@
 #include <random>
 #include <filesystem>
 
+// Include your bot interfaces
+#include "../bots/include/searchsmartbot.h"
+#include "../bots/include/smartbot.h"
+
+// Include your game and core classes
+#include "../include/game.h"
+#include "../include/state.h"
+#include "../include/move.h"
+#include "../include/card.h"
+#include "../include/player.h"
+
+// Any global or helper headers
 #include "../include/global_int.h"
 
-#include "../bots/holmesbot.cpp"
-#include "../bots/smartbot.cpp"
+// Only include if you test humanplayer
+// #include "../include/humanplayer.h"
 
-#include "../src/card.cpp"
-#include "../src/game.cpp"
-//
-// #include "test_game.cpp"
-#include "../src/move.cpp"
-#include "../src/state.cpp"
-#include "../src/humanplayer.cpp"
+// namespace plt = matplotlibcpp;  // if you use plotting later
 
-
-//namespace plt = matplotlibcpp;
 
 int seed_num;
 //int game_num;
@@ -77,14 +78,18 @@ std::vector<Card> test_shuffle_using_seed(int seed){
     return new_deck;
 }
 
-int test_create_singleagent_sparta_with_2_players(){
-    player* p1 = new SearchSmartBot(0, 2, /*search_n=*/10, /*search_thresh=*/0.5);
-    player* p2 = new SearchSmartBot(1, 2, 10, 0.5);
+int test_create_singleagent_sparta_with_2_players(int seed){
+    player* p1 = new spartabot(0, 2, /*search_n=*/10, /*search_thresh=*/0.5);
+    player* p2 = new smartbot(1, 2);
     std::vector<player*> players = {};
     players.push_back(p1);
     players.push_back(p2);
     std::vector<Card> deck = test_shuffle_using_seed(494);
     State init_state = State(2, deck);
+
+    /*Init belief state for spartabot*/
+    static_cast<spartabot*>(p1)->initialize_belief(init_state);
+
     game newgame = game(init_state, players);
     std::cout << "tested smartbot custom" << std::endl;
 
@@ -107,13 +112,12 @@ int main() {
     //test_create_two_smartbot_custom();
     //test_create_two_human_player();
     for (int x = 0; x < 1; x++){
-        test_create_two_smartbot(seed_num);
+        test_create_singleagent_sparta_with_2_players(seed_num);
         game_num +=1;
         seed_num +=1; 
     }
-    test_create_two_smartbot(seed_num);
+    test_create_singleagent_sparta_with_2_players(seed_num);
     // std::filesystem::remove_all("output/p1");
     return 0;
 }
 
-//5 15 15 

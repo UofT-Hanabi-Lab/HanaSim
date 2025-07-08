@@ -20,12 +20,12 @@ Definition:
 */
 class BeliefState : public State {
 public:
-    BeliefState(int num_players, int bot_id);
-
-    std::vector<std::map<std::pair<Color, Rank>, double>> belief_hand_;
-
+    // Default constructor: needed for spartabot deferred init
+    //note that in spartabot, initialize_belief() will rewrite the BeliefState bs_.
+    BeliefState() : State(2), bot_id_(-1) {}
+    BeliefState(const State& s, int bot_id);
     std::vector<Card> sample_hand();
-    State sample_belief_state();
+    BeliefState sample_belief_state();
     void update_belief(State s, move m);
 
     // Indexed by hand index (0..cards_per_hand_-1), each is a map from (color, rank) → probability
@@ -36,3 +36,5 @@ private:
     int bot_id_;
     
 };
+
+std::multiset<Card> get_possible_remaining_deck(const State& s, int bot_id);

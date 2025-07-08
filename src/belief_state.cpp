@@ -1,7 +1,7 @@
 #include "../include/belief_state.h"
+#include <algorithm>
 
-BeliefState::BeliefState(int num_players, int bot_id) : 
-    State(num_players), bot_id_(bot_id){
+BeliefState::BeliefState(const State& s, int bot_id) : State(s), bot_id_(bot_id){
     initialize_uniform_belief();
 }
 
@@ -81,13 +81,14 @@ std::vector<Card> BeliefState::sample_hand() {
 }
 
 // 3. Create a full sampled state from belief
-State BeliefState::sample_belief_state() {
-    State sampled_state = *this; // clone the public info 
+BeliefState BeliefState::sample_belief_state() {
+    BeliefState sampled_state = *this; // clone the public info 
     std::vector<Card> hand0 = sample_hand();
     sampled_state.get_hands()[bot_id_] = hand0; // overwrite bot's hand
     return sampled_state;
 }
 
+//TODO: since in single agent search, we directly create new BeliefState, the following is unused??
 // Updates the belief based on the observation (e.g., hint or play).
 void BeliefState::update_belief(State s, move m){
     switch(m.get_type()){
