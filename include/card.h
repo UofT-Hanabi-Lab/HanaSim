@@ -26,12 +26,7 @@ public:
     Rank rank() const;
 
     std::string str() const;
-    bool operator == (const Card c) const;
+    bool operator == (const Card& c) const;
+    bool operator<(const Card& c) const;
 
-    bool operator<(const Card& other) const {
-        if (color_ != other.color_) {
-            return color_ < other.color_;
-        }
-        return rank_ < other.rank_;
-    }
 };

@@ -93,12 +93,12 @@ int test_create_singleagent_sparta_with_2_players(int seed){
     game newgame = game(init_state, players);
     std::cout << "tested smartbot custom" << std::endl;
 
-    // custom list of moves
-    std::vector<move> test_moves = {move((move_type)3, 1, 2), move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
-    move((move_type)3, 1, 2), move((move_type)3, 0, 2)};
+    // // custom list of moves
+    // std::vector<move> test_moves = {move((move_type)3, 1, 2), move((move_type)3, 1, 2), move((move_type)3, 0, 2), 
+    // move((move_type)3, 1, 2), move((move_type)3, 0, 2)};
 
-    std::reverse(test_moves.begin(), test_moves.end());
-    int score = newgame.run_test(true, test_moves);
+    // std::reverse(test_moves.begin(), test_moves.end());
+    int score = newgame.run(true);
     return score;
 }
 
@@ -107,10 +107,6 @@ int main() {
     test_shuffle_using_seed(494);
     seed_num = 494;
     game_num = 1;
-    //test_create_two_human_player_custom();
-    //test_create_two_holmesbot_custom();
-    //test_create_two_smartbot_custom();
-    //test_create_two_human_player();
     for (int x = 0; x < 1; x++){
         test_create_singleagent_sparta_with_2_players(seed_num);
         game_num +=1;

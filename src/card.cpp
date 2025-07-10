@@ -36,6 +36,14 @@ std::string Card::str() const{
     return col_str + std::to_string(rank_int);
 }
 
-bool Card::operator == (const Card c) const{
+bool Card::operator == (const Card& c) const{
     return ((color_ == c.color_) && (rank_ == c.rank_));
+}
+
+
+bool Card::operator<(const Card& other) const {
+    if (color_ != other.color_) {
+        return color_ < other.color_;
+    }
+    return rank_ < other.rank_;
 }

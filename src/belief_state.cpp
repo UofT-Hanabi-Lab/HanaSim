@@ -1,5 +1,6 @@
 #include "../include/belief_state.h"
 #include <algorithm>
+#include <iostream>
 
 BeliefState::BeliefState(const State& s, int bot_id) : State(s), bot_id_(bot_id){
     initialize_uniform_belief();
@@ -71,7 +72,13 @@ std::vector<Card> BeliefState::sample_hand() {
             acc += prob;
             if (r <= acc) {
                 sampled.push_back(Card(card.first, card.second));
-                available.erase(available.find(Card(card.first, card.second)));
+                auto it = available.find(Card(card.first, card.second));
+                if (it != available.end()) {
+                    available.erase(it);
+                } else {
+                    std::cerr << "[BeliefState::sample_hand] WARNING: Tried to erase a card not found in available: "
+                            << Card(card.first, card.second).str() << std::endl;
+                }
                 break;
             }
         }

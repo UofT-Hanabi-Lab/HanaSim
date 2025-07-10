@@ -9,7 +9,9 @@
 
 #include "../include/game.h"
 #include "../include/humanplayer.h"
-#include "../bots/include/holmesbot.h"
+#ifdef USE_HOLMESBOT
+    #include "../bots/include/holmesbot.h"
+#endif
 #include "../bots/include/smartbot.h"
 
 // Variable to keep track of the game number
@@ -268,7 +270,9 @@ int game::run(bool log_game) {
                     hk_ranks.push_back((hk[i][j].rank() < 0) ? 6 : hk[i][j].rank());
                 }
             }
-        } else if (dynamic_cast<holmesbot*>(players_[curr_player]) != nullptr) {
+        } 
+#ifdef USE_HOLMESBOT
+        else if (dynamic_cast<holmesbot*>(players_[curr_player]) != nullptr) {
             // Generate knowledge for holmesbot
             holmesbot *holmes_partner = (holmesbot*)(players_[curr_player]);
             std::vector<std::vector<HolmesBotInternal::holmes_cardknowledge>> hk = holmes_partner->get_hk();
@@ -282,6 +286,7 @@ int game::run(bool log_game) {
                 }
             }
         }
+#endif
 
         // write to hk csv #####################################################################
         // Write hand knowledge to the CSV file
