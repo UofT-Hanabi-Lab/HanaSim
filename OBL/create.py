@@ -57,7 +57,6 @@ def flatten(s):
 def create_threads(num_thread, num_game_per_thread, actors, games):
     """
     Create threads using CustomHanabiThreadLoop to replace hanalearn.HanabiThreadLoop
-    This function is compatible with the original OBL/pyhanabi/create.py version
     """
     context = rela.Context()
     threads = []

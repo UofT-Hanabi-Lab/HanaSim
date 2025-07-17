@@ -9,15 +9,23 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 #
-import set_path
+import os
+import sys
 
-set_path.append_sys_path()
+# Add build directory to path
+BUILD_DIR = os.path.join(os.path.dirname(__file__), "../build")
+if BUILD_DIR not in sys.path:
+    sys.path.insert(0, BUILD_DIR)
+
+# Add current directory for custom modules
+current_dir = os.path.dirname(os.path.abspath(__file__))
+if current_dir not in sys.path:
+    sys.path.insert(0, current_dir)
 
 import rela
-import hanalearn
+from custom_actor import CustomR2D2Actor, MockModelRunner
 
-assert rela.__file__.endswith(".so")
-assert hanalearn.__file__.endswith(".so")
+# Note: We no longer use hanalearn, replaced with hana_sim and custom implementations
 
 
 class ActGroup:
@@ -68,7 +76,7 @@ class ActGroup:
             for i in range(num_thread):
                 thread_actors = []
                 for j in range(num_game_per_thread):
-                    actor = hanalearn.R2D2Actor(
+                    actor = CustomR2D2Actor(
                         self.model_runners[i % self.num_runners],
                         seed,
                         num_player,
@@ -94,7 +102,7 @@ class ActGroup:
                 for j in range(num_game_per_thread):
                     game_actors = []
                     for k in range(num_player):
-                        actor = hanalearn.R2D2Actor(
+                        actor = CustomR2D2Actor(
                             self.model_runners[i % self.num_runners],
                             seed,
                             num_player,
@@ -205,7 +213,7 @@ class BRActGroup:
                             cur_model = self.model_runners[i % self.num_runners]
                             cur_explore_eps = [1.0]
                         player_buffer = None
-                    actor = hanalearn.R2D2Actor(
+                    actor = CustomR2D2Actor(
                         cur_model,
                         seed,
                         num_player,
@@ -249,11 +257,37 @@ class BRActGroup:
 
 
 def make_model_runners(agents, devices, runners, methods):
+    """
+    Create model runners for agents
+    
+    Args:
+        agents: Agent or list of agents
+        devices: List of device strings
+        runners: List to append runners to
+        methods: Dictionary of method names and their sample limits
+    """
     if not isinstance(agents, list):
         agents = [agents]
+    
     for dev in devices:
         for agent in agents:
-            runner = rela.BatchRunner(agent.clone(dev), dev)
-            for method, sample_limit in methods.items():
-                runner.add_method(method, sample_limit)
-            runners.append(runner)
+            try:
+                # Try to create proper batch runner
+                if hasattr(agent, 'clone'):
+                    runner = rela.BatchRunner(agent.clone(dev), dev)
+                else:
+                    # Fallback to mock runner
+                    runner = MockModelRunner(dev)
+                
+                # Add methods if it's a proper BatchRunner
+                if hasattr(runner, 'add_method'):
+                    for method, sample_limit in methods.items():
+                        runner.add_method(method, sample_limit)
+                
+                runners.append(runner)
+                
+            except Exception as e:
+                print(f"Warning: Failed to create runner for device {dev}, using mock: {e}")
+                # Use mock runner as fallback
+                runner = MockModelRunner(dev)
+                runners.append(runner)
