@@ -11,60 +11,6 @@ if BUILD_DIR not in sys.path:
 import hana_sim
 from hanabi_gym import convert_observation_to_space, convert_action, explain_action
 
-class MyHanabiEnv(gym.Env):
-    def __init__(self, num_players=2):
-        self.num_players = num_players
-        super(MyHanabiEnv, self).__init__()
-        self.env = hana_sim.HanabiEnv(num_players=num_players)
-        
-        # Need do some convertion and define action space and observation space.
-        self.action_space = action_space = spaces.Tuple((
-                                spaces.Discrete(5),              # a[0] -> move_type ∈ {1,2,3,4,5}
-                                spaces.Discrete(self.num_players + 1),  # a[1] -> target_player_id ∈ {-1, 0, 1, ..., num_players-1} (offset)
-                                spaces.Discrete(self.num_players),      # a[2] -> from_player_id ∈ {0, 1, ..., num_players-1}
-                                spaces.Discrete(6),              # a[3] -> card index ∈ {-1, 0, 1, 2, 3, 4}  (offset)
-                                spaces.Sequence(spaces.Discrete(5)), # a[4] -> card_indices ∈ {0,1,2,3,4} 
-                                spaces.Discrete(6),              # a[5] -> color ∈ {1,2,3,4,5} 
-                                spaces.Discrete(6)               # a[6] -> rank ∈ {1,2,3,4,5} 
-                            ))
-        self.observation_space = spaces.Dict({
-                                "hands": spaces.Box(low=-1, high=5, shape=(2, 5, 2), dtype=np.int32),  # (num_players, max_cards, 2)
-                                "possible_colors": spaces.Box(low=0, high=1, shape=(2, 5, 6), dtype=np.bool_),  # (num_players, max_cards, num_colors)
-                                "possible_ranks": spaces.Box(low=0, high=1, shape=(2, 5, 6), dtype=np.bool_),  # (num_players, max_cards, num_ranks)
-                                "fireworks": spaces.Box(low=0, high=5, shape=(5,), dtype=np.int32),  # (num_colors,)
-                                "hint_tokens": spaces.Discrete(9),  # 0 to 8
-                                "lives_remaining": spaces.Discrete(4),  # 0 to 3
-                                "deck_size": spaces.Discrete(51),  # 0 to 50
-                                "discards": spaces.Box(low=-1, high=5, shape=(50, 2), dtype=np.int32),  # (max_discards, 2)
-                                "legal_actions": spaces.Box(low=-1, high=5, shape=(20, 11), dtype=np.int32),  # (max_legal_actions, 6 + max_action_params)
-                                "current_player_id": spaces.Discrete(2),  # 0 to 1
-                                "vector_encoding": spaces.Box(low=0, high=1, shape=(136,), dtype=np.int32)  # Bit vector encoding
-                            })
-
-    def reset(self):
-        # Reset the environment and return the initial observation
-        obs = self.env.reset()
-        print_observation_structure(obs)  # Print the raw observation structure
-        return self._convert_observation(obs)
-
-    def step(self, action):
-        # Execute action in the simulator and return the result
-        step_result = self.env.step(action)
-        print_observation_structure(step_result.observation)  # Print the raw observation structure
-        new_observation = self._convert_observation(step_result.observation)
-        reward = step_result.reward
-        done = step_result.done
-        info = step_result.info
-        return new_observation, reward, done, info
-
-    def render(self, mode='human'):
-        # Render the environment using the simulator's render method
-        self.env.render()
-
-    def _convert_observation(self, obs):
-        # Convert the observation from the simulator to the format expected by Gym
-        return convert_observation_to_space(obs)
-
 class CustomHanabiEnv:
     
     def __init__(self, game_params: Dict[str, str], max_len: int, verbose: bool = False):

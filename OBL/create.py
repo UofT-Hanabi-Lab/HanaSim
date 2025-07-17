@@ -6,6 +6,9 @@ if BUILD_DIR not in sys.path:
     sys.path.insert(0, BUILD_DIR)
 
 import hana_sim
+import rela
+from hanabi_env import CustomHanabiEnv
+from thread_loop import CustomHanabiThreadLoop
 
 
 def create_envs(
@@ -18,29 +21,51 @@ def create_envs(
     hand_size=5,
     random_start_player=1,
 ):
+    """
+    Create environments using CustomHanabiEnv to replace hanalearn.HanabiEnv
+    This function is compatible with the original OBL/pyhanabi/create.py version
+    """
     games = []
     for game_idx in range(num_env):
-        game = hana_sim.HanabiEnv(num_player=num_player)
+        params = {
+            "players": str(num_player),
+            "seed": str(seed + game_idx),
+            "bomb": str(bomb),
+            "hand_size": str(hand_size),
+            "random_start_player": str(random_start_player),
+        }
+        game = CustomHanabiEnv(
+            params,
+            max_len,
+            False,  # verbose
+        )
         games.append(game)
     return games
 
-# TODO:
+
 def flatten(s):
+    """
+    Recursively flatten nested lists
+    """
     if s == []:
         return s
     if isinstance(s[0], list):
         return flatten(s[0]) + flatten(s[1:])
     return s[:1] + flatten(s[1:])
 
-# TODO:
+
 def create_threads(num_thread, num_game_per_thread, actors, games):
+    """
+    Create threads using CustomHanabiThreadLoop to replace hanalearn.HanabiThreadLoop
+    This function is compatible with the original OBL/pyhanabi/create.py version
+    """
     context = rela.Context()
     threads = []
     for thread_idx in range(num_thread):
         envs = games[
             thread_idx * num_game_per_thread : (thread_idx + 1) * num_game_per_thread
         ]
-        thread = hanalearn.HanabiThreadLoop(envs, actors[thread_idx], False)
+        thread = CustomHanabiThreadLoop(envs, actors[thread_idx], False)
         threads.append(thread)
         context.push_thread_loop(thread)
     print(

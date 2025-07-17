@@ -5,17 +5,17 @@ import rela
 
 class CustomHanabiThreadLoop(rela.ThreadLoop):
     """
-    自定义的Hanabi线程循环，用于处理自定义Hanabi环境
+    Custom Hanabi thread loop for handling custom Hanabi environments
     """
     
     def __init__(self, envs, actors, eval_mode=False):
         """
-        初始化线程循环
+        Initialize thread loop
         
         Args:
-            envs: 环境列表
-            actors: 演员列表
-            eval_mode: 是否为评估模式
+            envs: List of environments
+            actors: List of actors
+            eval_mode: Whether in evaluation mode
         """
         super().__init__()
         self.envs = envs
@@ -23,10 +23,10 @@ class CustomHanabiThreadLoop(rela.ThreadLoop):
         self.eval_mode = eval_mode
         self.running = False
         
-        # 验证输入
+        # Validate inputs
         assert len(envs) == len(actors), f"Number of envs ({len(envs)}) != number of actor groups ({len(actors)})"
         
-        # 初始化环境
+        # Initialize environments
         for env in envs:
             env.reset()
         
@@ -34,44 +34,44 @@ class CustomHanabiThreadLoop(rela.ThreadLoop):
     
     def run(self):
         """
-        运行线程循环
+        Run thread loop
         """
         self.running = True
         print("CustomHanabiThreadLoop started")
         
         while self.running:
             try:
-                # 处理每个环境
+                # Process each environment
                 for env_idx, (env, actor_group) in enumerate(zip(self.envs, self.actors)):
                     if not self.running:
                         break
                     
-                    # 检查环境是否结束
+                    # Check if environment is terminated
                     if env.terminated():
-                        # 重置环境
+                        # Reset environment
                         env.reset()
                         continue
                     
-                    # 获取当前玩家
+                    # Get current player
                     current_player = env.get_current_player()
                     
-                    # 确保有对应的演员
+                    # Ensure corresponding actor exists
                     if current_player >= len(actor_group):
                         print(f"Warning: No actor for player {current_player}")
                         continue
                     
                     actor = actor_group[current_player]
                     
-                    # 获取观察
+                    # Get observation
                     obs = self._get_observation(env, current_player)
                     
-                    # 让演员选择动作
+                    # Let actor choose action
                     action = self._get_action(actor, obs)
                     
-                    # 执行动作
+                    # Execute action
                     env.step(action)
                     
-                    # 短暂休息以避免过度占用CPU
+                    # Brief pause to avoid excessive CPU usage
                     time.sleep(0.001)
                 
             except Exception as e:
@@ -82,37 +82,37 @@ class CustomHanabiThreadLoop(rela.ThreadLoop):
     
     def pause(self):
         """
-        暂停线程循环
+        Pause thread loop
         """
         self.running = False
         print("CustomHanabiThreadLoop paused")
     
     def resume(self):
         """
-        恢复线程循环
+        Resume thread loop
         """
         self.running = True
         print("CustomHanabiThreadLoop resumed")
     
     def _get_observation(self, env, player_id):
         """
-        获取指定玩家的观察
+        Get observation for specified player
         
         Args:
-            env: 环境
-            player_id: 玩家ID
+            env: Environment
+            player_id: Player ID
             
         Returns:
-            观察数据
+            Observation data
         """
-        # 这里需要根据你的观察格式来调整
-        # 假设环境有一个方法来获取特定玩家的观察
+        # This needs to be adjusted based on your observation format
+        # Assume environment has a method to get specific player's observation
         try:
-            # 尝试获取特定玩家的观察
+            # Try to get specific player's observation
             if hasattr(env, 'get_observation_for_player'):
                 return env.get_observation_for_player(player_id)
             else:
-                # 如果没有特定方法，返回当前状态的观察
+                # If no specific method, return current state observation
                 return env.current_state
         except Exception as e:
             print(f"Error getting observation for player {player_id}: {e}")
@@ -120,29 +120,29 @@ class CustomHanabiThreadLoop(rela.ThreadLoop):
     
     def _get_action(self, actor, obs):
         """
-        从演员获取动作
+        Get action from actor
         
         Args:
-            actor: 演员
-            obs: 观察
+            actor: Actor
+            obs: Observation
             
         Returns:
-            动作
+            Action
         """
         try:
-            # 调用演员的act方法
+            # Call actor's act method
             if hasattr(actor, 'act'):
                 action = actor.act(obs)
                 return action
             else:
-                # 如果没有act方法，尝试其他可能的方法名
+                # If no act method, try other possible method names
                 for method_name in ['get_action', 'select_action', 'decide_action']:
                     if hasattr(actor, method_name):
                         method = getattr(actor, method_name)
                         action = method(obs)
                         return action
                 
-                # 如果都没有，返回随机动作
+                # If none exist, return random action
                 print("Warning: Actor has no action method, using random action")
                 return self._get_random_action(obs)
                 
@@ -152,24 +152,24 @@ class CustomHanabiThreadLoop(rela.ThreadLoop):
     
     def _get_random_action(self, obs):
         """
-        获取随机动作（作为后备）
+        Get random action (as fallback)
         
         Args:
-            obs: 观察
+            obs: Observation
             
         Returns:
-            随机动作
+            Random action
         """
-        # 这里需要根据你的动作空间来生成随机动作
-        # 示例：返回一个默认动作
-        return (1, -1, 0, -1, [], 0, 0)  # 示例动作格式
+        # This needs to generate random actions based on your action space
+        # Example: return a default action
+        return (1, -1, 0, -1, [], 0, 0)  # Example action format
     
     def get_scores(self):
         """
-        获取所有环境的分数
+        Get scores of all environments
         
         Returns:
-            分数列表
+            List of scores
         """
         scores = []
         for env in self.envs:
@@ -181,9 +181,9 @@ class CustomHanabiThreadLoop(rela.ThreadLoop):
     
     def get_game_lengths(self):
         """
-        获取所有游戏的步数
+        Get step counts of all games
         
         Returns:
-            步数列表
+            List of step counts
         """
         return [env.get_step() for env in self.envs] 
