@@ -36,6 +36,9 @@ public:
 
     std::vector<PlayerName> get_supported_player_names() const;
 
+    std::vector<std::pair<std::string, int>> get_deck() const;
+    static std::string color_to_string(Color color);
+
 private:
     int num_players_;
     bool done_; // mark if the game end

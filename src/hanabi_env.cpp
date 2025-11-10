@@ -219,3 +219,24 @@ std::vector<PlayerName> HanabiEnv::get_supported_player_names() const
 {
     return {PlayerName::RandomBot, PlayerName::HolmesBot, PlayerName::SmartBot};
 }
+
+std::string HanabiEnv::color_to_string(Color color) {
+    switch (color) {
+    case Color::red: return "red";
+    case Color::blue: return "blue";
+    case Color::green: return "green";
+    case Color::yellow: return "yellow";
+    case Color::white: return "white";
+    default: return "unknown";
+    }
+}
+
+std::vector<std::pair<std::string, int>> HanabiEnv::get_deck() const
+{
+    std::vector<std::pair<std::string, int>> result;
+    result.reserve(50);
+    for (const auto &card : curr_state_->get_deck()) {
+        result.emplace_back(color_to_string(card.color()), static_cast<int>(card.rank()));
+    }
+    return result;
+}

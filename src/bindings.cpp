@@ -61,5 +61,6 @@ PYBIND11_MODULE(hana_sim, m)
         .def("render", &HanabiEnv::render, "Render the current state.")
         .def("add_player", &HanabiEnv::add_player, "Register a HanaSim player to the environment")
         .def("get_supported_player_names", &HanabiEnv::get_supported_player_names,
-            "Get a list of PlayerName enums for players that can be added to the environment");
+            "Get a list of PlayerName enums for players that can be added to the environment")
+        .def_property_readonly("deck", &HanabiEnv::get_deck, "The start deck for this game");
 }
