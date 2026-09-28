@@ -23,10 +23,10 @@ State::State(int num_players) {
               Card(green, one), Card(green, one), Card(green, one), Card(green, two), Card(green, two), Card(green, three), Card(green, three), Card(green, four), Card(green, four), Card(green, five),
               Card(white, one), Card(white, one), Card(white, one), Card(white, two), Card(white, two), Card(white, three), Card(white, three), Card(white, four), Card(white, four), Card(white, five)};
 
-    // Shuffling the deck
-    std::random_device rd;
-    std::default_random_engine gen(rd());
-    std::shuffle(deck_.begin(), deck_.end(), gen);
+    // Deck order is fixed (no shuffle) so HanasimGame / hanabi.py runs are reproducible.
+    // std::random_device rd;
+    // std::default_random_engine gen(rd());
+    // std::shuffle(deck_.begin(), deck_.end(), gen);
 
     num_players_ = num_players;
     // set Blue tokens and lives
