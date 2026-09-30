@@ -6,6 +6,11 @@
 
 #include "../include/state.h"
 
+// 0 keeps the historical fixed deck. A nonzero value shuffles with mt19937
+// before the deal so paired experiments can share a seed. Set from Python
+// via hana_sim.set_deck_seed before constructing HanabiEnv.
+int deck_seed = 0;
+
 // Forward declarations of encoding functions
 int BitsPerCard();
 int HandsSectionLength(int num_players, int cards_per_hand);
@@ -23,10 +28,12 @@ State::State(int num_players) {
               Card(green, one), Card(green, one), Card(green, one), Card(green, two), Card(green, two), Card(green, three), Card(green, three), Card(green, four), Card(green, four), Card(green, five),
               Card(white, one), Card(white, one), Card(white, one), Card(white, two), Card(white, two), Card(white, three), Card(white, three), Card(white, four), Card(white, four), Card(white, five)};
 
-    // Deck order is fixed (no shuffle) so HanasimGame / hanabi.py runs are reproducible.
-    // std::random_device rd;
-    // std::default_random_engine gen(rd());
-    // std::shuffle(deck_.begin(), deck_.end(), gen);
+    // deck_seed == 0: fixed order (reproducible default, same as before).
+    // deck_seed != 0: seeded shuffle so experiments can pair agents on a deck.
+    if (deck_seed != 0) {
+        std::mt19937 gen(static_cast<std::mt19937::result_type>(deck_seed));
+        std::shuffle(deck_.begin(), deck_.end(), gen);
+    }
 
     num_players_ = num_players;
     // set Blue tokens and lives

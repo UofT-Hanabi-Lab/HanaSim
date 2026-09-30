@@ -11,6 +11,8 @@
 
 namespace py = pybind11;
 
+extern int deck_seed;
+
 // Central macro list to define and bind enum values
 #define FOR_EACH_PLAYER_NAME(MACRO) \
     MACRO(RandomBot)                \
@@ -63,4 +65,7 @@ PYBIND11_MODULE(hana_sim, m)
         .def("get_supported_player_names", &HanabiEnv::get_supported_player_names,
             "Get a list of PlayerName enums for players that can be added to the environment")
         .def_property_readonly("deck", &HanabiEnv::get_deck, "The start deck for this game");
+
+    m.def("set_deck_seed", [](int seed) { deck_seed = seed; }, py::arg("seed"),
+          "Shuffle the next HanabiEnv deck with this seed. 0 keeps the fixed deck.");
 }
