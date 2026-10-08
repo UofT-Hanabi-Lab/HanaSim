@@ -51,6 +51,10 @@ class State {
     std::vector<std::vector<std::vector<bool>>> possible_colors_;  // [player][card_index][color]
     std::vector<std::vector<std::vector<bool>>> possible_ranks_;   // [player][card_index][rank]
 
+    static std::vector<bool> fresh_knowledge();
+    void init_knowledge();
+    void remove_card(int player, int card_index);
+
 public:
     State(int num_players);
     State(int num_players, std::vector<Card> deck); // provide an already shuffled deck

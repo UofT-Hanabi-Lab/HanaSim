@@ -57,29 +57,7 @@ State::State(int num_players) {
     discards_ = {};
     piles_ = {0, 0, 0, 0, 0, 0}; // all piles are empty
 
-    // Initialize card knowledge
-    possible_colors_ = std::vector<std::vector<std::vector<bool>>>(
-        num_players_,
-        std::vector<std::vector<bool>>(
-            cards_per_hand_,
-            std::vector<bool>(6, true)  // 6 colors (including invalid_color)
-        )
-    );
-    possible_ranks_ = std::vector<std::vector<std::vector<bool>>>(
-        num_players_,
-        std::vector<std::vector<bool>>(
-            cards_per_hand_,
-            std::vector<bool>(6, true)  // 6 ranks (including invalid_rank)
-        )
-    );
-
-    // Set index 0 to false since colors and ranks start from 1
-    for (int p = 0; p < num_players_; p++) {
-        for (int c = 0; c < cards_per_hand_; c++) {
-            possible_colors_[p][c][0] = false;
-            possible_ranks_[p][c][0] = false;
-        }
-    }
+    init_knowledge();
 }
 
 std::vector<move> State::get_legal_moves(int id) const{
@@ -146,6 +124,31 @@ State::State(int num_players, std::vector<Card> deck) {
     }
     discards_ = {};
     piles_ = {0, 0, 0, 0, 0, 0}; // all piles are empty
+    init_knowledge();
+}
+
+// Knowledge for a freshly drawn card: any color/rank except index 0 (colors and ranks start from 1)
+std::vector<bool> State::fresh_knowledge() {
+    std::vector<bool> k(6, true);
+    k[0] = false;
+    return k;
+}
+
+void State::init_knowledge() {
+    possible_colors_.assign(num_players_, {});
+    possible_ranks_.assign(num_players_, {});
+    for (int p = 0; p < num_players_; p++) {
+        possible_colors_[p].assign(hands_[p].size(), fresh_knowledge());
+        possible_ranks_[p].assign(hands_[p].size(), fresh_knowledge());
+    }
+}
+
+// Remove the card at card_index (not just the first identical card) together with its
+// knowledge, so hand and knowledge stay aligned.
+void State::remove_card(int player, int card_index) {
+    hands_[player].erase(hands_[player].begin() + card_index);
+    possible_colors_[player].erase(possible_colors_[player].begin() + card_index);
+    possible_ranks_[player].erase(possible_ranks_[player].begin() + card_index);
 }
 
 void State::update_card_knowledge(const move& m) {
@@ -194,28 +197,21 @@ void State::transition(move m, bool log) {
         Card discard = hands_[m.get_from()][m.get_card_index()];
         discards_.push_back(discard);
 
-        auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(),
-                            discard);
-        hands_[m.get_from()].erase(it); // remove the discarded card form the player's hand
+        remove_card(m.get_from(), m.get_card_index()); // remove this exact card (and its knowledge) from the player's hand
 
         if (!(deck_.empty())) { // draw if deck isn't empty
             if (log) std::cout << std::endl << "        Draw: " << deck_.back().str() << std::endl;
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
 
-            // Initialize knowledge for the new card
-            int new_card_index = hands_[m.get_from()].size() - 1;
-            possible_colors_[m.get_from()][new_card_index] = std::vector<bool>(6, true);
-            possible_ranks_[m.get_from()][new_card_index] = std::vector<bool>(6, true);
-            // Set index 0 to false since colors and ranks start from 1
-            possible_colors_[m.get_from()][new_card_index][0] = false;
-            possible_ranks_[m.get_from()][new_card_index][0] = false;
+            // Initialize knowledge for the new card (appended, like the card itself)
+            possible_colors_[m.get_from()].push_back(fresh_knowledge());
+            possible_ranks_[m.get_from()].push_back(fresh_knowledge());
         }
         hint_tokens_++; // if there were 8 hint tokens, a discard shoudn't have even been made
     } else if (m.get_type() == PLAY) {
         Card playing_card = hands_[m.get_from()][m.get_card_index()];
-        auto it = std::find(hands_[m.get_from()].begin(), hands_[m.get_from()].end(), playing_card);
-        hands_[m.get_from()].erase(it); // remove the played card form the player's hand
+        remove_card(m.get_from(), m.get_card_index()); // remove this exact card (and its knowledge) from the player's hand
 
         int top_rank = piles_[playing_card.color()];
         if (playing_card.rank() == top_rank + 1) { // SUCCESSFUL PLAY
@@ -236,13 +232,9 @@ void State::transition(move m, bool log) {
             hands_[m.get_from()].push_back(deck_.back());
             deck_.pop_back();
 
-            // Initialize knowledge for the new card
-            int new_card_index = hands_[m.get_from()].size() - 1;
-            possible_colors_[m.get_from()][new_card_index] = std::vector<bool>(6, true);
-            possible_ranks_[m.get_from()][new_card_index] = std::vector<bool>(6, true);
-            // Set index 0 to false since colors and ranks start from 1
-            possible_colors_[m.get_from()][new_card_index][0] = false;
-            possible_ranks_[m.get_from()][new_card_index][0] = false;
+            // Initialize knowledge for the new card (appended, like the card itself)
+            possible_colors_[m.get_from()].push_back(fresh_knowledge());
+            possible_ranks_[m.get_from()].push_back(fresh_knowledge());
         }
     } else if (m.get_type() == COL_HINT || m.get_type() == RANK_HINT){ // A hint was given
         hint_tokens_--;
@@ -307,29 +299,7 @@ void State::reset() {
     discards_ = {};
     piles_ = {0, 0, 0, 0, 0, 0};
 
-    // Reset card knowledge
-    possible_colors_ = std::vector<std::vector<std::vector<bool>>>(
-        num_players_,
-        std::vector<std::vector<bool>>(
-            cards_per_hand_,
-            std::vector<bool>(6, true)
-        )
-    );
-    possible_ranks_ = std::vector<std::vector<std::vector<bool>>>(
-        num_players_,
-        std::vector<std::vector<bool>>(
-            cards_per_hand_,
-            std::vector<bool>(6, true)
-        )
-    );
-
-    // Set index 0 to false since colors and ranks start from 1
-    for (int p = 0; p < num_players_; p++) {
-        for (int c = 0; c < cards_per_hand_; c++) {
-            possible_colors_[p][c][0] = false;
-            possible_ranks_[p][c][0] = false;
-        }
-    }
+    init_knowledge();
 }
 
 static const std::vector<std::string> color_names = {"empty", "red", "white", "yellow", "green", "blue"};
