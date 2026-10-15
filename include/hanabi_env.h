@@ -45,6 +45,7 @@ private:
     State *curr_state_ = NULL;
     int last_score_; // To calculate score
     int curr_player_id_;
+    int num_final_turns;
 
     // map between player IDs and player objects
     std::unordered_map<int, std::shared_ptr<player>> players_;

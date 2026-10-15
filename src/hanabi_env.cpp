@@ -11,6 +11,7 @@ HanabiEnv::HanabiEnv(int num_players)
     curr_state_ = new State(num_players);
     last_score_ = 0;
     curr_player_id_ = 0;
+    num_final_turns = -1;
 }
 
 Observation HanabiEnv::reset()
@@ -19,6 +20,7 @@ Observation HanabiEnv::reset()
     curr_state_->reset();
     last_score_ = 0;
     curr_player_id_ = 0;
+    num_final_turns = -1;
     // for (int top : curr_state_->get_piles()) {
     //     score += top;
     // }
@@ -165,7 +167,13 @@ HanabiEnv::StepResult HanabiEnv::step(const std::optional<py::tuple> maybe_actio
     last_score_ = score;
 
     // Set done_ if the game is over
-    done_ = (last_score_ >= 25) || (curr_state_->get_num_lives() == 0) || curr_state_->get_deck().empty();
+    if (num_final_turns > 0) {
+        num_final_turns--;
+    }
+    else if (num_final_turns < 0 && curr_state_->get_deck().empty()) {
+        num_final_turns = num_players_;
+    }
+    done_ = (last_score_ >= 25) || (curr_state_->get_num_lives() == 0) || (num_final_turns == 0);
 
     curr_player_id_ = (curr_player_id_ + 1) % num_players_;
 
