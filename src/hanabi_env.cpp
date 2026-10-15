@@ -11,6 +11,7 @@ HanabiEnv::HanabiEnv(int num_players)
     curr_state_ = new State(num_players);
     last_score_ = 0;
     curr_player_id_ = 0;
+    num_final_turns = -1;
 }
 
 Observation HanabiEnv::reset()
@@ -19,6 +20,7 @@ Observation HanabiEnv::reset()
     curr_state_->reset();
     last_score_ = 0;
     curr_player_id_ = 0;
+    num_final_turns = -1;
     // for (int top : curr_state_->get_piles()) {
     //     score += top;
     // }
@@ -165,7 +167,13 @@ HanabiEnv::StepResult HanabiEnv::step(const std::optional<py::tuple> maybe_actio
     last_score_ = score;
 
     // Set done_ if the game is over
-    done_ = (last_score_ >= 25) || (curr_state_->get_num_lives() == 0) || curr_state_->get_deck().empty();
+    if (num_final_turns > 0) {
+        num_final_turns--;
+    }
+    else if (num_final_turns < 0 && curr_state_->get_deck().empty()) {
+        num_final_turns = num_players_;
+    }
+    done_ = (last_score_ >= 25) || (curr_state_->get_num_lives() == 0) || (num_final_turns == 0);
 
     curr_player_id_ = (curr_player_id_ + 1) % num_players_;
 
@@ -218,4 +226,25 @@ void HanabiEnv::add_player(const PlayerName name, const int player_id)
 std::vector<PlayerName> HanabiEnv::get_supported_player_names() const
 {
     return {PlayerName::RandomBot, PlayerName::HolmesBot, PlayerName::SmartBot};
+}
+
+std::string HanabiEnv::color_to_string(Color color) {
+    switch (color) {
+    case Color::red: return "red";
+    case Color::blue: return "blue";
+    case Color::green: return "green";
+    case Color::yellow: return "yellow";
+    case Color::white: return "white";
+    default: return "unknown";
+    }
+}
+
+std::vector<std::pair<std::string, int>> HanabiEnv::get_deck() const
+{
+    std::vector<std::pair<std::string, int>> result;
+    result.reserve(50);
+    for (const auto &card : curr_state_->get_deck()) {
+        result.emplace_back(color_to_string(card.color()), static_cast<int>(card.rank()));
+    }
+    return result;
 }

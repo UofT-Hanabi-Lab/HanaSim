@@ -36,12 +36,16 @@ public:
 
     std::vector<PlayerName> get_supported_player_names() const;
 
+    std::vector<std::pair<std::string, int>> get_deck() const;
+    static std::string color_to_string(Color color);
+
 private:
     int num_players_;
     bool done_; // mark if the game end
     State *curr_state_ = NULL;
     int last_score_; // To calculate score
     int curr_player_id_;
+    int num_final_turns;
 
     // map between player IDs and player objects
     std::unordered_map<int, std::shared_ptr<player>> players_;
